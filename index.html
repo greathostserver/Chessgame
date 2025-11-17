@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>بازی شطرنج — نسخه سالم و تست‌شده</title>
+<style>
+:root{--bg:#2c3e50;--panel:#34495e;--accent:#f1c40f;--ok:#27ae60;--warn:#e67e22}
+html,body{height:100%;margin:0;padding:0;background:var(--bg);box-sizing:border-box;font-family:Tahoma, sans-serif;}
+.container{max-width:1200px;width:100%;margin:0 auto;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;padding:12px;}
+.left{flex:1;min-width:320px;max-width:820px}
+.right{width:320px;min-width:240px}
+header h1{font-size:1.6rem;color:var(--accent);margin:0 0 6px 0;text-align:center}
+.board-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+#chess-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border:3px solid #5D2906;max-width:700px;width:100%;aspect-ratio:1/1;box-shadow:0 10px 30px rgba(0,0,0,.3);position:relative}
+.cell{display:flex;justify-content:center;align-items:center;font-weight:bold;position:relative;user-select:none;overflow:hidden}
+.cell .piece{width:100%;height:100%;display:flex;justify-content:center;align-items:center;border-radius:3px;transition:transform .12s; font-size:clamp(20px,4.5vw,56px)}
+.cell.hover{transform:scale(1.03);z-index:10}
+.cell.selected{box-shadow:0 0 18px rgba(168,230,163,.9);transform:scale(1.05);z-index:20}
+.cell .move-dot{position:absolute;width:20px;height:20px;border-radius:50%;opacity:0.9;pointer-events:none;display:none;border:1.5px solid rgba(255,255,255,0.6)}
+.cell.can-move .move-dot{display:block;background:rgba(46,204,113,0.7)}
+.cell.can-capture .move-dot{display:block;background:rgba(231,76,60,0.75);border:1.5px solid rgba(255,255,255,0.7)}
+.cell.last-move{outline:4px solid rgba(241,196,15,.18)}
+.controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{padding:8px 12px;background:var(--accent);color:#222;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
+.btn.warn{background:var(--warn);color:#222}
+.status-panel{background:var(--panel);padding:12px;border-radius:10px}
+.info{font-size:1rem;margin:6px 0;color:#fff}
+.small{font-size:.9rem;color:#ddd}
+#move-list{max-height: 200px;overflow:auto;background:rgba(255,255,255,.03);padding:10px;border-radius:8px;color:#eee}
+.move-item{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.03);display:flex;justify-content:space-between;gap:8px}
+.captured{display:flex;gap:6px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,.02);border-radius:6px;color:#fff}
+.coord{position:absolute;font-size:9px;color:rgba(0,0,0,.45);user-select:none}
+.coord.row{left:4px;top:4px}
+.coord.col{right:4px;bottom:4px}
+@media(max-width:900px){.right{width:100%}}
+/* remove any extra unwanted bottom spacing when embedded */
+body, html { padding-bottom:0; margin-bottom:0; }
+</style>
+</head>
+<body>
+<div class="container" role="main">
+  <div class="left">
+    <header>
+      <h1>بازی شطرنج — نسخه سالم</h1>
+      <p style="text-align:center;color:#fff">نوبت: <strong id="chess-turn-indicator">سفید</strong></p>
+    </header>
+
+    <div class="board-wrap">
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:6px;">
+        <button id="toggle-coordinates" class="btn" style="background:var(--panel);color:var(--accent);border:2px solid var(--accent);">مختصات: روشن</button>
+        <button id="toggle-move-hints" class="btn" style="background:var(--panel);color:var(--accent);border:2px solid var(--accent);">راهنما: روشن</button>
+        <button id="toggle-game-mode" class="btn" style="background:var(--panel);color:var(--accent);border:2px solid var(--accent);">حالت بازی</button>
+      </div>
+
+      <div id="chess-board" aria-label="Chess board" role="grid"></div>
+
+      <div style="display:flex;justify-content:center;margin-top:8px;gap:8px;">
+        <button id="chess-new-game" class="btn" title="بازی جدید">بازی جدید</button>
+        <button id="chess-undo-move" class="btn warn" title="حذف حرکت">لغو حرکت</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="status-panel">
+      <p id="chess-game-status" class="info">برای شروع بازی، یک مهره سفید را انتخاب کنید</p>
+      <p id="chess-check-status" class="small" style="color:#e74c3c;display:none;font-weight:bold">شاه شما در حالت کیش است!</p>
+      <p id="chess-king-selected-status" class="small" style="display:none;color:#9b59b6;font-weight:bold">شاه انتخاب شده — حرکت مناسب را انتخاب کنید.</p>
+    </div>
+
+    <div style="margin-top:12px" class="status-panel">
+      <h3 style="margin:0 0 8px 0;color:#fff">حرکت‌ها</h3>
+      <div id="move-list"><div style="text-align:center;color:#bbb">هنوز حرکتی انجام نشده</div></div>
+    </div>
+
+    <div style="margin-top:12px" class="status-panel">
+      <h3 style="margin:0 0 8px 0;color:#fff">مهره‌های گرفته‌شده</h3>
+      <div style="font-size:9px;color:#ddd;margin-bottom:6px">سفید:</div>
+      <div id="captured-white" class="captured"></div>
+      <div style="font-size:9px;color:#ddd;margin:8px 0 6px 0">سیاه:</div>
+      <div id="captured-black" class="captured"></div>
+    </div>
+  </div>
+</div>
+
+<div id="chess-alert" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#e74c3c;color:white;padding:10px 14px;border-radius:6px;z-index:1200;display:none;font-weight:bold"></div>
+
+<div id="game-mode-dialog" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#34495e;border:3px solid var(--accent);border-radius:10px;padding:16px;z-index:2000;min-width:260px;">
+  <h3 style="margin:0 0 12px 0;color:white;text-align:center">انتخاب حالت بازی</h3>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <select id="game-mode" style="padding:8px;border-radius:6px;background:var(--panel);color:white;border:1px solid var(--accent);">
+      <option value="friend">بازی با دوست</option>
+      <option value="ai-normal">حریف معمولی (Stockfish)</option>
+      <option value="ai-pro">حریف حرفه‌ای (Stockfish)</option>
+      <option value="ai-grandmaster">استاد بزرگ (Stockfish)</option>
+      <option value="ai-internal-easy">حریف داخلی - آسان</option>
+      <option value="ai-internal-hard">حریف داخلی - سخت</option>
+    </select>
+    <button id="apply-game-mode" class="btn" style="width:100%">اعمال حالت بازی</button>
+    <button id="close-game-mode" class="btn warn" style="width:100%">بستن</button>
+  </div>
+</div>
+
+<script>
+/* --- constants --- */
+const WHITE='white', BLACK='black', EMPTY=null;
+const PAWN='pawn', ROOK='rook', KNIGHT='knight', BISHOP='bishop', QUEEN='queen', KING='king';
+const PIECE_SYMBOLS = {
+  [WHITE]:{[PAWN]:'♙',[ROOK]:'♖',[KNIGHT]:'♘',[BISHOP]:'♗',[QUEEN]:'♕',[KING]:'♔'},
+  [BLACK]:{[PAWN]:'♟',[ROOK]:'♜',[KNIGHT]:'♞',[BISHOP]:'♝',[QUEEN]:'♛',[KING]:'♚'}
+};
+
+let board=[], selectedPiece=null, currentPlayer=WHITE, moveHistory=[], gameOver=false;
+let kingInCheck = {[WHITE]:false,[BLACK]:false}, kingPosition={[WHITE]:null,[BLACK]:null};
+let currentTheme='classic', enPassantTarget=null, castlingRights={}, promotionPending=null;
+let captured = { [WHITE]:[], [BLACK]:[] };
+let moveHintsVisible = true;
+let gameMode = 'friend';
+
+/* --- helpers --- */
+function coordToAlg(row,col){ const files=['a','b','c','d','e','f','g','h']; return files[col] + (8 - row); }
+function pieceLetter(piece){ if(!piece) return ''; if(piece.type===PAWN) return ''; if(piece.type===KNIGHT) return 'N'; return piece.type[0].toUpperCase(); }
+
+/* --- initialize board & UI --- */
+function initializeBoard(){
+  const chessboard = document.getElementById('chess-board');
+  chessboard.innerHTML='';
+  board = Array(8).fill().map(()=>Array(8).fill(EMPTY));
+  for(let i=0;i<8;i++){ board[6][i]={type:PAWN,color:WHITE,hasMoved:false}; board[1][i]={type:PAWN,color:BLACK,hasMoved:false}; }
+  board[7][0]= {type:ROOK,color:WHITE,hasMoved:false}; board[7][7]={type:ROOK,color:WHITE,hasMoved:false};
+  board[0][0]= {type:ROOK,color:BLACK,hasMoved:false}; board[0][7]={type:ROOK,color:BLACK,hasMoved:false};
+  board[7][1]={type:KNIGHT,color:WHITE}; board[7][6]={type:KNIGHT,color:WHITE};
+  board[0][1]={type:KNIGHT,color:BLACK}; board[0][6]={type:KNIGHT,color:BLACK};
+  board[7][2]={type:BISHOP,color:WHITE}; board[7][5]={type:BISHOP,color:WHITE};
+  board[0][2]={type:BISHOP,color:BLACK}; board[0][5]={type:BISHOP,color:BLACK};
+  board[7][3]={type:QUEEN,color:WHITE}; board[0][3]={type:QUEEN,color:BLACK};
+  board[7][4]={type:KING,color:WHITE,hasMoved:false}; board[0][4]={type:KING,color:BLACK,hasMoved:false};
+  kingPosition[WHITE]={row:7,col:4}; kingPosition[BLACK]={row:0,col:4};
+  castlingRights = { [WHITE]:{kingside:true,queenside:true}, [BLACK]:{kingside:true,queenside:true} };
+  captured = { [WHITE]:[], [BLACK]:[] };
+  // create cells
+  for(let row=0;row<8;row++){
+    for(let col=0;col<8;col++){
+      const cell = document.createElement('div');
+      cell.className='cell';
+      cell.setAttribute('data-row',row);
+      cell.setAttribute('data-col',col);
+      const rlabel = document.createElement('div'); rlabel.className='coord row'; rlabel.textContent = (8-row);
+      const clabel = document.createElement('div'); clabel.className='coord col'; clabel.textContent = ['a','b','c','d','e','f','g','h'][col];
+      const piece = document.createElement('div'); piece.className='piece';
+      const dot = document.createElement('div'); dot.className='move-dot';
+      cell.appendChild(rlabel); cell.appendChild(clabel); cell.appendChild(piece); cell.appendChild(dot);
+      applyThemeToCell(cell,row,col);
+      cell.addEventListener('mouseenter',()=>{ if(!gameOver) cell.classList.add('hover'); });
+      cell.addEventListener('mouseleave',()=>{ cell.classList.remove('hover'); });
+      cell.addEventListener('click', ()=> handleCellClick(row,col));
+      chessboard.appendChild(cell);
+    }
+  }
+  updateBoardDisplay();
+  updateGameStatus();
+  updateCapturedDisplay();
+  updateMoveList();
+}
+
+/* --- theme --- */
+const BOARD_THEMES = {
+ classic:{white:'#f0d9b5',black:'#b58863'},
+ blue:{white:'#a7c7e7',black:'#5d8aa8'},
+ green:{white:'#c1e1c1',black:'#7d9d7d'}
+};
+function applyThemeToCell(cell,row,col){
+  const isWhiteCell = (row+col)%2===0;
+  const theme = BOARD_THEMES[currentTheme] || BOARD_THEMES.classic;
+  cell.style.backgroundColor = isWhiteCell ? theme.white : theme.black;
+  const pieceEl = cell.querySelector('.piece');
+  if(pieceEl) pieceEl.style.color = '';
+}
+
+/* --- basic move validation (kept but simplified) --- */
+function isValidKnightMove(fromRow,fromCol,toRow,toCol){ const r=Math.abs(fromRow-toRow), c=Math.abs(fromCol-toCol); return (r===2&&c===1)||(r===1&&c===2); }
+function isValidBishopMove(fromRow,fromCol,toRow,toCol){ if(Math.abs(fromRow-toRow)!==Math.abs(fromCol-toCol)) return false; const rs = fromRow<toRow?1:-1, cs = fromCol<toCol?1:-1; let r=fromRow+rs,c=fromCol+cs; while(r!==toRow && c!==toCol){ if(board[r][c]) return false; r+=rs; c+=cs; } return true; }
+function isValidRookMove(fromRow,fromCol,toRow,toCol){ if(fromRow!==toRow && fromCol!==toCol) return false; if(fromRow===toRow){ const s=Math.min(fromCol,toCol), e=Math.max(fromCol,toCol); for(let cc=s+1;cc<e;cc++) if(board[fromRow][cc]) return false; } else { const s=Math.min(fromRow,toRow), e=Math.max(fromRow,toRow); for(let rr=s+1;rr<e;rr++) if(board[rr][fromCol]) return false; } return true; }
+function isValidQueenMove(fR,fC,tR,tC){ return isValidRookMove(fR,fC,tR,tC)||isValidBishopMove(fR,fC,tR,tC); }
+function isValidKingMove(fromRow,fromCol,toRow,toCol){ const rd=Math.abs(fromRow-toRow), cd=Math.abs(fromCol-toCol); if(rd<=1 && cd<=1 && (rd>0||cd>0)) return true; return false; }
+
+function isValidPawnMoveForPiece(fromRow,fromCol,toRow,toCol,piece){
+  const direction = piece.color===WHITE?-1:1;
+  const startRow = piece.color===WHITE?6:1;
+  if(fromCol===toCol){
+    if(toRow===fromRow+direction && !board[toRow][toCol]) return true;
+    if(fromRow===startRow && toRow===fromRow+2*direction && !board[fromRow+direction][fromCol] && !board[toRow][toCol]) return true;
+  }
+  if(Math.abs(fromCol-toCol)===1 && toRow===fromRow+direction){
+    if(board[toRow][toCol] && board[toRow][toCol].color!==piece.color) return true;
+    if(enPassantTarget && toRow===enPassantTarget.row && toCol===enPassantTarget.col) return true;
+  }
+  return false;
+}
+
+function isValidMove(fromRow,fromCol,toRow,toCol){
+  if(gameOver) return false;
+  if(fromRow===toRow && fromCol===toCol) return false;
+  const piece = board[fromRow][fromCol];
+  if(!piece || piece.color!==currentPlayer) return false;
+  const target = board[toRow][toCol];
+  if(target && target.color===piece.color) return false;
+  let valid=false;
+  switch(piece.type){
+    case PAWN: valid = isValidPawnMoveForPiece(fromRow,fromCol,toRow,toCol,piece); break;
+    case ROOK: valid = isValidRookMove(fromRow,fromCol,toRow,toCol); break;
+    case KNIGHT: valid = isValidKnightMove(fromRow,fromCol,toRow,toCol); break;
+    case BISHOP: valid = isValidBishopMove(fromRow,fromCol,toRow,toCol); break;
+    case QUEEN: valid = isValidQueenMove(fromRow,fromCol,toRow,toCol); break;
+    case KING: valid = isValidKingMove(fromRow,fromCol,toRow,toCol); break;
+  }
+  if(!valid) return false;
+  // simple simulation to avoid moving into check
+  const originalTarget = board[toRow][toCol];
+  board[toRow][toCol] = piece;
+  board[fromRow][fromCol] = EMPTY;
+  const origKingPos = {...kingPosition[piece.color]};
+  if(piece.type===KING) kingPosition[piece.color] = {row:toRow,col:toCol};
+  const wouldBeInCheck = isKingInCheck(piece.color);
+  // restore
+  board[fromRow][fromCol] = piece;
+  board[toRow][toCol] = originalTarget;
+  if(piece.type===KING) kingPosition[piece.color] = origKingPos;
+  return !wouldBeInCheck;
+}
+
+/* --- check detection --- */
+function isKingInCheck(color){
+  const kp = kingPosition[color];
+  if(!kp) return false;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+    const p = board[r][c];
+    if(p && p.color!==color){
+      if(isValidMoveForCheck(r,c,kp.row,kp.col,p)) return true;
+    }
+  }
+  return false;
+}
+function isValidMoveForCheck(fr,fc,tr,tc,piece){
+  // reuse piece-specific raw validators without considering moving player's turn or checks
+  switch(piece.type){
+    case PAWN: return isValidPawnMoveForPiece(fr,fc,tr,tc,piece);
+    case ROOK: return isValidRookMove(fr,fc,tr,tc);
+    case KNIGHT: return isValidKnightMove(fr,fc,tr,tc);
+    case BISHOP: return isValidBishopMove(fr,fc,tr,tc);
+    case QUEEN: return isValidQueenMove(fr,fc,tr,tc);
+    case KING: return isValidKingMove(fr,fc,tr,tc);
+  }
+  return false;
+}
+
+/* --- selection/highlight --- */
+function showPossibleMoves(fromRow,fromCol){
+  clearMoveHighlights();
+  if(!moveHintsVisible) return;
+  const piece = board[fromRow][fromCol];
+  if(!piece) return;
+  for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++){
+    if(isValidMove(fromRow,fromCol,tr,tc)){
+      const cell = document.querySelector(`[data-row="${tr}"][data-col="${tc}"]`);
+      if(cell){ cell.classList.add('can-move'); if(board[tr][tc] && board[tr][tc].color!==piece.color) cell.classList.add('can-capture'); }
+    }
+  }
+}
+function clearMoveHighlights(){ document.querySelectorAll('.cell').forEach(c=>c.classList.remove('can-move','can-capture')); }
+
+/* --- UI selection --- */
+function setSelectedPiece(row,col){
+  clearSelection();
+  selectedPiece=[row,col];
+  const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+  if(cell) cell.classList.add('selected');
+  showPossibleMoves(row,col);
+}
+function clearSelection(){
+  if(selectedPiece){
+    const [r,c] = selectedPiece;
+    const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+    if(cell) cell.classList.remove('selected');
+  }
+  selectedPiece=null;
+  clearMoveHighlights();
+}
+
+/* --- move execution --- */
+function handleCellClick(row,col){
+  if(gameOver) return;
+  if(promotionPending) return;
+  const piece = board[row][col];
+  if(selectedPiece){
+    const [sr,sc] = selectedPiece;
+    if(sr===row && sc===col){ clearSelection(); return; }
+    if(piece && piece.color===currentPlayer){ setSelectedPiece(row,col); return; }
+    if(isValidMove(sr,sc,row,col)){
+      const moving = board[sr][sc]; const target = board[row][col];
+      const fromAlg = coordToAlg(sr,sc), toAlg = coordToAlg(row,col);
+      const san = (pieceLetter(moving)||'') + fromAlg + '-' + toAlg;
+      moveHistory.push({ from:{row:sr,col:sc}, to:{row:row,col:col}, piece:moving, captured: target, san });
+      if(target) captured[target.color].push(target);
+      movePiece(sr,sc,row,col);
+      clearSelection();
+      checkGameStatus();
+      updateMoveList(); updateCapturedDisplay();
+      if(gameMode.startsWith('ai-') && currentPlayer===BLACK && !gameOver) setTimeout(makeAIMove, 300);
+    } else { showAlert('این حرکت مجاز نیست!'); clearSelection(); }
+  } else {
+    if(piece && piece.color===currentPlayer) setSelectedPiece(row,col);
+  }
+}
+
+function movePiece(fromRow,fromCol,toRow,toCol){
+  const piece = board[fromRow][fromCol];
+  board[toRow][toCol]=piece; board[fromRow][fromCol]=EMPTY;
+  if(piece.type===KING) kingPosition[piece.color]={row:toRow,col:toCol};
+  if(piece.type===PAWN) piece.hasMoved = true;
+  updateBoardDisplay();
+  setEnPassantTarget(fromRow,fromCol,toRow,toCol);
+  checkForPromotion(toRow,toCol);
+  currentPlayer = currentPlayer===WHITE?BLACK:WHITE;
+  syncKingPositions();
+  updateGameStatus();
+  highlightLastMove(fromRow,fromCol,toRow,toCol);
+}
+
+function highlightLastMove(fR,fC,tR,tC){
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('last-move'));
+  const a=document.querySelector(`[data-row="${fR}"][data-col="${fC}"]`); const b=document.querySelector(`[data-row="${tR}"][data-col="${tC}"]`);
+  if(a) a.classList.add('last-move'); if(b) b.classList.add('last-move');
+}
+
+/* --- en passant & promotion --- */
+function setEnPassantTarget(fromRow,fromCol,toRow,toCol){
+  const piece = board[toRow][toCol];
+  if(piece && piece.type===PAWN && Math.abs(fromRow-toRow)===2){
+    const direction = piece.color===WHITE?-1:1;
+    enPassantTarget = { row: fromRow + direction, col: fromCol };
+  } else enPassantTarget = null;
+}
+
+function checkForPromotion(row,col){
+  const piece = board[row][col];
+  if(piece && piece.type===PAWN){
+    if((piece.color===WHITE && row===0) || (piece.color===BLACK && row===7)){
+      promotionPending={row,col};
+      // if AI's pawn promotes, auto promote to queen
+      if(piece.color!==currentPlayer){
+         board[row][col] = {type: QUEEN, color: piece.color};
+         promotionPending = null;
+         updateBoardDisplay();
+         updateGameStatus();
+         updateMoveList();
+         return;
+      }
+      showPromotionDialog(row,col,piece.color);
+    }
+  }
+}
+
+function showPromotionDialog(row,col,color){
+  const existing = document.getElementById('promotion-dialog'); if(existing) existing.remove();
+  const d = document.createElement('div'); d.id='promotion-dialog';
+  d.style.position='fixed'; d.style.top='50%'; d.style.left='50%'; d.style.transform='translate(-50%,-50%)';
+  d.style.backgroundColor='#34495e'; d.style.border='3px solid var(--accent)'; d.style.borderRadius='10px'; d.style.padding='12px'; d.style.zIndex='3000';
+  const title = document.createElement('p'); title.textContent='سرباز خود را ارتقا دهید:'; title.style.color='white'; d.appendChild(title);
+  const cont = document.createElement('div'); cont.style.display='flex'; cont.style.gap='8px';
+  const pieces = [QUEEN,ROOK,BISHOP,KNIGHT];
+  pieces.forEach(pt=>{
+    const btn = document.createElement('div'); btn.style.width='56px'; btn.style.height='56px'; btn.style.display='flex'; btn.style.alignItems='center'; btn.style.justifyContent='center';
+    btn.style.fontSize='32px'; btn.style.cursor='pointer'; btn.style.background='rgba(255,255,255,0.04)'; btn.style.borderRadius='8px';
+    btn.textContent = PIECE_SYMBOLS[color][pt];
+    btn.addEventListener('click', ()=>{
+      board[row][col] = { type: pt, color: color };
+      updateBoardDisplay(); promotionPending = null; d.remove(); checkGameStatus(); updateMoveList();
+      if(gameMode.startsWith('ai-') && currentPlayer===BLACK && !gameOver) setTimeout(makeAIMove,300);
+    });
+    cont.appendChild(btn);
+  });
+  d.appendChild(cont); document.body.appendChild(d);
+}
+
+/* --- update UI functions --- */
+function updateBoardDisplay(){
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+    const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+    if(!cell) continue;
+    const pieceEl = cell.querySelector('.piece');
+    if(board[r][c]){ const pd = board[r][c]; pieceEl.textContent = PIECE_SYMBOLS[pd.color][pd.type]; pieceEl.style.color = pd.color===WHITE? '#fff':'#222'; }
+    else { pieceEl.textContent=''; pieceEl.style.color=''; }
+  }
+}
+
+function updateMoveList(){
+  const ml = document.getElementById('move-list'); ml.innerHTML='';
+  if(moveHistory.length===0){ ml.innerHTML='<div style="text-align:center;color:#bbb">هنوز حرکتی انجام نشده</div>'; return; }
+  moveHistory.forEach((m,i)=>{
+    const div = document.createElement('div'); div.className='move-item';
+    const idx = document.createElement('div'); idx.textContent = (i+1)+'. ' + m.san; idx.style.color='#eee';
+    const info = document.createElement('div'); info.textContent = (m.captured ? 'x' : '');
+    div.appendChild(idx); div.appendChild(info); ml.appendChild(div);
+  });
+  ml.scrollTop = ml.scrollHeight;
+}
+
+function updateCapturedDisplay(){
+  const cw = document.getElementById('captured-white'); const cb = document.getElementById('captured-black'); cw.innerHTML=''; cb.innerHTML='';
+  captured[WHITE].forEach(p=>{ const d=document.createElement('div'); d.textContent = PIECE_SYMBOLS[p.color][p.type]; cw.appendChild(d); });
+  captured[BLACK].forEach(p=>{ const d=document.createElement('div'); d.textContent = PIECE_SYMBOLS[p.color][p.type]; cb.appendChild(d); });
+}
+
+function showAlert(msg){
+  const el = document.getElementById('chess-alert'); el.textContent=msg; el.style.display='block';
+  setTimeout(()=>el.style.display='none',2500);
+}
+
+function updateGameStatus(){
+  const status = document.getElementById('chess-game-status'); const ti = document.getElementById('chess-turn-indicator');
+  if(gameOver){ status.textContent='بازی به پایان رسیده است!'; ti.textContent='پایان'; }
+  else if(currentPlayer===WHITE){ status.textContent='نوبت شماست. یک مهره سفید انتخاب کنید.' + (kingInCheck[WHITE]?' (شاه در کیش است!)':''); ti.textContent='سفید'; }
+  else { status.textContent='نوبت حریف. یک مهره سیاه انتخاب کنید.' + (kingInCheck[BLACK]?' (شاه در کیش است!)':''); ti.textContent='سیاه'; }
+}
+
+/* --- game end checks simplified --- */
+function isKingCaptured(){
+  let white=false, black=false;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){ const p = board[r][c]; if(p && p.type===KING){ if(p.color===WHITE) white=true; else black=true; } }
+  return { white: !white, black: !black };
+}
+
+function checkForCheck(){ kingInCheck[WHITE]=isKingInCheck(WHITE); kingInCheck[BLACK]=isKingInCheck(BLACK); updateCheckDisplay(); }
+function updateCheckDisplay(){ const checkStatus = document.getElementById('chess-check-status'); const kingSelected = document.getElementById('chess-king-selected-status'); if(kingInCheck[currentPlayer]) checkStatus.style.display='block'; else checkStatus.style.display='none'; if(selectedPiece && board[selectedPiece[0]][selectedPiece[1]] && board[selectedPiece[0]][selectedPiece[1]].type===KING && kingInCheck[currentPlayer]) kingSelected.style.display='block'; else kingSelected.style.display='none'; }
+
+function checkGameStatus(){
+  const kc = isKingCaptured();
+  if(kc.white){ gameOver=true; showAlert('شاه سفید زده شد! سیاه برنده شد!'); updateGameStatus(); return; }
+  if(kc.black){ gameOver=true; showAlert('شاه سیاه زده شد! سفید برنده شد!'); updateGameStatus(); return; }
+  // simple checkmate/stalemate: naive
+  checkForCheck();
+}
+
+/* --- undo/new --- */
+document.getElementById('chess-undo-move').addEventListener('click',()=>{
+  if(moveHistory.length>0 && !gameOver){
+    const last = moveHistory.pop();
+    board[last.from.row][last.from.col] = last.piece;
+    board[last.to.row][last.to.col] = last.captured;
+    currentPlayer = currentPlayer===WHITE?BLACK:WHITE;
+    rebuildCapturedFromHistory();
+    syncKingPositions();
+    updateBoardDisplay(); updateMoveList(); updateCapturedDisplay(); updateGameStatus();
+  }
+});
+
+function rebuildCapturedFromHistory(){ captured = { [WHITE]:[], [BLACK]:[] }; moveHistory.forEach(m=>{ if(m.captured) captured[m.captured.color].push(m.captured); }); }
+
+/* --- simple internal AI as fallback --- */
+function makeAIMove_internal(){
+  if(gameOver || currentPlayer!==BLACK) return;
+  const moves=[];
+  for(let fr=0;fr<8;fr++) for(let fc=0;fc<8;fc++){
+    const p = board[fr][fc]; if(!p||p.color!==BLACK) continue;
+    for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++) if(isValidMove(fr,fc,tr,tc)) moves.push({fr,fc,tr,tc});
+  }
+  if(moves.length===0) return;
+  const mv = moves[Math.floor(Math.random()*moves.length)];
+  const moving = board[mv.fr][mv.fc], target = board[mv.tr][mv.tc];
+  moveHistory.push({ from:{row:mv.fr,col:mv.fc}, to:{row:mv.tr,col:mv.tc}, piece:moving, captured: target, san: (pieceLetter(moving)||'')+coordToAlg(mv.fr,mv.fc)+'-'+coordToAlg(mv.tr,mv.tc) });
+  if(target) captured[target.color].push(target);
+  movePiece(mv.fr,mv.fc,mv.tr,mv.tc);
+  checkGameStatus(); updateMoveList(); updateCapturedDisplay();
+}
+
+/* === Stockfish integration (clean) === */
+let stockfishWorker = null;
+let stockfishReady = false;
+let stockfishBusy = false;
+
+function initStockfish(){
+  const candidates = ['stockfish.wasm.js','stockfish.js'];
+  function tryLoad(i){
+    if(i>=candidates.length) return;
+    try{
+      stockfishWorker = new Worker(candidates[i]);
+      stockfishWorker.onmessage = (e)=>{
+        const data = typeof e.data === 'string' ? e.data : (e.data && e.data.data ? e.data.data : '');
+        if(!data) return;
+        if(data.indexOf('uciok')!==-1) stockfishWorker.postMessage('isready');
+        else if(data.indexOf('readyok')!==-1){ stockfishReady=true; console.log('stockfish ready'); }
+        else if(data.startsWith('bestmove')){
+          const mv = data.split(' ')[1];
+          if(mv && mv.length>=4){
+            const from = mv.slice(0,2), to = mv.slice(2,4);
+            const fcol = 'abcdefgh'.indexOf(from[0]); const frow = 8 - parseInt(from[1]);
+            const tcol = 'abcdefgh'.indexOf(to[0]); const trow = 8 - parseInt(to[1]);
+            if(board[frow] && board[frow][fcol] && board[frow][fcol].color===BLACK){
+              const moving = board[frow][fcol], target = board[trow][tcol];
+              moveHistory.push({ from:{row:frow,col:fcol}, to:{row:trow,col:tcol}, piece:moving, captured: target, san: (pieceLetter(moving)||'')+coordToAlg(frow,fcol)+'-'+coordToAlg(trow,tcol) });
+              if(target) captured[target.color].push(target);
+              movePiece(frow,fcol,trow,tcol);
+              checkGameStatus(); updateMoveList(); updateCapturedDisplay();
+            }
+          }
+          stockfishBusy=false;
+        }
+      };
+      stockfishWorker.postMessage('uci');
+      console.log('trying stockfish', candidates[i]);
+    }catch(err){ tryLoad(i+1); }
+  }
+  tryLoad(0);
+}
+function setStockfishOptions(mode){
+  if(!stockfishWorker) return;
+  try{ stockfishWorker.postMessage('setoption name Threads value 2'); }catch(e){}
+  try{ stockfishWorker.postMessage('setoption name Hash value 1024'); }catch(e){}
+  let skill=12, time=2000;
+  if(mode==='ai-normal'){ skill=12; time=2000; }
+  if(mode==='ai-pro'){ skill=18; time=5000; }
+  if(mode==='ai-grandmaster'){ skill=20; time=15000; }
+  try{ stockfishWorker.postMessage('setoption name Skill Level value ' + skill); }catch(e){}
+  window.sf_time = time;
+}
+function askStockfishForMove(ms){
+  if(!stockfishWorker || !stockfishReady) return false;
+  if(stockfishBusy) return false;
+  stockfishBusy=true;
+  let movesStr = '';
+  for(let i=0;i<moveHistory.length;i++){
+    const m = moveHistory[i];
+    movesStr += ' ' + coordToAlg(m.from.row,m.from.col) + coordToAlg(m.to.row,m.to.col);
+  }
+  stockfishWorker.postMessage('position startpos moves' + movesStr);
+  stockfishWorker.postMessage('go movetime ' + Math.max(20,Math.floor(ms)));
+  return true;
+}
+
+/* wrapper AI call */
+function makeAIMove(){
+  if(gameOver || currentPlayer!==BLACK) return;
+  if(gameMode==='ai-normal' || gameMode==='ai-pro' || gameMode==='ai-grandmaster'){
+    setStockfishOptions(gameMode);
+    const ok = askStockfishForMove(window.sf_time || 2000);
+    if(!ok){ makeAIMove_internal(); }
+  } else if(gameMode==='ai-internal-easy' || gameMode==='ai-internal-hard'){
+    makeAIMove_internal();
+  } else {
+    // friend mode, do nothing
+  }
+}
+
+/* --- game mode UI --- */
+document.getElementById('toggle-game-mode').addEventListener('click', ()=>{ document.getElementById('game-mode-dialog').style.display='block'; });
+document.getElementById('apply-game-mode').addEventListener('click', ()=>{
+  const mode = document.getElementById('game-mode').value;
+  gameMode = mode;
+  document.getElementById('game-mode-dialog').style.display='none';
+  document.getElementById('chess-new-game').click();
+  showAlert('حالت بازی تغییر کرد: ' + document.getElementById('game-mode').selectedOptions[0].text);
+});
+document.getElementById('close-game-mode').addEventListener('click', ()=>{ document.getElementById('game-mode-dialog').style.display='none'; });
+
+/* toggles */
+let coordsVisible=true;
+document.getElementById('toggle-coordinates').addEventListener('click', ()=>{
+  coordsVisible = !coordsVisible;
+  document.querySelectorAll('.coord').forEach(el=> el.style.display = coordsVisible ? 'block' : 'none');
+  document.getElementById('toggle-coordinates').textContent = coordsVisible ? 'مختصات: روشن' : 'مختصات: خاموش';
+});
+document.getElementById('toggle-move-hints').addEventListener('click', ()=>{
+  moveHintsVisible = !moveHintsVisible;
+  document.getElementById('toggle-move-hints').textContent = moveHintsVisible ? 'راهنما: روشن' : 'راهنما: خاموش';
+  if(!moveHintsVisible) clearMoveHighlights(); else if(selectedPiece) showPossibleMoves(selectedPiece[0], selectedPiece[1]);
+});
+
+/* helpers to keep king positions synced */
+function syncKingPositions(){
+  kingPosition[WHITE]=null; kingPosition[BLACK]=null;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){ const p=board[r][c]; if(p && p.type===KING) kingPosition[p.color]={row:r,col:c}; }
+}
+
+/* init and attach */
+window.addEventListener('load', ()=>{
+  initializeBoard();
+  initStockfish();
+});
+window.addEventListener('resize', initializeBoard);
+</script>
+</body>
+</html>
