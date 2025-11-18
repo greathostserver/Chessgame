@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>Auto Height Wrapper</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    #innerFrame {
+        width: 100%;
+        border: none;
+        display: block;
+    }
+</style>
+</head>
+<body>
+
+<iframe id="innerFrame" src="index.html"></iframe>
+
+<script>
+function adjustHeight(){
+    const iframe = document.getElementById('innerFrame');
+    try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+        const height = iframeDoc.body.scrollHeight;
+
+        iframe.style.height = height + 'px';
+    } catch (e) {
+        console.log("Error adjusting height:", e);
+    }
+}
+
+window.addEventListener('load', adjustHeight);
+window.addEventListener('resize', adjustHeight);
+setInterval(adjustHeight, 500);
+</script>
+
+</body>
+</html>
