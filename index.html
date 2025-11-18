@@ -3,61 +3,64 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>بازی شطرنج — نسخه سالم و تست‌شده</title>
+<title>بازی شطرنج — نسخه نهایی (قدرت وحشی)</title>
 <style>
 :root{--bg:#2c3e50;--panel:#34495e;--accent:#f1c40f;--ok:#27ae60;--warn:#e67e22}
-html,body{height:100%;margin:0;padding:0;background:var(--bg);box-sizing:border-box;font-family:Tahoma, sans-serif;}
-.container{max-width:1200px;width:100%;margin:0 auto;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;padding:12px;}
+body{margin:0;font-family:Tahoma, sans-serif;background:var(--bg);color:#fff;display:flex;justify-content:center;padding:20px;box-sizing:border-box}
+.container{max-width:1200px;width:100%;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
 .left{flex:1;min-width:320px;max-width:820px}
 .right{width:320px;min-width:240px}
-header h1{font-size:1.6rem;color:var(--accent);margin:0 0 6px 0;text-align:center}
-.board-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
-#chess-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border:3px solid #5D2906;max-width:700px;width:100%;aspect-ratio:1/1;box-shadow:0 10px 30px rgba(0,0,0,.3);position:relative}
-.cell{display:flex;justify-content:center;align-items:center;font-weight:bold;position:relative;user-select:none;overflow:hidden}
-.cell .piece{width:100%;height:100%;display:flex;justify-content:center;align-items:center;border-radius:3px;transition:transform .12s; font-size:clamp(20px,4.5vw,56px)}
-.cell.hover{transform:scale(1.03);z-index:10}
-.cell.selected{box-shadow:0 0 18px rgba(168,230,163,.9);transform:scale(1.05);z-index:20}
-.cell .move-dot{position:absolute;width:20px;height:20px;border-radius:50%;opacity:0.9;pointer-events:none;display:none;border:1.5px solid rgba(255,255,255,0.6)}
+header h1{font-size:2rem;color:var(--accent);margin:0 0 6px 0;text-align:center}
+.board-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+#chess-board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border:3px solid #5D2906;max-width:800px;width:100%;aspect-ratio:1/1;box-shadow:0 10px 30px rgba(0,0,0,.3);position:relative}
+.cell{display:flex;justify-content:center;align-items:center;font-weight:bold;position:relative;user-select:none}
+.cell .piece{width:110%;height:110%;display:flex;justify-content:center;align-items:center;border-radius:3px;transition:all .12s transform: scale(1.5); }
+.cell.hover{transform:scale(1.04);z-index:10}
+.cell.selected{box-shadow:0 0 18px rgba(168,230,163,.9);transform:scale(1.06);z-index:20}
+.cell .move-dot{position:absolute;width:20px;height:20px;border-radius:50%;opacity:0.85;pointer-events:none;transform:translateY(-20%);display:none;border:1.5px solid rgba(255,255,255,0.6)}
 .cell.can-move .move-dot{display:block;background:rgba(46,204,113,0.7)}
 .cell.can-capture .move-dot{display:block;background:rgba(231,76,60,0.75);border:1.5px solid rgba(255,255,255,0.7)}
 .cell.last-move{outline:4px solid rgba(241,196,15,.18)}
 .controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn{padding:8px 12px;background:var(--accent);color:#222;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
+.btn{padding:10px 14px;background:var(--accent);color:#222;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
 .btn.warn{background:var(--warn);color:#222}
 .status-panel{background:var(--panel);padding:12px;border-radius:10px}
-.info{font-size:1rem;margin:6px 0;color:#fff}
+.info{font-size:1rem;margin:6px 0}
 .small{font-size:.9rem;color:#ddd}
-#move-list{max-height: 200px;overflow:auto;background:rgba(255,255,255,.03);padding:10px;border-radius:8px;color:#eee}
+#move-list{max-height: 180px;overflow:auto;background:rgba(255,255,255,.03);padding:10px;border-radius:8px}
 .move-item{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.03);display:flex;justify-content:space-between;gap:8px}
-.captured{display:flex;gap:6px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,.02);border-radius:6px;color:#fff}
+.captured{display:flex;gap:6px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,.02);border-radius:6px}
 .coord{position:absolute;font-size:9px;color:rgba(0,0,0,.45);user-select:none}
 .coord.row{left:4px;top:4px}
 .coord.col{right:4px;bottom:4px}
 @media(max-width:900px){.right{width:100%}}
-/* remove any extra unwanted bottom spacing when embedded */
-body, html { padding-bottom:0; margin-bottom:0; }
 </style>
 </head>
 <body>
-<div class="container" role="main">
+<div class="container">
   <div class="left">
     <header>
-      <h1>بازی شطرنج — نسخه سالم</h1>
-      <p style="text-align:center;color:#fff">نوبت: <strong id="chess-turn-indicator">سفید</strong></p>
+      <h1>بازی شطرنج — نسخه نهایی (قدرت وحشی)</h1>
+      <p style="text-align:center">نوبت: <strong id="chess-turn-indicator">سفید</strong></p>
     </header>
 
     <div class="board-wrap">
-      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:6px;">
-        <button id="toggle-coordinates" class="btn" style="background:var(--panel);color:var(--accent);border:2px solid var(--accent);">مختصات: روشن</button>
-        <button id="toggle-move-hints" class="btn" style="background:var(--panel);color:var(--accent);border:2px solid var(--accent);">راهنما: روشن</button>
-        <button id="toggle-game-mode" class="btn" style="background:var(--panel);color:var(--accent);border:2px solid var(--accent);">حالت بازی</button>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:6px;">
+        <div class="chess-theme-option" data-theme="classic" title="Classic" style="width:36px;height:36px;border-radius:6px;cursor:pointer;border:2px solid var(--accent);background:linear-gradient(135deg,#f0d9b5 50%,#b58863 50%);"></div>
+        <div class="chess-theme-option" data-theme="blue" title="Blue" style="width:36px;height:36px;border-radius:6px;cursor:pointer;background:linear-gradient(135deg,#a7c7e7 50%,#5d8aa8 50%);"></div>
+        <div class="chess-theme-option" data-theme="green" title="Green" style="width:36px;height:36px;border-radius:6px;cursor:pointer;background:linear-gradient(135deg,#c1e1c1 50%,#7d9d7d 50%);"></div>
+        <div class="chess-theme-option" data-theme="purple" title="Purple" style="width:36px;height:36px;border-radius:6px;cursor:pointer;background:linear-gradient(135deg,#d8bfd8 50%,#9370db 50%);"></div>
+        <div class="chess-theme-option" data-theme="dark" title="Dark" style="width:36px;height:36px;border-radius:6px;cursor:pointer;background:linear-gradient(135deg,#a9a9a9 50%,#696969 50%);"></div>
+<button id="toggle-coordinates" class="btn" style="padding:8px 14px;background:var(--panel);color:var(--accent);font-weight:bold;border:2px solid var(--accent);border-radius:8px;cursor:pointer;">مختصات: روشن</button>
+<button id="toggle-move-hints" class="btn" style="padding:8px 14px;background:var(--panel);color:var(--accent);font-weight:bold;border:2px solid var(--accent);border-radius:8px;cursor:pointer;">راهنما: روشن</button>
+<button id="toggle-game-mode" class="btn" style="padding:8px 14px;background:var(--panel);color:var(--accent);font-weight:bold;border:2px solid var(--accent);border-radius:8px;cursor:pointer;">انتخاب حریف (AI)</button>
       </div>
 
       <div id="chess-board" aria-label="Chess board" role="grid"></div>
 
       <div style="display:flex;justify-content:center;margin-top:8px;gap:8px;">
         <button id="chess-new-game" class="btn" title="بازی جدید">بازی جدید</button>
-        <button id="chess-undo-move" class="btn warn" title="حذف حرکت">لغو حرکت</button>
+        <button id="chess-undo-move" class="btn warn" title="حرکت قبلی">لغو حرکت</button>
       </div>
     </div>
   </div>
@@ -70,12 +73,12 @@ body, html { padding-bottom:0; margin-bottom:0; }
     </div>
 
     <div style="margin-top:12px" class="status-panel">
-      <h3 style="margin:0 0 8px 0;color:#fff">حرکت‌ها</h3>
+      <h3 style="margin:0 0 8px 0">حرکت‌ها</h3>
       <div id="move-list"><div style="text-align:center;color:#bbb">هنوز حرکتی انجام نشده</div></div>
     </div>
 
     <div style="margin-top:12px" class="status-panel">
-      <h3 style="margin:0 0 8px 0;color:#fff">مهره‌های گرفته‌شده</h3>
+      <h3 style="margin:0 0 8px 0">مهره‌های گرفته‌شده</h3>
       <div style="font-size:9px;color:#ddd;margin-bottom:6px">سفید:</div>
       <div id="captured-white" class="captured"></div>
       <div style="font-size:9px;color:#ddd;margin:8px 0 6px 0">سیاه:</div>
@@ -84,31 +87,45 @@ body, html { padding-bottom:0; margin-bottom:0; }
   </div>
 </div>
 
-<div id="chess-alert" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#e74c3c;color:white;padding:10px 14px;border-radius:6px;z-index:1200;display:none;font-weight:bold"></div>
+<div id="chess-alert" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#e74c3c;color:white;padding:12px 18px;border-radius:6px;z-index:1200;display:none;font-weight:bold"></div>
 
-<div id="game-mode-dialog" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#34495e;border:3px solid var(--accent);border-radius:10px;padding:16px;z-index:2000;min-width:260px;">
-  <h3 style="margin:0 0 12px 0;color:white;text-align:center">انتخاب حالت بازی</h3>
+<div id="game-mode-dialog" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#34495e;border:3px solid var(--accent);border-radius:10px;padding:16px;z-index:2000;min-width:320px;">
+  <h3 style="margin:0 0 12px 0;color:white;text-align:center">انتخاب حریف (AI)</h3>
   <div style="display:flex;flex-direction:column;gap:10px;">
-    <select id="game-mode" style="padding:8px;border-radius:6px;background:var(--panel);color:white;border:1px solid var(--accent);">
-      <option value="friend">بازی با دوست</option>
-      <option value="ai-normal">حریف معمولی (Stockfish)</option>
-      <option value="ai-pro">حریف حرفه‌ای (Stockfish)</option>
-      <option value="ai-grandmaster">استاد بزرگ (Stockfish)</option>
-      <option value="ai-internal-easy">حریف داخلی - آسان</option>
-      <option value="ai-internal-hard">حریف داخلی - سخت</option>
-    </select>
+    
+<select id="game-mode" style="padding:10px;border-radius:6px;background:var(--panel);color:white;border:1px solid var(--accent);font-weight:bold;">
+  <option value="friend">بازی با دوست</option>
+  <option value="ai-easy">حریف — آسان</option>
+  <option value="ai-medium">حریف — متوسط (قوی)</option>
+  <option value="ai-beast">حریف — وحشی (حداکثر قدرت)</option>
+</select>
+
     <button id="apply-game-mode" class="btn" style="width:100%">اعمال حالت بازی</button>
     <button id="close-game-mode" class="btn warn" style="width:100%">بستن</button>
   </div>
 </div>
 
 <script>
-/* --- constants --- */
+/* ---------------------------
+   نسخه نهایی: تقویت هوش مصنوعی
+   سه سطح: ai-easy, ai-medium, ai-beast
+   اگر Stockfish در دسترس باشد، "وحشی" از Stockfish با تنظیمات سنگین استفاده می‌کند.
+   در غیر اینصورت، از موتور داخلی با پارامترهای تقویت شده استفاده می‌کنیم.
+   --------------------------- */
+
+/* --- constants & setup --- */
 const WHITE='white', BLACK='black', EMPTY=null;
 const PAWN='pawn', ROOK='rook', KNIGHT='knight', BISHOP='bishop', QUEEN='queen', KING='king';
 const PIECE_SYMBOLS = {
-  [WHITE]:{[PAWN]:'♙',[ROOK]:'♖',[KNIGHT]:'♘',[BISHOP]:'♗',[QUEEN]:'♕',[KING]:'♔'},
+  [WHITE]:{[PAWN]:'♟',[ROOK]:'♜',[KNIGHT]:'♞',[BISHOP]:'♝',[QUEEN]:'♛',[KING]:'♚'},
   [BLACK]:{[PAWN]:'♟',[ROOK]:'♜',[KNIGHT]:'♞',[BISHOP]:'♝',[QUEEN]:'♛',[KING]:'♚'}
+};
+const BOARD_THEMES = {
+ classic:{white:'#f0d9b5',black:'#b58863'},
+ blue:{white:'#a7c7e7',black:'#5d8aa8'},
+ green:{white:'#c1e1c1',black:'#7d9d7d'},
+ purple:{white:'#d8bfd8',black:'#9370db'},
+ dark:{white:'#a9a9a9',black:'#696969'}
 };
 
 let board=[], selectedPiece=null, currentPlayer=WHITE, moveHistory=[], gameOver=false;
@@ -117,12 +134,22 @@ let currentTheme='classic', enPassantTarget=null, castlingRights={}, promotionPe
 let captured = { [WHITE]:[], [BLACK]:[] };
 let moveHintsVisible = true;
 let gameMode = 'friend';
+let stockfishWorker = null, stockfishReady = false, stockfishBusy = false;
+let AI_FALLBACK_STRENGTH = 3; // 1 easy,2 medium,3 beast (used when stockfish not available)
 
-/* --- helpers --- */
-function coordToAlg(row,col){ const files=['a','b','c','d','e','f','g','h']; return files[col] + (8 - row); }
-function pieceLetter(piece){ if(!piece) return ''; if(piece.type===PAWN) return ''; if(piece.type===KNIGHT) return 'N'; return piece.type[0].toUpperCase(); }
+/* --- helpers (same as قبل) --- */
+function coordToAlg(row,col){
+  const files=['a','b','c','d','e','f','g','h'];
+  return files[col] + (8 - row);
+}
+function pieceLetter(piece){
+  if(!piece) return '';
+  if(piece.type===PAWN) return '';
+  if(piece.type===KNIGHT) return 'N';
+  return piece.type[0].toUpperCase();
+}
 
-/* --- initialize board & UI --- */
+/* --- board init & UI --- */
 function initializeBoard(){
   const chessboard = document.getElementById('chess-board');
   chessboard.innerHTML='';
@@ -139,7 +166,7 @@ function initializeBoard(){
   kingPosition[WHITE]={row:7,col:4}; kingPosition[BLACK]={row:0,col:4};
   castlingRights = { [WHITE]:{kingside:true,queenside:true}, [BLACK]:{kingside:true,queenside:true} };
   captured = { [WHITE]:[], [BLACK]:[] };
-  // create cells
+
   for(let row=0;row<8;row++){
     for(let col=0;col<8;col++){
       const cell = document.createElement('div');
@@ -148,9 +175,10 @@ function initializeBoard(){
       cell.setAttribute('data-col',col);
       const rlabel = document.createElement('div'); rlabel.className='coord row'; rlabel.textContent = (8-row);
       const clabel = document.createElement('div'); clabel.className='coord col'; clabel.textContent = ['a','b','c','d','e','f','g','h'][col];
+      cell.appendChild(rlabel); cell.appendChild(clabel);
       const piece = document.createElement('div'); piece.className='piece';
-      const dot = document.createElement('div'); dot.className='move-dot';
-      cell.appendChild(rlabel); cell.appendChild(clabel); cell.appendChild(piece); cell.appendChild(dot);
+      cell.appendChild(piece);
+      const dot = document.createElement('div'); dot.className='move-dot'; cell.appendChild(dot);
       applyThemeToCell(cell,row,col);
       cell.addEventListener('mouseenter',()=>{ if(!gameOver) cell.classList.add('hover'); });
       cell.addEventListener('mouseleave',()=>{ cell.classList.remove('hover'); });
@@ -158,32 +186,28 @@ function initializeBoard(){
       chessboard.appendChild(cell);
     }
   }
-  updateBoardDisplay();
-  updateGameStatus();
-  updateCapturedDisplay();
-  updateMoveList();
+  updateBoardDisplay(); updateGameStatus(); updateCapturedDisplay(); updateMoveList();
+  document.querySelectorAll('.chess-theme-option').forEach(opt=>{
+    opt.style.borderColor = opt.getAttribute('data-theme')===currentTheme? 'var(--accent)':'transparent';
+  });
 }
 
 /* --- theme --- */
-const BOARD_THEMES = {
- classic:{white:'#f0d9b5',black:'#b58863'},
- blue:{white:'#a7c7e7',black:'#5d8aa8'},
- green:{white:'#c1e1c1',black:'#7d9d7d'}
-};
 function applyThemeToCell(cell,row,col){
   const isWhiteCell = (row+col)%2===0;
-  const theme = BOARD_THEMES[currentTheme] || BOARD_THEMES.classic;
+  const theme = BOARD_THEMES[currentTheme];
   cell.style.backgroundColor = isWhiteCell ? theme.white : theme.black;
+  cell.style.fontSize = 'clamp(24px,4.5vw,56px)';
   const pieceEl = cell.querySelector('.piece');
   if(pieceEl) pieceEl.style.color = '';
 }
 
-/* --- basic move validation (kept but simplified) --- */
+/* --- move validation (kept) --- */
 function isValidKnightMove(fromRow,fromCol,toRow,toCol){ const r=Math.abs(fromRow-toRow), c=Math.abs(fromCol-toCol); return (r===2&&c===1)||(r===1&&c===2); }
-function isValidBishopMove(fromRow,fromCol,toRow,toCol){ if(Math.abs(fromRow-toRow)!==Math.abs(fromCol-toCol)) return false; const rs = fromRow<toRow?1:-1, cs = fromCol<toCol?1:-1; let r=fromRow+rs,c=fromCol+cs; while(r!==toRow && c!==toCol){ if(board[r][c]) return false; r+=rs; c+=cs; } return true; }
-function isValidRookMove(fromRow,fromCol,toRow,toCol){ if(fromRow!==toRow && fromCol!==toCol) return false; if(fromRow===toRow){ const s=Math.min(fromCol,toCol), e=Math.max(fromCol,toCol); for(let cc=s+1;cc<e;cc++) if(board[fromRow][cc]) return false; } else { const s=Math.min(fromRow,toRow), e=Math.max(fromRow,toRow); for(let rr=s+1;rr<e;rr++) if(board[rr][fromCol]) return false; } return true; }
+function isValidBishopMove(fromRow,fromCol,toRow,toCol){ if(Math.abs(fromRow-toRow)!==Math.abs(fromCol-toCol)) return false; const rowStep = fromRow<toRow?1:-1, colStep = fromCol<toCol?1:-1; let r=fromRow+rowStep, c=fromCol+colStep; while(r!==toRow && c!==toCol){ if(board[r][c]) return false; r+=rowStep; c+=colStep; } return true; }
+function isValidRookMove(fromRow,fromCol,toRow,toCol){ if(fromRow!==toRow && fromCol!==toCol) return false; if(fromRow===toRow){ const s=Math.min(fromCol,toCol), e=Math.max(fromCol,toCol); for(let cc=s+1;cc<e;cc++) if(board[fromRow][cc]) return false; }else{ const s=Math.min(fromRow,toRow), e=Math.max(fromRow,toRow); for(let rr=s+1;rr<e;rr++) if(board[rr][fromCol]) return false; } return true; }
 function isValidQueenMove(fR,fC,tR,tC){ return isValidRookMove(fR,fC,tR,tC)||isValidBishopMove(fR,fC,tR,tC); }
-function isValidKingMove(fromRow,fromCol,toRow,toCol){ const rd=Math.abs(fromRow-toRow), cd=Math.abs(fromCol-toCol); if(rd<=1 && cd<=1 && (rd>0||cd>0)) return true; return false; }
+function isValidKingMove(fromRow,fromCol,toRow,toCol){ const rd=Math.abs(fromRow-toRow), cd=Math.abs(fromCol-toCol); if(rd<=1 && cd<=1 && (rd>0||cd>0)) return true; if(rd===0 && Math.abs(fromCol-toCol)===2) return canCastle(fromRow,fromCol,toRow,toCol); return false; }
 
 function isValidPawnMoveForPiece(fromRow,fromCol,toRow,toCol,piece){
   const direction = piece.color===WHITE?-1:1;
@@ -194,18 +218,47 @@ function isValidPawnMoveForPiece(fromRow,fromCol,toRow,toCol,piece){
   }
   if(Math.abs(fromCol-toCol)===1 && toRow===fromRow+direction){
     if(board[toRow][toCol] && board[toRow][toCol].color!==piece.color) return true;
-    if(enPassantTarget && toRow===enPassantTarget.row && toCol===enPassantTarget.col) return true;
+    if(enPassantTarget && toRow===enPassantTarget.row && toCol===enPassantTarget.col){
+      const enPassantPawnRow = fromRow, enPassantPawnCol = toCol;
+      if(board[enPassantPawnRow][enPassantPawnCol] && board[enPassantPawnRow][enPassantPawnCol].type===PAWN && board[enPassantPawnRow][enPassantPawnCol].color!==piece.color) return true;
+    }
+  }
+  return false;
+}
+function isValidMoveForPiece(fromRow,fromCol,toRow,toCol,piece){
+  const target = board[toRow][toCol];
+  if(target && target.color===piece.color) return false;
+  switch(piece.type){
+    case PAWN: return isValidPawnMoveForPiece(fromRow,fromCol,toRow,toCol,piece);
+    case ROOK: return isValidRookMove(fromRow,fromCol,toRow,toCol);
+    case KNIGHT: return isValidKnightMove(fromRow,fromCol,toRow,toCol);
+    case BISHOP: return isValidBishopMove(fromRow,fromCol,toRow,toCol);
+    case QUEEN: return isValidQueenMove(fromRow,fromCol,toRow,toCol);
+    case KING: return isValidKingMove(fromRow,fromCol,toRow,toCol);
   }
   return false;
 }
 
+/* --- check logic & simulation --- */
+function isKingInCheck(color){
+  const kingPos = kingPosition[color];
+  if(!kingPos) return false;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+    const piece = board[r][c];
+    if(piece && piece.color!==color){
+      if(isValidMoveForPiece(r,c,kingPos.row,kingPos.col,piece)) return true;
+    }
+  }
+  return false;
+}
 function isValidMove(fromRow,fromCol,toRow,toCol){
   if(gameOver) return false;
   if(fromRow===toRow && fromCol===toCol) return false;
   const piece = board[fromRow][fromCol];
   if(!piece || piece.color!==currentPlayer) return false;
   const target = board[toRow][toCol];
-  if(target && target.color===piece.color) return false;
+  if(target && target.color===currentPlayer) return false;
+
   let valid=false;
   switch(piece.type){
     case PAWN: valid = isValidPawnMoveForPiece(fromRow,fromCol,toRow,toCol,piece); break;
@@ -216,67 +269,127 @@ function isValidMove(fromRow,fromCol,toRow,toCol){
     case KING: valid = isValidKingMove(fromRow,fromCol,toRow,toCol); break;
   }
   if(!valid) return false;
-  // simple simulation to avoid moving into check
+
   const originalTarget = board[toRow][toCol];
   board[toRow][toCol] = piece;
   board[fromRow][fromCol] = EMPTY;
-  const origKingPos = {...kingPosition[piece.color]};
-  if(piece.type===KING) kingPosition[piece.color] = {row:toRow,col:toCol};
+
+  const originalKingPos = {...kingPosition[piece.color]};
+  if(piece.type === KING) {
+    kingPosition[piece.color] = {row: toRow, col: toCol};
+  }
+
   const wouldBeInCheck = isKingInCheck(piece.color);
-  // restore
+
   board[fromRow][fromCol] = piece;
   board[toRow][toCol] = originalTarget;
-  if(piece.type===KING) kingPosition[piece.color] = origKingPos;
+  if(piece.type === KING) {
+    kingPosition[piece.color] = originalKingPos;
+  }
+
   return !wouldBeInCheck;
 }
 
-/* --- check detection --- */
-function isKingInCheck(color){
-  const kp = kingPosition[color];
-  if(!kp) return false;
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
-    const p = board[r][c];
-    if(p && p.color!==color){
-      if(isValidMoveForCheck(r,c,kp.row,kp.col,p)) return true;
-    }
+/* --- castling --- */
+function canCastle(fromRow,fromCol,toRow,toCol){
+  const piece = board[fromRow][fromCol];
+  if(!piece || piece.hasMoved || kingInCheck[piece.color]) return false;
+  const isKingside = toCol>fromCol;
+  const rookCol = isKingside?7:0;
+  const rook = board[fromRow][rookCol];
+  if(!rook || rook.type!==ROOK || rook.hasMoved || rook.color!==piece.color) return false;
+  const startCol = Math.min(fromCol,rookCol)+1, endCol = Math.max(fromCol,rookCol)-1;
+  for(let col=startCol;col<=endCol;col++) if(board[fromRow][col]) return false;
+  const step = isKingside?1:-1;
+  for(let col=fromCol; col!==toCol; col+=step){
+    const originalPiece = board[fromRow][col];
+    board[fromRow][col]=EMPTY; board[fromRow][col+step]=piece;
+    const originalKingPos = {...kingPosition[piece.color]}; kingPosition[piece.color]={row:fromRow,col:col+step};
+    const inCheck = isKingInCheck(piece.color);
+    board[fromRow][col]=originalPiece; board[fromRow][col+step]=EMPTY; kingPosition[piece.color]=originalKingPos;
+    if(inCheck) return false;
   }
-  return false;
+  return true;
 }
-function isValidMoveForCheck(fr,fc,tr,tc,piece){
-  // reuse piece-specific raw validators without considering moving player's turn or checks
-  switch(piece.type){
-    case PAWN: return isValidPawnMoveForPiece(fr,fc,tr,tc,piece);
-    case ROOK: return isValidRookMove(fr,fc,tr,tc);
-    case KNIGHT: return isValidKnightMove(fr,fc,tr,tc);
-    case BISHOP: return isValidBishopMove(fr,fc,tr,tc);
-    case QUEEN: return isValidQueenMove(fr,fc,tr,tc);
-    case KING: return isValidKingMove(fr,fc,tr,tc);
-  }
-  return false;
+function performCastle(fromRow,fromCol,toRow,toCol){
+  const piece = board[fromRow][fromCol];
+  const isKingside = toCol>fromCol;
+  const rookFromCol = isKingside?7:0;
+  const rookToCol = isKingside?toCol-1:toCol+1;
+  board[toRow][toCol]=piece; board[fromRow][fromCol]=EMPTY; kingPosition[piece.color]={row:toRow,col:toCol};
+  const rook = board[fromRow][rookFromCol]; board[fromRow][rookToCol]=rook; board[fromRow][rookFromCol]=EMPTY;
+  updateBoardDisplay();
 }
 
-/* --- selection/highlight --- */
+/* --- status checks --- */
+function isKingCaptured(){
+  let white=false, black=false;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+    const p=board[r][c]; if(p && p.type===KING){ if(p.color===WHITE) white=true; else black=true; }
+  }
+  return { white: !white, black: !black };
+}
+function isStalemate(color){
+  if(isKingInCheck(color)) return false;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+    const piece = board[r][c];
+    if(piece && piece.color===color){
+      for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++) if(isValidMove(r,c,tr,tc)) return false;
+    }
+  }
+  return true;
+}
+function isCheckmate(color){
+  if(!isKingInCheck(color)) return false;
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+    const piece=board[r][c];
+    if(piece && piece.color===color){
+      for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++){
+        if(isValidMove(r,c,tr,tc)){
+          const original = board[tr][tc]; board[tr][tc]=piece; board[r][c]=EMPTY;
+          const origKing = {...kingPosition[color]}; if(piece.type===KING) kingPosition[color]={row:tr,col:tc};
+          const still = isKingInCheck(color);
+          board[r][c]=piece; board[tr][tc]=original; if(piece.type===KING) kingPosition[color]=origKing;
+          if(!still) return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+function checkForCheck(){ kingInCheck[WHITE]=isKingInCheck(WHITE); kingInCheck[BLACK]=isKingInCheck(BLACK); updateCheckDisplay(); }
+function updateCheckDisplay(){
+  const checkStatus = document.getElementById('chess-check-status');
+  const kingSelected = document.getElementById('chess-king-selected-status');
+  if(kingInCheck[currentPlayer]) checkStatus.style.display='block'; else checkStatus.style.display='none';
+  if(selectedPiece && board[selectedPiece[0]][selectedPiece[1]] && board[selectedPiece[0]][selectedPiece[1]].type===KING && kingInCheck[currentPlayer]) kingSelected.style.display='block'; else kingSelected.style.display='none';
+}
+
+/* --- highlights & selection --- */
 function showPossibleMoves(fromRow,fromCol){
   clearMoveHighlights();
-  if(!moveHintsVisible) return;
+  if (!moveHintsVisible) return;
   const piece = board[fromRow][fromCol];
   if(!piece) return;
   for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++){
     if(isValidMove(fromRow,fromCol,tr,tc)){
       const cell = document.querySelector(`[data-row="${tr}"][data-col="${tc}"]`);
-      if(cell){ cell.classList.add('can-move'); if(board[tr][tc] && board[tr][tc].color!==piece.color) cell.classList.add('can-capture'); }
+      if(cell){
+        cell.classList.add('can-move');
+        if(board[tr][tc] && board[tr][tc].color!==piece.color) cell.classList.add('can-capture');
+      }
     }
   }
 }
-function clearMoveHighlights(){ document.querySelectorAll('.cell').forEach(c=>c.classList.remove('can-move','can-capture')); }
+function clearMoveHighlights(){ document.querySelectorAll('.cell').forEach(c=>{ c.classList.remove('can-move','can-capture'); }); }
 
-/* --- UI selection --- */
 function setSelectedPiece(row,col){
   clearSelection();
   selectedPiece=[row,col];
   const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
   if(cell) cell.classList.add('selected');
   showPossibleMoves(row,col);
+  updateCheckDisplay();
 }
 function clearSelection(){
   if(selectedPiece){
@@ -286,9 +399,10 @@ function clearSelection(){
   }
   selectedPiece=null;
   clearMoveHighlights();
+  updateCheckDisplay();
 }
 
-/* --- move execution --- */
+/* --- move execution & history --- */
 function handleCellClick(row,col){
   if(gameOver) return;
   if(promotionPending) return;
@@ -296,19 +410,29 @@ function handleCellClick(row,col){
   if(selectedPiece){
     const [sr,sc] = selectedPiece;
     if(sr===row && sc===col){ clearSelection(); return; }
-    if(piece && piece.color===currentPlayer){ setSelectedPiece(row,col); return; }
+    if(piece && piece.color===currentPlayer){
+      setSelectedPiece(row,col);
+      return;
+    }
     if(isValidMove(sr,sc,row,col)){
-      const moving = board[sr][sc]; const target = board[row][col];
+      const moving = board[sr][sc];
+      const target = board[row][col];
       const fromAlg = coordToAlg(sr,sc), toAlg = coordToAlg(row,col);
-      const san = (pieceLetter(moving)||'') + fromAlg + '-' + toAlg;
+      const san = (pieceLetter(moving) || '') + fromAlg + '-' + toAlg;
       moveHistory.push({ from:{row:sr,col:sc}, to:{row:row,col:col}, piece:moving, captured: target, san });
-      if(target) captured[target.color].push(target);
+      if(target){ captured[target.color].push(target); }
       movePiece(sr,sc,row,col);
       clearSelection();
       checkGameStatus();
-      updateMoveList(); updateCapturedDisplay();
-      if(gameMode.startsWith('ai-') && currentPlayer===BLACK && !gameOver) setTimeout(makeAIMove, 300);
-    } else { showAlert('این حرکت مجاز نیست!'); clearSelection(); }
+      updateMoveList();
+      updateCapturedDisplay();
+      if(gameMode.startsWith('ai-') && currentPlayer === BLACK && !gameOver) {
+        setTimeout(makeAIMove, 300);
+      }
+    } else {
+      showAlert('این حرکت مجاز نیست!');
+      clearSelection();
+    }
   } else {
     if(piece && piece.color===currentPlayer) setSelectedPiece(row,col);
   }
@@ -316,10 +440,21 @@ function handleCellClick(row,col){
 
 function movePiece(fromRow,fromCol,toRow,toCol){
   const piece = board[fromRow][fromCol];
-  board[toRow][toCol]=piece; board[fromRow][fromCol]=EMPTY;
-  if(piece.type===KING) kingPosition[piece.color]={row:toRow,col:toCol};
-  if(piece.type===PAWN) piece.hasMoved = true;
-  updateBoardDisplay();
+  if(piece.type===KING && Math.abs(fromCol-toCol)===2){
+    performCastle(fromRow,fromCol,toRow,toCol);
+  } else {
+    if(piece.type===PAWN && enPassantTarget && toRow===enPassantTarget.row && toCol===enPassantTarget.col){
+      const capturedPawnRow = fromRow, capturedPawnCol = toCol;
+      const capturedPiece = board[capturedPawnRow][capturedPawnCol];
+      if(capturedPiece) captured[capturedPiece.color].push(capturedPiece);
+      board[capturedPawnRow][capturedPawnCol]=EMPTY;
+    }
+    board[toRow][toCol]=piece; board[fromRow][fromCol]=EMPTY;
+    if(piece.type===KING) kingPosition[piece.color]={row:toRow,col:toCol};
+    updateBoardDisplay();
+  }
+  if(piece.type===PAWN||piece.type===ROOK||piece.type===KING) piece.hasMoved=true;
+  updateCastlingRights(fromRow,fromCol,toRow,toCol);
   setEnPassantTarget(fromRow,fromCol,toRow,toCol);
   checkForPromotion(toRow,toCol);
   currentPlayer = currentPlayer===WHITE?BLACK:WHITE;
@@ -330,11 +465,21 @@ function movePiece(fromRow,fromCol,toRow,toCol){
 
 function highlightLastMove(fR,fC,tR,tC){
   document.querySelectorAll('.cell').forEach(c=>c.classList.remove('last-move'));
-  const a=document.querySelector(`[data-row="${fR}"][data-col="${fC}"]`); const b=document.querySelector(`[data-row="${tR}"][data-col="${tC}"]`);
-  if(a) a.classList.add('last-move'); if(b) b.classList.add('last-move');
+  const c1 = document.querySelector(`[data-row="${fR}"][data-col="${fC}"]`);
+  const c2 = document.querySelector(`[data-row="${tR}"][data-col="${tC}"]`);
+  if(c1) c1.classList.add('last-move'); if(c2) c2.classList.add('last-move');
 }
 
-/* --- en passant & promotion --- */
+/* --- castling & en passant --- */
+function updateCastlingRights(fromRow,fromCol,toRow,toCol){
+  const piece = board[toRow][toCol];
+  if(!piece) return;
+  if(piece.type===KING){ castlingRights[piece.color].kingside=false; castlingRights[piece.color].queenside=false; }
+  if(piece.type===ROOK){
+    if(fromCol===0) castlingRights[piece.color].queenside=false;
+    else if(fromCol===7) castlingRights[piece.color].kingside=false;
+  }
+}
 function setEnPassantTarget(fromRow,fromCol,toRow,toCol){
   const piece = board[toRow][toCol];
   if(piece && piece.type===PAWN && Math.abs(fromRow-toRow)===2){
@@ -343,58 +488,50 @@ function setEnPassantTarget(fromRow,fromCol,toRow,toCol){
   } else enPassantTarget = null;
 }
 
+/* --- promotion --- */
 function checkForPromotion(row,col){
   const piece = board[row][col];
   if(piece && piece.type===PAWN){
     if((piece.color===WHITE && row===0) || (piece.color===BLACK && row===7)){
       promotionPending={row,col};
-      // if AI's pawn promotes, auto promote to queen
-      if(piece.color!==currentPlayer){
-         board[row][col] = {type: QUEEN, color: piece.color};
-         promotionPending = null;
-         updateBoardDisplay();
-         updateGameStatus();
-         updateMoveList();
-         return;
-      }
       showPromotionDialog(row,col,piece.color);
     }
   }
 }
-
 function showPromotionDialog(row,col,color){
   const existing = document.getElementById('promotion-dialog'); if(existing) existing.remove();
-  const d = document.createElement('div'); d.id='promotion-dialog';
-  d.style.position='fixed'; d.style.top='50%'; d.style.left='50%'; d.style.transform='translate(-50%,-50%)';
-  d.style.backgroundColor='#34495e'; d.style.border='3px solid var(--accent)'; d.style.borderRadius='10px'; d.style.padding='12px'; d.style.zIndex='3000';
-  const title = document.createElement('p'); title.textContent='سرباز خود را ارتقا دهید:'; title.style.color='white'; d.appendChild(title);
-  const cont = document.createElement('div'); cont.style.display='flex'; cont.style.gap='8px';
-  const pieces = [QUEEN,ROOK,BISHOP,KNIGHT];
+  const promotionDialog = document.createElement('div'); promotionDialog.id='promotion-dialog';
+  promotionDialog.style.position='fixed'; promotionDialog.style.top='50%'; promotionDialog.style.left='50%'; promotionDialog.style.transform='translate(-50%,-50%)';
+  promotionDialog.style.backgroundColor='#34495e'; promotionDialog.style.border='3px solid var(--accent)'; promotionDialog.style.borderRadius='10px'; promotionDialog.style.padding='16px'; promotionDialog.style.zIndex='2000';
+  const title = document.createElement('p'); title.textContent='سرباز خود را ارتقا دهید:'; title.style.color='white'; promotionDialog.appendChild(title);
+  const pieces=[QUEEN,ROOK,BISHOP,KNIGHT]; const cont=document.createElement('div'); cont.style.display='flex'; cont.style.gap='12px';
   pieces.forEach(pt=>{
-    const btn = document.createElement('div'); btn.style.width='56px'; btn.style.height='56px'; btn.style.display='flex'; btn.style.alignItems='center'; btn.style.justifyContent='center';
-    btn.style.fontSize='32px'; btn.style.cursor='pointer'; btn.style.background='rgba(255,255,255,0.04)'; btn.style.borderRadius='8px';
-    btn.textContent = PIECE_SYMBOLS[color][pt];
-    btn.addEventListener('click', ()=>{
-      board[row][col] = { type: pt, color: color };
-      updateBoardDisplay(); promotionPending = null; d.remove(); checkGameStatus(); updateMoveList();
-      if(gameMode.startsWith('ai-') && currentPlayer===BLACK && !gameOver) setTimeout(makeAIMove,300);
+    const opt = document.createElement('div'); opt.style.width='60px'; opt.style.height='60px'; opt.style.display='flex'; opt.style.alignItems='center'; opt.style.justifyContent='center';
+    opt.style.fontSize='36px'; opt.style.cursor='pointer'; opt.textContent=PIECE_SYMBOLS[color][pt];
+    opt.addEventListener('click',()=>{
+      board[row][col]={type:pt,color:color}; updateBoardDisplay(); promotionPending=null; promotionDialog.remove(); checkGameStatus(); updateMoveList();
+      if(gameMode.startsWith('ai-') && currentPlayer === BLACK && !gameOver) {
+        setTimeout(makeAIMove, 300);
+      }
     });
-    cont.appendChild(btn);
+    cont.appendChild(opt);
   });
-  d.appendChild(cont); document.body.appendChild(d);
+  promotionDialog.appendChild(cont); document.body.appendChild(promotionDialog);
 }
 
-/* --- update UI functions --- */
+/* --- UI updates --- */
 function updateBoardDisplay(){
   for(let r=0;r<8;r++) for(let c=0;c<8;c++){
     const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
     if(!cell) continue;
     const pieceEl = cell.querySelector('.piece');
-    if(board[r][c]){ const pd = board[r][c]; pieceEl.textContent = PIECE_SYMBOLS[pd.color][pd.type]; pieceEl.style.color = pd.color===WHITE? '#fff':'#222'; }
-    else { pieceEl.textContent=''; pieceEl.style.color=''; }
+    if(board[r][c]){
+      const pd = board[r][c]; pieceEl.textContent = PIECE_SYMBOLS[pd.color][pd.type];
+      pieceEl.style.color = pd.color===WHITE ? 'white' : '#2c3e50';
+      pieceEl.style.textShadow = pd.color===WHITE ? '2px 2px 4px rgba(0,0,0,.5)':'2px 2px 4px rgba(0,0,0,.3)';
+    } else { pieceEl.textContent=''; pieceEl.style.textShadow=''; pieceEl.style.color=''; }
   }
 }
-
 function updateMoveList(){
   const ml = document.getElementById('move-list'); ml.innerHTML='';
   if(moveHistory.length===0){ ml.innerHTML='<div style="text-align:center;color:#bbb">هنوز حرکتی انجام نشده</div>'; return; }
@@ -406,41 +543,27 @@ function updateMoveList(){
   });
   ml.scrollTop = ml.scrollHeight;
 }
-
 function updateCapturedDisplay(){
   const cw = document.getElementById('captured-white'); const cb = document.getElementById('captured-black'); cw.innerHTML=''; cb.innerHTML='';
   captured[WHITE].forEach(p=>{ const d=document.createElement('div'); d.textContent = PIECE_SYMBOLS[p.color][p.type]; cw.appendChild(d); });
   captured[BLACK].forEach(p=>{ const d=document.createElement('div'); d.textContent = PIECE_SYMBOLS[p.color][p.type]; cb.appendChild(d); });
 }
-
 function showAlert(msg){
   const el = document.getElementById('chess-alert'); el.textContent=msg; el.style.display='block';
   setTimeout(()=>el.style.display='none',2500);
 }
-
 function updateGameStatus(){
   const status = document.getElementById('chess-game-status'); const ti = document.getElementById('chess-turn-indicator');
-  if(gameOver){ status.textContent='بازی به پایان رسیده است!'; ti.textContent='پایان'; }
-  else if(currentPlayer===WHITE){ status.textContent='نوبت شماست. یک مهره سفید انتخاب کنید.' + (kingInCheck[WHITE]?' (شاه در کیش است!)':''); ti.textContent='سفید'; }
-  else { status.textContent='نوبت حریف. یک مهره سیاه انتخاب کنید.' + (kingInCheck[BLACK]?' (شاه در کیش است!)':''); ti.textContent='سیاه'; }
+  if(gameOver){ status.textContent='بازی به پایان رسیده است!'; ti.textContent='پایان'; } else if(currentPlayer===WHITE){ status.textContent='نوبت شماست. یک مهره سفید انتخاب کنید.' + (kingInCheck[WHITE]?' (شاه در کیش است!)':''); ti.textContent='سفید'; } else { status.textContent='نوبت حریف. یک مهره سیاه انتخاب کنید.' + (kingInCheck[BLACK]?' (شاه در کیش است!)':''); ti.textContent='سیاه'; }
 }
-
-/* --- game end checks simplified --- */
-function isKingCaptured(){
-  let white=false, black=false;
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){ const p = board[r][c]; if(p && p.type===KING){ if(p.color===WHITE) white=true; else black=true; } }
-  return { white: !white, black: !black };
-}
-
-function checkForCheck(){ kingInCheck[WHITE]=isKingInCheck(WHITE); kingInCheck[BLACK]=isKingInCheck(BLACK); updateCheckDisplay(); }
-function updateCheckDisplay(){ const checkStatus = document.getElementById('chess-check-status'); const kingSelected = document.getElementById('chess-king-selected-status'); if(kingInCheck[currentPlayer]) checkStatus.style.display='block'; else checkStatus.style.display='none'; if(selectedPiece && board[selectedPiece[0]][selectedPiece[1]] && board[selectedPiece[0]][selectedPiece[1]].type===KING && kingInCheck[currentPlayer]) kingSelected.style.display='block'; else kingSelected.style.display='none'; }
-
 function checkGameStatus(){
-  const kc = isKingCaptured();
-  if(kc.white){ gameOver=true; showAlert('شاه سفید زده شد! سیاه برنده شد!'); updateGameStatus(); return; }
-  if(kc.black){ gameOver=true; showAlert('شاه سیاه زده شد! سفید برنده شد!'); updateGameStatus(); return; }
-  // simple checkmate/stalemate: naive
+  const kingCaptured = isKingCaptured();
+  if(kingCaptured.white){ gameOver=true; showAlert('شاه سفید زده شد! بازیکن سیاه برنده شد!'); updateGameStatus(); return; }
+  if(kingCaptured.black){ gameOver=true; showAlert('شاه سیاه زده شد! بازیکن سفید برنده شد!'); updateGameStatus(); return; }
+  if(isCheckmate(currentPlayer)){ gameOver=true; const winner = currentPlayer===WHITE? 'سیاه':'سفید'; showAlert('کیش و مات! بازیکن ' + winner + ' برنده شد!'); updateGameStatus(); return; }
+  if(isStalemate(currentPlayer)){ gameOver=true; showAlert('پات! بازی مساوی شد!'); updateGameStatus(); return; }
   checkForCheck();
+  if(kingInCheck[currentPlayer] && kingPosition[currentPlayer]) showAlert('شاه شما در کیش است!');
 }
 
 /* --- undo/new --- */
@@ -449,146 +572,364 @@ document.getElementById('chess-undo-move').addEventListener('click',()=>{
     const last = moveHistory.pop();
     board[last.from.row][last.from.col] = last.piece;
     board[last.to.row][last.to.col] = last.captured;
+    if(last.piece.type===KING) kingPosition[last.piece.color]={row:last.from.row,col:last.from.col};
     currentPlayer = currentPlayer===WHITE?BLACK:WHITE;
     rebuildCapturedFromHistory();
     syncKingPositions();
-    updateBoardDisplay(); updateMoveList(); updateCapturedDisplay(); updateGameStatus();
+    updateBoardDisplay(); updateMoveList(); updateCapturedDisplay(); updateGameStatus(); checkForCheck();
   }
 });
-
 function rebuildCapturedFromHistory(){ captured = { [WHITE]:[], [BLACK]:[] }; moveHistory.forEach(m=>{ if(m.captured) captured[m.captured.color].push(m.captured); }); }
+document.getElementById('chess-new-game').addEventListener('click',()=>{
+  const pd = document.getElementById('promotion-dialog'); if(pd) pd.remove();
+  initializeBoard(); currentPlayer=WHITE; moveHistory=[]; gameOver=false; kingInCheck={[WHITE]:false,[BLACK]:false};
+  kingPosition={[WHITE]:{row:7,col:4},[BLACK]:{row:0,col:4}}; enPassantTarget=null; promotionPending=null; clearSelection();
+  updateGameStatus(); updateMoveList(); updateCapturedDisplay();
+});
 
-/* --- simple internal AI as fallback --- */
-function makeAIMove_internal(){
-  if(gameOver || currentPlayer!==BLACK) return;
-  const moves=[];
-  for(let fr=0;fr<8;fr++) for(let fc=0;fc<8;fc++){
-    const p = board[fr][fc]; if(!p||p.color!==BLACK) continue;
-    for(let tr=0;tr<8;tr++) for(let tc=0;tc<8;tc++) if(isValidMove(fr,fc,tr,tc)) moves.push({fr,fc,tr,tc});
+/* --- theme selectors --- */
+document.querySelectorAll('.chess-theme-option').forEach(opt=>{
+  opt.addEventListener('click',function(){ currentTheme=this.getAttribute('data-theme'); document.querySelectorAll('.chess-theme-option').forEach(o=>o.style.borderColor=o===this?'var(--accent)':'transparent'); for(let r=0;r<8;r++) for(let c=0;c<8;c++){ const cell=document.querySelector(`[data-row="${r}"][data-col="${c}"]`); if(cell) applyThemeToCell(cell,r,c); } updateBoardDisplay(); });
+});
+
+/* --- toggles --- */
+let coordsVisible = true;
+document.getElementById('toggle-coordinates').addEventListener('click', () => {
+  coordsVisible = !coordsVisible;
+  document.querySelectorAll('.coord').forEach(el => { el.style.display = coordsVisible ? 'block' : 'none'; });
+  document.getElementById('toggle-coordinates').textContent = coordsVisible ? 'مختصات: روشن' : 'مختصات: خاموش';
+});
+document.getElementById('toggle-move-hints').addEventListener('click', () => {
+  moveHintsVisible = !moveHintsVisible;
+  document.getElementById('toggle-move-hints').textContent = moveHintsVisible ? 'راهنما: روشن' : 'راهنما: خاموش';
+  if (!moveHintsVisible) clearMoveHighlights(); else if (selectedPiece) showPossibleMoves(selectedPiece[0],selectedPiece[1]);
+});
+
+/* ============================
+   موتور AI داخلی تقویت‌شده
+   makeAIMove_old حالا بر اساس AI_FALLBACK_STRENGTH رفتار می‌کند:
+   1: آسان، 2: متوسط، 3: وحشی (در غیاب Stockfish)
+   ============================ */
+function makeAIMove_old() {
+  if (gameOver || currentPlayer !== BLACK) return;
+
+  const possibleMoves = [];
+  for (let fromRow = 0; fromRow < 8; fromRow++) {
+    for (let fromCol = 0; fromCol < 8; fromCol++) {
+      const piece = board[fromRow][fromCol];
+      if (piece && piece.color === BLACK) {
+        for (let toRow = 0; toRow < 8; toRow++) {
+          for (let toCol = 0; toCol < 8; toCol++) {
+            if (isValidMove(fromRow, fromCol, toRow, toCol)) {
+              possibleMoves.push({ fromRow, fromCol, toRow, toCol });
+            }
+          }
+        }
+      }
+    }
   }
-  if(moves.length===0) return;
-  const mv = moves[Math.floor(Math.random()*moves.length)];
-  const moving = board[mv.fr][mv.fc], target = board[mv.tr][mv.tc];
-  moveHistory.push({ from:{row:mv.fr,col:mv.fc}, to:{row:mv.tr,col:mv.tc}, piece:moving, captured: target, san: (pieceLetter(moving)||'')+coordToAlg(mv.fr,mv.fc)+'-'+coordToAlg(mv.tr,mv.tc) });
-  if(target) captured[target.color].push(target);
-  movePiece(mv.fr,mv.fc,mv.tr,mv.tc);
-  checkGameStatus(); updateMoveList(); updateCapturedDisplay();
+
+  if (possibleMoves.length === 0) return;
+
+  const VALUE = { pawn: 10, knight: 30, bishop: 30, rook: 50, queen: 90, king: 900 };
+
+  // تقویت: سطح 3 (وحشی) از ارزیابی عمیق‌تر و وزن‌دهی تهاجمی استفاده می‌کند
+  function simulateMoveAndEvaluate(move, depthEstimate=1) {
+    const backupBoard = board;
+    const backupKingPos = { [WHITE]: {...kingPosition[WHITE]}, [BLACK]: {...kingPosition[BLACK]} };
+    const backupEnPassant = enPassantTarget;
+    const backupCastling = JSON.parse(JSON.stringify(castlingRights));
+    const backupCurrentPlayer = currentPlayer;
+
+    const boardCopy = JSON.parse(JSON.stringify(backupBoard));
+    const moving = boardCopy[move.fromRow][move.fromCol];
+    const target = boardCopy[move.toRow][move.toCol];
+    if (moving && moving.type === PAWN && enPassantTarget && move.toRow === enPassantTarget.row && move.toCol === enPassantTarget.col) {
+      const capRow = move.fromRow;
+      const capCol = move.toCol;
+      boardCopy[capRow][capCol] = null;
+    }
+    boardCopy[move.toRow][move.toCol] = moving;
+    boardCopy[move.fromRow][move.fromCol] = null;
+    if (moving && moving.type === KING && Math.abs(move.fromCol - move.toCol) === 2) {
+      const isKingside = move.toCol > move.fromCol;
+      const rookFrom = isKingside ? 7 : 0;
+      const rookTo = isKingside ? move.toCol - 1 : move.toCol + 1;
+      boardCopy[move.fromRow][rookTo] = boardCopy[move.fromRow][rookFrom];
+      boardCopy[move.fromRow][rookFrom] = null;
+    }
+
+    board = boardCopy;
+    for (let r=0;r<8;r++) for (let c=0;c<8;c++){
+      const p = board[r][c];
+      if (p && p.type===KING) kingPosition[p.color] = {row:r,col:c};
+    }
+
+    let score = 0;
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const p = board[r][c];
+        if (!p) continue;
+        const val = VALUE[p.type] || 0;
+        score += (p.color === BLACK ? val : -val);
+        if ((r === 3 || r === 4) && (c === 3 || c === 4)) score += (p.color === BLACK ? 6 : -6);
+        else if ((r >= 2 && r <=5) && (c >=2 && c <=5)) score += (p.color === BLACK ? 2 : -2);
+      }
+    }
+
+    const givesCheck = isKingInCheck(WHITE);
+    if (givesCheck) score += 80;
+    const ourInCheck = isKingInCheck(BLACK);
+    if (ourInCheck) score -= 600;
+
+    // عمق بیشتر برای سطح وحشی: یک نوبت سادهٔ شبیه‌سازی پاسخ حریف
+    if (AI_FALLBACK_STRENGTH >= 3 && depthEstimate < 2) {
+      // generate replies for white and pick worst for black
+      let worst = Infinity;
+      for (let fr=0; fr<8; fr++) for (let fc=0; fc<8; fc++){
+        const p = board[fr][fc];
+        if(!p || p.color!==WHITE) continue;
+        for (let tr=0; tr<8; tr++) for (let tc=0; tc<8; tc++){
+          if (!isValidMove(fr,fc,tr,tc)) continue;
+          const backupBoard2 = JSON.parse(JSON.stringify(board));
+          // apply white move
+          const moving2 = backupBoard2[fr][fc];
+          const target2 = backupBoard2[tr][tc];
+          backupBoard2[tr][tc] = moving2;
+          backupBoard2[fr][fc] = null;
+          // evaluate quickly material on backupBoard2
+          let sc2 = 0;
+          for (let r=0;r<8;r++) for (let c=0;c<8;c++){
+            const pp = backupBoard2[r][c]; if(!pp) continue; const val2 = VALUE[pp.type]||0; sc2 += (pp.color===BLACK?val2:-val2);
+            if ((r===3||r===4)&&(c===3||c===4)) sc2 += (pp.color===BLACK?3:-3);
+          }
+          if (sc2 < worst) worst = sc2;
+        }
+      }
+      if (worst !== Infinity) score = Math.min(score, worst);
+    }
+
+    board = backupBoard;
+    kingPosition[WHITE] = backupKingPos[WHITE];
+    kingPosition[BLACK] = backupKingPos[BLACK];
+    enPassantTarget = backupEnPassant;
+    castlingRights = backupCastling;
+    currentPlayer = backupCurrentPlayer;
+
+    return { score, boardCopy };
+  }
+
+  // انتخاب حرکت: با توجه به AI_FALLBACK_STRENGTH رفتار می‌کند
+  let selectedMove = null;
+  if (AI_FALLBACK_STRENGTH === 1) {
+    // آسان: بعضی تصادف + ترجیح به گرفتن مهره
+    let bestScore = -Infinity; let bestMoves = [];
+    for (const m of possibleMoves) {
+      const res = simulateMoveAndEvaluate(m);
+      let score = res.score + (Math.random()*6 - 3); // کمی تصادف
+      if (score > bestScore) { bestScore = score; bestMoves = [m]; }
+      else if (score === bestScore) bestMoves.push(m);
+    }
+    selectedMove = bestMoves[Math.floor(Math.random()*bestMoves.length)];
+  } else if (AI_FALLBACK_STRENGTH === 2) {
+    // متوسط: انتخاب قوی‌تر با بررسی خطر گرفتن توسط حریف
+    let bestScore = -Infinity; let bestMoves = [];
+    for (const m of possibleMoves) {
+      const res = simulateMoveAndEvaluate(m);
+      let score = res.score;
+      // penalty for exposing pieces (approx)
+      // quick scan: if any white immediate capture exists on res.boardCopy with high value, penalize
+      const boardSave = board;
+      board = res.boardCopy;
+      let worstCap = 0;
+      for (let fr=0; fr<8; fr++) for (let fc=0; fc<8; fc++){
+        const p = board[fr][fc]; if(!p || p.color!==WHITE) continue;
+        for (let tr=0; tr<8; tr++) for (let tc=0; tc<8; tc++) if(isValidMove(fr,fc,tr,tc) && board[tr][tc] && board[tr][tc].color===BLACK){
+          const v = VALUE[board[tr][tc].type]||0; if(v>worstCap) worstCap=v;
+        }
+      }
+      board = boardSave;
+      score -= worstCap * 0.6;
+      if (score > bestScore) { bestScore = score; bestMoves = [m]; }
+      else if (score === bestScore) bestMoves.push(m);
+    }
+    selectedMove = bestMoves[Math.floor(Math.random()*bestMoves.length)];
+  } else {
+    // وحشی fallback: انتخاب محتاطانه‌تر با جستجوی 2-PLY تقریبی (کوشش برای بهترین بدترین حالت)
+    let bestScore = -Infinity; let bestMoves = [];
+    for (const m of possibleMoves) {
+      const res = simulateMoveAndEvaluate(m, 1);
+      // بررسی بدترین پاسخ سفید (تقریبی)
+      const backupBoard = board; const backupCurrentPlayer = currentPlayer;
+      board = res.boardCopy; currentPlayer = WHITE;
+      let worstForBlack = Infinity;
+      const whiteReplies = [];
+      for (let fr=0; fr<8; fr++) for (let fc=0; fc<8; fc++){
+        const p = board[fr][fc]; if(!p || p.color!==WHITE) continue;
+        for (let tr=0; tr<8; tr++) for (let tc=0; tc<8; tc++) if(isValidMove(fr,fc,tr,tc)) whiteReplies.push({fr,fc,tr,tc});
+      }
+      if (whiteReplies.length===0) worstForBlack = res.score;
+      else {
+        for (const wr of whiteReplies) {
+          const board2 = JSON.parse(JSON.stringify(board));
+          board2[wr.tr][wr.tc] = board2[wr.fr][wr.fc];
+          board2[wr.fr][wr.fc] = null;
+          let sc2 = 0;
+          for (let r=0;r<8;r++) for (let c=0;c<8;c++){
+            const pp = board2[r][c]; if(!pp) continue; const val2 = VALUE[pp.type]||0; sc2 += (pp.color===BLACK?val2:-val2);
+            if ((r===3||r===4)&&(c===3||c===4)) sc2 += (pp.color===BLACK?3:-3);
+          }
+          if (sc2 < worstForBlack) worstForBlack = sc2;
+          if (worstForBlack < bestScore - 200) break;
+        }
+      }
+      board = backupBoard; currentPlayer = backupCurrentPlayer;
+      if (worstForBlack === Infinity) worstForBlack = res.score;
+      if (worstForBlack > bestScore) { bestScore = worstForBlack; bestMoves = [m]; }
+      else if (worstForBlack === bestScore) bestMoves.push(m);
+    }
+    selectedMove = bestMoves[Math.floor(Math.random()*bestMoves.length)];
+  }
+
+  if (selectedMove) {
+    const { fromRow, fromCol, toRow, toCol } = selectedMove;
+    const moving = board[fromRow][fromCol];
+    const target = board[toRow][toCol];
+    const fromAlg = coordToAlg(fromRow, fromCol), toAlg = coordToAlg(toRow, toCol);
+    const san = (pieceLetter(moving) || '') + fromAlg + '-' + toAlg;
+    moveHistory.push({ from: {row: fromRow, col: fromCol}, to: {row: toRow, col: toCol}, piece: moving, captured: target, san });
+    if (target) captured[target.color].push(target);
+    movePiece(fromRow, fromCol, toRow, toCol);
+    checkGameStatus(); updateMoveList(); updateCapturedDisplay();
+  }
 }
 
-/* === Stockfish integration (clean) === */
-let stockfishWorker = null;
-let stockfishReady = false;
-let stockfishBusy = false;
-
+/* ============================
+   Stockfish integration (اگر موجود باشد)
+   ما کوشش می‌کنیم stockfish.wasm.js یا stockfish.js را load کنیم.
+   برای حالت وحشی تنظیمات سنگینی می‌دهیم.
+   ============================ */
 function initStockfish(){
-  const candidates = ['stockfish.wasm.js','stockfish.js'];
-  function tryLoad(i){
-    if(i>=candidates.length) return;
-    try{
-      stockfishWorker = new Worker(candidates[i]);
-      stockfishWorker.onmessage = (e)=>{
-        const data = typeof e.data === 'string' ? e.data : (e.data && e.data.data ? e.data.data : '');
+  stockfishReady = false; stockfishBusy = false;
+  const candidates = ['stockfish.wasm.js','stockfish.js','stockfish.wasm','stockfish.js']; // تلاش برای چند اسم رایج
+  function tryLoad(idx){
+    if(idx>=candidates.length){ console.warn('Stockfish files not found locally.'); return; }
+    try {
+      stockfishWorker = new Worker(candidates[idx]);
+      stockfishWorker.onmessage = (e) => {
+        const data = (typeof e.data === 'string')? e.data : (e.data && e.data.data ? e.data.data : '');
         if(!data) return;
-        if(data.indexOf('uciok')!==-1) stockfishWorker.postMessage('isready');
-        else if(data.indexOf('readyok')!==-1){ stockfishReady=true; console.log('stockfish ready'); }
+        if(data.indexOf('uciok')!==-1) { stockfishWorker.postMessage('isready'); }
+        else if(data.indexOf('readyok')!==-1){ stockfishReady = true; console.log('Stockfish ready'); }
         else if(data.startsWith('bestmove')){
-          const mv = data.split(' ')[1];
+          const parts = data.split(' ');
+          const mv = parts[1];
           if(mv && mv.length>=4){
-            const from = mv.slice(0,2), to = mv.slice(2,4);
+            const from = mv.slice(0,2); const to = mv.slice(2,4);
             const fcol = 'abcdefgh'.indexOf(from[0]); const frow = 8 - parseInt(from[1]);
             const tcol = 'abcdefgh'.indexOf(to[0]); const trow = 8 - parseInt(to[1]);
             if(board[frow] && board[frow][fcol] && board[frow][fcol].color===BLACK){
-              const moving = board[frow][fcol], target = board[trow][tcol];
+              const moving = board[frow][fcol]; const target = board[trow][tcol];
               moveHistory.push({ from:{row:frow,col:fcol}, to:{row:trow,col:tcol}, piece:moving, captured: target, san: (pieceLetter(moving)||'')+coordToAlg(frow,fcol)+'-'+coordToAlg(trow,tcol) });
               if(target) captured[target.color].push(target);
               movePiece(frow,fcol,trow,tcol);
               checkGameStatus(); updateMoveList(); updateCapturedDisplay();
+            } else {
+              console.warn('Stockfish suggested invalid move or turn mismatch', mv);
             }
           }
-          stockfishBusy=false;
+          stockfishBusy = false;
         }
       };
       stockfishWorker.postMessage('uci');
-      console.log('trying stockfish', candidates[i]);
-    }catch(err){ tryLoad(i+1); }
+      console.log('Attempting to load Stockfish from', candidates[idx]);
+    } catch(e){
+      console.warn('Failed to load', candidates[idx], e);
+      tryLoad(idx+1);
+    }
   }
   tryLoad(0);
 }
-function setStockfishOptions(mode){
+
+function configureStockfishForMode(mode){
   if(!stockfishWorker) return;
-  try{ stockfishWorker.postMessage('setoption name Threads value 2'); }catch(e){}
-  try{ stockfishWorker.postMessage('setoption name Hash value 1024'); }catch(e){}
-  let skill=12, time=2000;
-  if(mode==='ai-normal'){ skill=12; time=2000; }
-  if(mode==='ai-pro'){ skill=18; time=5000; }
-  if(mode==='ai-grandmaster'){ skill=20; time=15000; }
-  try{ stockfishWorker.postMessage('setoption name Skill Level value ' + skill); }catch(e){}
-  window.sf_time = time;
+  try { stockfishWorker.postMessage('setoption name Threads value 2'); } catch(e){}
+  try { stockfishWorker.postMessage('setoption name Hash value 2048'); } catch(e){}
+  if(mode==='ai-easy'){ try { stockfishWorker.postMessage('setoption name Skill Level value 5'); } catch(e){}; window.sf_time=200; }
+  else if(mode==='ai-medium'){ try { stockfishWorker.postMessage('setoption name Skill Level value 12'); } catch(e){}; window.sf_time=1200; }
+  else if(mode==='ai-beast'){ try { stockfishWorker.postMessage('setoption name Skill Level value 20'); } catch(e){}; window.sf_time=8000; try { stockfishWorker.postMessage('setoption name UCI_AnalyseMode value true'); } catch(e){}; }
 }
+
 function askStockfishForMove(ms){
-  if(!stockfishWorker || !stockfishReady) return false;
-  if(stockfishBusy) return false;
-  stockfishBusy=true;
-  let movesStr = '';
+  if(!stockfishWorker || !stockfishReady) { console.log('Stockfish not ready'); return false; }
+  if(stockfishBusy) { console.log('Stockfish busy'); return false; }
+  stockfishBusy = true;
+  let moves = '';
   for(let i=0;i<moveHistory.length;i++){
     const m = moveHistory[i];
-    movesStr += ' ' + coordToAlg(m.from.row,m.from.col) + coordToAlg(m.to.row,m.to.col);
+    moves += ' ' + coordToAlg(m.from.row,m.from.col) + coordToAlg(m.to.row,m.to.col);
   }
-  stockfishWorker.postMessage('position startpos moves' + movesStr);
-  stockfishWorker.postMessage('go movetime ' + Math.max(20,Math.floor(ms)));
+  stockfishWorker.postMessage('position startpos moves' + moves);
+  stockfishWorker.postMessage('go movetime ' + Math.max(20, Math.floor(ms)));
   return true;
 }
 
-/* wrapper AI call */
-function makeAIMove(){
-  if(gameOver || currentPlayer!==BLACK) return;
-  if(gameMode==='ai-normal' || gameMode==='ai-pro' || gameMode==='ai-grandmaster'){
-    setStockfishOptions(gameMode);
-    const ok = askStockfishForMove(window.sf_time || 2000);
-    if(!ok){ makeAIMove_internal(); }
-  } else if(gameMode==='ai-internal-easy' || gameMode==='ai-internal-hard'){
-    makeAIMove_internal();
-  } else {
-    // friend mode, do nothing
+/* wrapper makeAIMove: ترجیح به Stockfish برای سطوح medium/beast، در غیر اینصورت fallback داخلی */
+function makeAIMove() {
+  if (gameOver || currentPlayer !== BLACK) return;
+  if (gameMode === 'ai-easy') {
+    AI_FALLBACK_STRENGTH = 1;
+    if(typeof makeAIMove_old === 'function') makeAIMove_old();
+    return;
   }
+  if (gameMode === 'ai-medium') {
+    // تلاش برای استفاده از Stockfish با time متوسط، در غیر اینصورت fallback قوی‌تر
+    AI_FALLBACK_STRENGTH = 2;
+    configureStockfishForMode('ai-medium');
+    if(stockfishReady){
+      const ok = askStockfishForMove(window.sf_time || 1200);
+      if(!ok) { makeAIMove_old(); }
+      return;
+    } else {
+      makeAIMove_old();
+      return;
+    }
+  }
+  if (gameMode === 'ai-beast') {
+    // اولویت: Stockfish با تنظیمات سنگین؛ اگر موجود نبود از fallback قوی استفاده کن
+    AI_FALLBACK_STRENGTH = 3;
+    configureStockfishForMode('ai-beast');
+    if(stockfishReady){
+      const ok = askStockfishForMove(window.sf_time || 8000);
+      if(!ok) { makeAIMove_old(); }
+      return;
+    } else {
+      makeAIMove_old();
+      return;
+    }
+  }
+  // default friend
 }
 
-/* --- game mode UI --- */
-document.getElementById('toggle-game-mode').addEventListener('click', ()=>{ document.getElementById('game-mode-dialog').style.display='block'; });
-document.getElementById('apply-game-mode').addEventListener('click', ()=>{
-  const mode = document.getElementById('game-mode').value;
-  gameMode = mode;
-  document.getElementById('game-mode-dialog').style.display='none';
+/* --- Game Mode UI handling --- */
+document.getElementById('toggle-game-mode').addEventListener('click', () => {
+  document.getElementById('game-mode-dialog').style.display = 'block';
+});
+document.getElementById('apply-game-mode').addEventListener('click', () => {
+  const modeSelect = document.getElementById('game-mode');
+  gameMode = modeSelect.value;
+  document.getElementById('game-mode-dialog').style.display = 'none';
   document.getElementById('chess-new-game').click();
-  showAlert('حالت بازی تغییر کرد: ' + document.getElementById('game-mode').selectedOptions[0].text);
+  showAlert(`حالت بازی تغییر کرد به: ${modeSelect.options[modeSelect.selectedIndex].text}`);
 });
-document.getElementById('close-game-mode').addEventListener('click', ()=>{ document.getElementById('game-mode-dialog').style.display='none'; });
-
-/* toggles */
-let coordsVisible=true;
-document.getElementById('toggle-coordinates').addEventListener('click', ()=>{
-  coordsVisible = !coordsVisible;
-  document.querySelectorAll('.coord').forEach(el=> el.style.display = coordsVisible ? 'block' : 'none');
-  document.getElementById('toggle-coordinates').textContent = coordsVisible ? 'مختصات: روشن' : 'مختصات: خاموش';
-});
-document.getElementById('toggle-move-hints').addEventListener('click', ()=>{
-  moveHintsVisible = !moveHintsVisible;
-  document.getElementById('toggle-move-hints').textContent = moveHintsVisible ? 'راهنما: روشن' : 'راهنما: خاموش';
-  if(!moveHintsVisible) clearMoveHighlights(); else if(selectedPiece) showPossibleMoves(selectedPiece[0], selectedPiece[1]);
+document.getElementById('close-game-mode').addEventListener('click', () => {
+  document.getElementById('game-mode-dialog').style.display = 'none';
 });
 
-/* helpers to keep king positions synced */
-function syncKingPositions(){
-  kingPosition[WHITE]=null; kingPosition[BLACK]=null;
-  for(let r=0;r<8;r++) for(let c=0;c<8;c++){ const p=board[r][c]; if(p && p.type===KING) kingPosition[p.color]={row:r,col:c}; }
-}
+/* --- init stockfish on load (if available) --- */
+window.addEventListener('load', ()=>{ initStockfish(); initializeBoard(); });
+window.addEventListener('resize', ()=>{ /* keep board responsive */ });
 
-/* init and attach */
-window.addEventListener('load', ()=>{
-  initializeBoard();
-  initStockfish();
-});
-window.addEventListener('resize', initializeBoard);
 </script>
 </body>
 </html>
