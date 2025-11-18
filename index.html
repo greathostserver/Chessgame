@@ -931,18 +931,5 @@ window.addEventListener('load', ()=>{ initStockfish(); initializeBoard(); });
 window.addEventListener('resize', ()=>{ /* keep board responsive */ });
 
 </script>
-  <script>
-function sendHeightToParent(){
-    var height = document.body.scrollHeight;
-    parent.postMessage({ type: 'setHeight', height: height }, '*');
-}
-
-window.addEventListener('load', sendHeightToParent);
-window.addEventListener('resize', sendHeightToParent);
-
-// برای محتواهای پویا
-setInterval(sendHeightToParent, 500);
-  </script>
-  
 </body>
 </html>
