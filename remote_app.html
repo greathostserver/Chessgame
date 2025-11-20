@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<title>Remote App — Full Remote Rendering</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  html,body{height:100%;margin:0;padding:0;overflow:hidden;background:#000;}
+  #outer{width:100%;box-sizing:border-box;}
+  #innerFrame{width:100%;border:0;display:block;}
+  /* safety: ensure container grows to child */
+  .content-wrap{width:100%;box-sizing:border-box;}
+</style>
+</head>
+<body>
+<div id="outer" class="content-wrap">
+  <!-- load your actual app (index.html) here -->
+  <iframe id="innerFrame" src="index.html" scrolling="no" frameborder="0" style="display:block;width:100%;"></iframe>
+</div>
+
+<script>
+(function(){
+  var inner = document.getElementById('innerFrame');
+
+  function getInnerHeightSafe(){
+    try{
+      var d = inner.contentDocument || inner.contentWindow.document;
+      if(!d) return 0;
+      var b = d.body, h = d.documentElement;
+      var height = Math.max(
+        b ? b.scrollHeight : 0,
+        b ? b.offsetHeight : 0,
+        h ? h.clientHeight : 0,
+        h ? h.scrollHeight : 0,
+        h ? h.offsetHeight : 0
+      );
+      return height;
+    }catch(e){
+      return 0;
+    }
+  }
+
+  function resizeInner(){
+    var h = getInnerHeightSafe();
+    if(h && h>0){
+      inner.style.height = h + 'px';
+      document.documentElement.style.height = inner.style.height;
+      document.body.style.height = inner.style.height;
+    }
+    // also try to notify parent if allowed
+    try{
+      parent.postMessage && parent.postMessage({type:'remoteAppHeight',height:h},'*');
+    }catch(e){}
+  }
+
+  // try a robust schedule and events
+  inner.addEventListener ? inner.addEventListener('load', function(){
+    resizeInner();
+    // attempt to poll inner for dynamic content after load
+    var attempts = 0;
+    var poll = setInterval(function(){
+      resizeInner();
+      attempts++;
+      if(attempts>20) clearInterval(poll);
+    },300);
+  }) : null;
+
+  window.addEventListener('resize', resizeInner);
+  // periodic resize for dynamic content
+  setInterval(resizeInner,500);
+
+  // Also listen for explicit messages from inner (if inner uses postMessage)
+  window.addEventListener('message', function(e){
+    try{
+      if(e && e.data && e.data.type==='iAmReadyHeight' && e.data.height){
+        inner.style.height = e.data.height + 'px';
+        document.documentElement.style.height = inner.style.height;
+        document.body.style.height = inner.style.height;
+      }
+    }catch(err){}
+  });
+
+})();
+</script>
+</body>
+</html>
