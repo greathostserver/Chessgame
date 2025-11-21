@@ -1,0 +1,3708 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa-IR">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=770">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<link rel="icon" type="image/x-icon" href="http://up.khoobeha.ir/view/4127837/1367846472.png">
+<link media="all" href="https://rozblog.com/user/static/776859/maine.css?7082" rel="stylesheet">
+<link media="all" href="https://rozblog.com/user/static/776859/my.css?3187" rel="stylesheet">
+<link media="all" href="https://rozblog.com/user/static/776859/se.css?18729" rel="stylesheet">
+<link media="all" href="https://rozblog.com/user/static/776859/rtl.css?82225" rel="stylesheet">
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'>
+<!-- اضافه کردن کتابخانه Swiper برای اسلایدر -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<meta name="theme-color" content="#c7177a" />
+
+<title>[RB:Blog_And_Post_Title]</title>
+<meta name="description" content="[RB:Blog_Description]">
+
+<style>
+/* استایل‌های اصلی */
+body {
+  background-color: #C2BF80; /* تغییر رنگ پس‌زمینه بدنه - !important حذف شد */
+}
+
+img.wp-smiley, img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+@font-face{
+src:url("https://rozup.ir/view/3426969/IRANSansWeb.woff");
+font-family:bigol;
+}
+body,a,p,li,h1,h2,h3,h4,h5,h6,div,span,input{
+font-family:bigol !important;
+}
+
+/* استایل هدر با افکت رنگین‌کمانی تیره */
+.topbar-wrap {
+  background: linear-gradient(
+    90deg,
+    #8b0000, /* Dark Red */
+    #cc5500, /* Dark Orange */
+    #999900, /* Dark Yellow */
+    #006400, /* Dark Green */
+    #004d00, /* Darker Green */
+    #008080, /* Teal */
+    #006666, /* Dark Cyan */
+    #000080, /* Navy */
+    #000066, /* Darker Blue */
+    #4b0082, /* Indigo */
+    #800080, /* Purple */
+    #800040  /* Dark Pink */
+  );
+  background-size: 1200% 100%;
+  animation: rainbow 15s linear infinite;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+  padding: 10px 0;
+}
+
+.topbar-inner {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.topbar-menu a, .topbar-info {
+  color: #fff !important;
+  font-weight: bold;
+}
+
+.topbar-wrap::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+}
+
+/* استایل فوتر بهبود یافته (بدون انیمیشن) */
+.footer-wrap {
+  background: #8b0000;
+  position: relative;
+  padding: 25px 0 15px;
+  border-top: 3px solid #fff;
+  color: #fff;
+  transition: background-color 0.5s ease;
+}
+
+.footer-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+}
+
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  padding: 0 15px;
+}
+
+.footer-section {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+}
+
+.footer-section:hover {
+  background: rgba(0, 0, 0, 0.5);
+  transform: translateY(-3px);
+}
+
+.footer-title {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ffc107;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.footer-links li {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.footer-links a {
+  color: #eee;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  text-align: right;
+  min-height: 45px;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.footer-links a:hover {
+  color: #ffc107;
+  padding-right: 18px;
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.25);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.footer-links a::after {
+  content: "\f054";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  font-size: 12px;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover::after {
+  opacity: 1;
+  transform: translateX(-5px);
+}
+
+.footer-bottom {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding-top: 20px;
+  margin-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.copyright p {
+  color: white;
+  margin: 0;
+  font-size: 14px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.copyright a {
+  color: #ffc107;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* استایل‌های جدید و بهبود یافته برای لینک‌های سریع در حالت موبایل */
+@media (max-width: 768px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .footer-section {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .footer-section:first-child {
+    order: 1;
+  }
+  
+  .footer-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .footer-inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-section:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* استایل‌های جدید برای منو و جستجو در حالت ریسپانسیو */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.7);
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-btn:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+.mobile-menu-btn i {
+  color: white;
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-btn.active i {
+  transform: rotate(90deg);
+}
+
+.mobile-menu-container {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 320px;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+  z-index: 1001;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+  border-left: 1px solid rgba(255,255,255,0.1);
+}
+
+.mobile-menu-header {
+  position: fixed;
+  top: 0;
+  width: 320px;
+  z-index: 1002;
+  background: linear-gradient(90deg, #35086a, #50086a);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 15px 20px;
+  height: 216px;
+}
+
+.mobile-menu-container.active {
+  transform: translateX(-320px);
+}
+
+.mobile-menu-close {
+  color: #fff;
+  font-size: 24px;
+  transition: transform 0.3s ease;
+  display: inline-block;
+  position: absolute;
+  left: 20px;
+  top: 15px;
+  background: rgba(255, 0, 0, 0.7);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.mobile-menu-close:hover {
+  transform: rotate(90deg);
+  color: #fff;
+  background: rgba(255, 0, 0, 0.9);
+}
+
+.mobile-menu-nav {
+  position: relative;
+  z-index: 1003;
+  margin-top: 215px;
+  padding-top: 10px;
+}
+
+.mobile-menu-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-menu-nav li {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.3s ease;
+}
+
+.mobile-menu-nav li:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.mobile-menu-nav a {
+  display: flex;
+  align-items: center;
+  padding: 18px 25px;
+  color: #fff;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.mobile-menu-nav a:hover {
+  background: transparent;
+  padding-right: 30px;
+  color: #ffc107;
+}
+
+.mobile-menu-nav i {
+  margin-left: 15px;
+  width: 24px;
+  text-align: center;
+  font-size: 18px;
+  color: rgba(255,255,255,0.7);
+}
+
+.mobile-menu-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  margin: 15px 25px;
+}
+
+/* استایل جدید برای جستجوی موبایل */
+.mobile-search-container {
+  padding: 15px;
+  position: relative;
+  margin-top: 10px;
+}
+
+.mobile-search-container input[type="search"] {
+  width: 100%;
+  padding: 14px 20px;
+  padding-left: 50px;
+  border: none;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.mobile-search-container input[type="search"]:focus {
+  outline: none;
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.mobile-search-container button {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.mobile-search-container button:hover {
+  color: #ffc107;
+}
+
+.mobile-search-container input[type="search"]::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+/* استایل‌های کارت‌های دسترسی سریع */
+:root{
+  --max-width: 1200px;
+  --bg-card: #ffffff;
+  --surface: #f6f6f8;
+  --accent: #f6c84c;
+  --muted: #666;
+  --gap: 18px;
+  --cols: 4;
+}
+
+/* استایل‌های جدید برای منوی دسکتاپ ساده */
+.main-menu-wrap {
+  position: relative;
+  z-index: 999;
+}
+
+.main-menu {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.main-menu > li {
+  position: relative;
+  margin: 0 5px;
+}
+
+.main-menu > li > a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  color: #333;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  background: transparent;
+}
+
+.main-menu > li > a::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff5722, #ff9800);
+  transition: width 0.3s ease;
+}
+
+.main-menu > li:hover > a,
+.main-menu > li.current-menu-item > a {
+  color: #ff5722;
+  background: rgba(255, 87, 34, 0.1);
+}
+
+.main-menu > li:hover > a::before,
+.main-menu > li.current-menu-item > a::before {
+  width: 100%;
+}
+
+.main-menu > li > a > i {
+  margin-left: 8px;
+  font-size: 16px;
+}
+
+/* دکته جستجو */
+.search-container {
+  position: relative;
+  margin-right: 15px;
+}
+
+.search-input {
+  padding: 12px 45px 12px 20px;
+  border: 2px solid #eee;
+  border-radius: 30px;
+  font-size: 14px;
+  width: 200px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #ff5722;
+  width: 250px;
+  box-shadow: 0 5px 15px rgba(255,87,34,0.1);
+}
+
+.search-button {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.search-input:focus + .search-button {
+  color: #ff5722;
+}
+
+/* ریسپانسیو */
+@media (max-width: 990px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+  
+  .navbar-search.desktop-search {
+    display: none;
+  }
+  
+  .mobile-search-container {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  .mobile-navbar .navbar-search {
+    display: none;
+  }
+  
+  .footer-section {
+    flex: 1 0 30%;
+    min-width: 250px;
+  }
+  
+  .footer-inner {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  /* مخفی کردن منوی دسکتاپ در موبایل */
+  .main-menu-wrap {
+    display: none;
+  }
+}
+
+@media (min-width: 991px) {
+  .mobile-search-container {
+    display: none;
+  }
+  
+  .mobile-menu-btn {
+    display: none;
+  }
+  
+  .mobile-menu-container {
+    display: none;
+  }
+}
+
+@media (max-width: 1000px){
+  :root{ --cols: 3; }
+}
+@media (max-width: 760px){
+  :root{ --cols: 2; }
+  
+  .footer-inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 420px){
+  :root{ --cols: 1; }
+  
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* استایل جدید برای باکس ابزارهای کناری - تغییرات اعمال شده برای موقعیت نزدیک به محتوای مرکزی و هدر */
+.tool-container {
+  position: fixed;
+  /* موقعیت افقی: نزدیک به لبه چپ محتوای مرکزی (post-content-container) */
+  left: calc(50% - 600px + 20px - 12.1px + 3.78px); /* جابجایی 3.2mm (تقریباً 12.1px) به سمت چپ + 1mm (تقریباً 3.78px) به سمت راست */
+  top: 120px; /* نزدیک به هدر (پس از هدر ثابت) */
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /* اطمینان از visibility در همه حالت‌ها */
+  opacity: 1;
+  visibility: visible;
+}
+
+.tool-sidebar {
+  position: relative;
+  margin-top: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    #8b0000, /* Dark Red */
+    #cc5500, /* Dark Orange */
+    #999900, /* Dark Yellow */
+    #006400, /* Dark Green */
+    #004d00, /* Darker Green */
+    #008080, /* Teal */
+    #006666, /* Dark Cyan */
+    #000080, /* Navy */
+    #000066, /* Darker Blue */
+    #4b0082, /* Indigo */
+    #800080, /* Purple */
+    #800040  /* Dark Pink */
+  );
+  background-size: 1200% 100%;
+  animation: rainbow 15s linear infinite;
+  padding: 15px 8px;
+  border-radius: 30px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(-100px);
+  visibility: hidden;
+}
+
+.tool-sidebar.active {
+  opacity: 1;
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.tool-sidebar:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.tool-sidebar a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.2);
+}
+
+.tool-sidebar a:hover {
+  transform: translateY(-5px) scale(1.1);
+  background: rgba(255,255,255,0.3);
+}
+
+.tool-sidebar a i {
+  transition: transform 0.3s ease;
+}
+
+.tool-sidebar a:hover i {
+  transform: scale(1.2);
+}
+
+/* استایل دکته آلارم - تغییرات اعمال شده */
+.alarm-btn {
+  position: relative;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff0000, #ff6600);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255,0,0,0.3);
+  animation: pulse 2s infinite;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  /* اطمینان از visibility */
+  opacity: 1;
+  visibility: visible;
+}
+
+.alarm-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255,0,0,0.4);
+}
+
+.alarm-btn i {
+  animation: ring 2s infinite;
+}
+
+/* استایل دکمه مترجم - شبیه به دکمه آلارم، قرارگیری دقیقاً پایین آن */
+.translate-btn {
+  position: relative;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  /* اطمینان از visibility */
+  opacity: 1;
+  visibility: visible;
+}
+
+.translate-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.translate-btn i {
+  transition: transform 0.3s ease;
+}
+
+.translate-btn:hover i {
+  transform: scale(1.2);
+}
+
+/* استایل tooltip برای دکمه مترجم */
+.translator-tooltip {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.4);
+  color: black;
+  font-family: sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1001;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-left: 5px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.translator-tooltip::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-right: 4px solid rgba(255, 255, 255, 0.4);
+}
+
+.translator-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* استایل overlay برای widget گوگل */
+.google-translate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 1002;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.google-translate-modal {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 400px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.google-translate-modal .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.google-translate-modal .close-btn:hover {
+  color: #333;
+}
+
+/* CSS برای مخفی کردن نوار بالایی Google Translate */
+.goog-te-banner-frame {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+#goog-gt-tt {
+  display: none !important;
+}
+.goog-te-menu-frame {
+  display: none !important;
+}
+
+/* تغییرات در نسخه موبایل - افزایش سایز فونت و باکس‌ها */
+@media (max-width: 768px) {
+  /* افزایش سایز فونت در منو و هدر */
+  .mobile-menu-nav a {
+    font-size: 21px !important;
+    padding: 20px 25px;
+  }
+  
+  .topbar-menu a, .topbar-info {
+    font-size: 18px !important;
+  }
+  
+  .mobile-menu-nav i {
+    font-size: 22px !important;
+  }
+  
+  .mobile-search-container input[type="search"] {
+    font-size: 18px !important;
+    padding: 16px 20px 16px 50px;
+  }
+  
+  /* بزرگتر کردن باکس ابزار و دکمه آلارم - تنظیم موقعیت responsive */
+  .tool-container {
+    left: calc(50% - 300px + 10px - 12.1px + 3.78px); /* جابجایی 3.2mm (تقریباً 12.1px) به سمت چپ + 1mm (تقریباً 3.78px) به سمت راست */
+    top: 100px; /* نزدیک‌تر به هدر در موبایل */
+    gap: 8px;
+  }
+  
+  .tool-sidebar {
+    padding: 12px 10px;
+    border-radius: 35px;
+  }
+  
+  .tool-sidebar a {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 22px !important;
+  }
+  
+  .alarm-btn, .translate-btn {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 26px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .translator-tooltip {
+    font-size: 11px;
+    padding: 3px 6px;
+    min-width: 90px;
+  }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
+
+@keyframes ring {
+  0% { transform: rotate(0deg); }
+  5% { transform: rotate(15deg); }
+  10% { transform: rotate(-15deg); }
+  15% { transform: rotate(15deg); }
+  20% { transform: rotate(-15deg); }
+  25% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateY(-50%) translateX(50px); }
+  to { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+/* استایل برای حالت چپ‌چین */
+body.ltr-direction {
+    direction: ltr !important;
+    text-align: left !important;
+}
+
+body.ltr-direction .post-content-container,
+body.ltr-direction .footer-creative-section,
+body.ltr-direction .footer-creative-links a,
+body.ltr-direction .main-menu,
+body.ltr-direction .mobile-menu-nav,
+body.ltr-direction .topbar-menu {
+    text-align: left !important;
+    direction: ltr !important;
+}
+
+body.ltr-direction .footer-creative-links a i,
+body.ltr-direction .main-menu > li > a i,
+body.ltr-direction .mobile-menu-nav a i {
+    margin-left: 0 !important;
+    margin-right: 8px !important;
+}
+
+body.ltr-direction .footer-creative-links a:hover {
+    padding-right: 15px !important;
+    padding-left: 20px !important;
+}
+
+body.ltr-direction .mobile-menu-nav a {
+    text-align: left !important;
+    padding: 18px 25px 18px 25px !important;
+}
+
+body.ltr-direction .mobile-menu-nav a:hover {
+    padding-right: 25px !important;
+    padding-left: 30px !important;
+}
+
+body.ltr-direction .main-menu > li > a {
+    text-align: left !important;
+}
+
+body.ltr-direction .search-input {
+    text-align: left !important;
+}
+
+body.ltr-direction .mobile-search-container input[type="search"] {
+    text-align: left !important;
+    padding: 14px 50px 14px 20px !important;
+}
+
+body.ltr-direction .mobile-search-container button {
+    left: auto !important;
+    right: 20px !important;
+}
+
+body.ltr-direction .search-container .search-button {
+    left: auto !important;
+    right: 15px !important;
+}
+
+body.ltr-direction .search-input {
+    padding: 12px 20px 12px 45px !important;
+}
+
+/* استایل برای پیام تغییر چیدمان */
+#alignmentMessage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    z-index: 10000;
+    font-size: 16px;
+    font-weight: bold;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    font-family: 'bigol', sans-serif !important;
+    border: 2px solid #ffc107;
+    display: none;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+/* استایل برای تغییر اندازه فونت در تمام سایت */
+body.font-size-12, 
+body.font-size-12 a, 
+body.font-size-12 p, 
+body.font-size-12 li, 
+body.font-size-12 span, 
+body.font-size-12 input, 
+body.font-size-12 button, 
+body.font-size-12 .footer-links a, 
+body.font-size-12 .main-menu > li > a, 
+body.font-size-12 .mobile-menu-nav a { 
+  font-size: 12px !important; 
+}
+body.font-size-12 h1, 
+body.font-size-12 h2, 
+body.font-size-12 h3, 
+body.font-size-12 h4, 
+body.font-size-12 h5, 
+body.font-size-12 h6 {
+  font-size: calc(12px + 0.5vw) !important;
+}
+body.font-size-12 .card-title,
+body.font-size-12 .btn-login,
+body.font-size-12 .footer-title {
+  font-size: calc(12px + 0.3vw) !important;
+}
+
+body.font-size-14, 
+body.font-size-14 a, 
+body.font-size-14 p, 
+body.font-size-14 li, 
+body.font-size-14 span, 
+body.font-size-14 input, 
+body.font-size-14 button, 
+body.font-size-14 .footer-links a, 
+body.font-size-14 .main-menu > li > a, 
+body.font-size-14 .mobile-menu-nav a { 
+  font-size: 14px !important; 
+}
+body.font-size-14 h1, 
+body.font-size-14 h2, 
+body.font-size-14 h3, 
+body.font-size-14 h4, 
+body.font-size-14 h5, 
+body.font-size-14 h6 {
+  font-size: calc(14px + 0.6vw) !important;
+}
+body.font-size-14 .card-title,
+body.font-size-14 .btn-login,
+body.font-size-14 .footer-title {
+  font-size: calc(14px + 0.4vw) !important;
+}
+
+body.font-size-16, 
+body.font-size-16 a, 
+body.font-size-16 p, 
+body.font-size-16 li, 
+body.font-size-16 span, 
+body.font-size-16 input, 
+body.font-size-16 button, 
+body.font-size-16 .footer-links a, 
+body.font-size-16 .main-menu > li > a, 
+body.font-size-16 .mobile-menu-nav a { 
+  font-size: 16px !important; 
+}
+body.font-size-16 h1, 
+body.font-size-16 h2, 
+body.font-size-16 h3, 
+body.font-size-16 h4, 
+body.font-size-16 h5, 
+body.font-size-16 h6 {
+  font-size: calc(16px + 0.7vw) !important;
+}
+body.font-size-16 .card-title,
+body.font-size-16 .btn-login,
+body.font-size-16 .footer-title {
+  font-size: calc(16px + 0.5vw) !important;
+}
+
+body.font-size-18, 
+body.font-size-18 a, 
+body.font-size-18 p, 
+body.font-size-18 li, 
+body.font-size-18 span, 
+body.font-size-18 input, 
+body.font-size-18 button, 
+body.font-size-18 .footer-links a, 
+body.font-size-18 .main-menu > li > a, 
+body.font-size-18 .mobile-menu-nav a { 
+  font-size: 18px !important; 
+}
+body.font-size-18 h1, 
+body.font-size-18 h2, 
+body.font-size-18 h3, 
+body.font-size-18 h4, 
+body.font-size-18 h5, 
+body.font-size-18 h6 {
+  font-size: calc(18px + 0.8vw) !important;
+}
+body.font-size-18 .card-title,
+body.font-size-18 .btn-login,
+body.font-size-18 .footer-title {
+  font-size: calc(18px + 0.6vw) !important;
+}
+
+body.font-size-20, 
+body.font-size-20 a, 
+body.font-size-20 p, 
+body.font-size-20 li, 
+body.font-size-20 span, 
+body.font-size-20 input, 
+body.font-size-20 button, 
+body.font-size-20 .footer-links a, 
+body.font-size-20 .main-menu > li > a, 
+body.font-size-20 .mobile-menu-nav a { 
+  font-size: 20px !important; 
+}
+body.font-size-20 h1, 
+body.font-size-20 h2, 
+body.font-size-20 h3, 
+body.font-size-20 h4, 
+body.font-size-20 h5, 
+body.font-size-20 h6 {
+  font-size: calc(20px + 0.9vw) !important;
+}
+body.font-size-20 .card-title,
+body.font-size-20 .btn-login,
+body.font-size-20 .footer-title {
+  font-size: calc(20px + 0.7vw) !important;
+}
+
+body.font-size-22, 
+body.font-size-22 a, 
+body.font-size-22 p, 
+body.font-size-22 li, 
+body.font-size-22 span, 
+body.font-size-22 input, 
+body.font-size-22 button, 
+body.font-size-22 .footer-links a, 
+body.font-size-22 .main-menu > li > a, 
+body.font-size-22 .mobile-menu-nav a { 
+  font-size: 22px !important; 
+}
+body.font-size-22 h1, 
+body.font-size-22 h2, 
+body.font-size-22 h3, 
+body.font-size-22 h4, 
+body.font-size-22 h5, 
+body.font-size-22 h6 {
+  font-size: calc(22px + 1vw) !important;
+}
+body.font-size-22 .card-title,
+body.font-size-22 .btn-login,
+body.font-size-22 .footer-title {
+  font-size: calc(22px + 0.8vw) !important;
+}
+
+body.font-size-24, 
+body.font-size-24 a, 
+body.font-size-24 p, 
+body.font-size-24 li, 
+body.font-size-24 span, 
+body.font-size-24 input, 
+body.font-size-24 button, 
+body.font-size-24 .footer-links a, 
+body.font-size-24 .main-menu > li > a, 
+body.font-size-24 .mobile-menu-nav a { 
+  font-size: 24px !important; 
+}
+body.font-size-24 h1, 
+body.font-size-24 h2, 
+body.font-size-24 h3, 
+body.font-size-24 h4, 
+body.font-size-24 h5, 
+body.font-size-24 h6 {
+  font-size: calc(24px + 1.1vw) !important;
+}
+body.font-size-24 .card-title,
+body.font-size-24 .btn-login,
+body.font-size-24 .footer-title {
+  font-size: calc(24px + 0.9vw) !important;
+}
+
+/* استایل فوتر جدید و خلاقانه (بدون انیمیشن) */
+.footer-creative {
+  background: #8b0000;
+  padding: 50px 0 20px;
+  position: relative;
+  overflow: hidden;
+  border-top: 3px solid rgba(255,255,255,0.3);
+  transition: background-color 0.5s ease;
+}
+
+.footer-creative::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.3);
+}
+
+.footer-creative-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.footer-creative-section {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 15px;
+  padding: 25px 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  min-height: 280px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-creative-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.footer-creative-title {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ffc107;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-creative-title i {
+  margin-left: 10px;
+  font-size: 24px;
+  color: #ffc107;
+}
+
+.footer-creative-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.footer-creative-links li {
+  margin-bottom: 0;
+}
+
+.footer-creative-links a {
+  color: #eee;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-creative-links a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background: rgba(255,255,255,0.1);
+  transition: width 0.3s ease;
+  z-index: 0;
+}
+
+.footer-creative-links a:hover {
+  color: #ffc107;
+  padding-right: 20px;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.footer-creative-links a:hover::before {
+  width: 100%;
+}
+
+.footer-creative-links a i {
+  margin-left: 12px;
+  font-size: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-creative-social {
+  display: flex;
+  justify-content: center;
+  gap: 0px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.footer-creative-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.footer-creative-social a:hover {
+  transform: translateY(-5px) scale(1.1);
+  background: rgba(255,255,255,0.25);
+  color: #ffc107;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.footer-creative-bottom {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  position: relative;
+}
+
+.footer-creative-bottom::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: #ffc107;
+  border-radius: 3px;
+}
+
+.footer-creative-copyright {
+  color: white;
+  margin: 0;
+  font-size: 16px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.footer-creative-copyright a {
+  color: #ffc107;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.footer-creative-copyright a:hover {
+  text-decoration: underline;
+  color: #ffd700;
+}
+
+/* استایل یکسان برای لینک‌های پربازدیدترین‌ها و آخرین مطالب */
+#monthHitLoop.footer-creative-links.last-posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px !important;
+}
+
+/* اطمینان از یکسان بودن استایل لینک‌ها در همه بخش‌ها */
+.footer-creative-section .footer-creative-links a,
+.footer-creative-section .last-posts-list a {
+    margin-bottom: 0 !important;
+    padding: 12px 15px !important;
+}
+
+/* فاصله بین آیتم‌های لیست در بخش پربازدیدترین‌ها */
+#monthHitLoop.footer-creative-links.last-posts-list li {
+    margin-bottom: 0 !important;
+}
+
+/* استایل‌های جدید برای بخش آخرین مطالب در فوتر */
+.last-posts-container {
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+  min-height: 350px;
+}
+
+.last-posts-list {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  animation: scrollPosts 30s linear infinite;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.last-posts-list.scroll-loop {
+  animation: scrollPostsLoop 30s linear infinite;
+}
+
+.last-posts-list li {
+  margin-bottom: 12px;
+}
+
+.last-posts-list a {
+  color: #eee;
+  transition: all 0.3s ease;
+  display: block;
+  padding: 12px 15px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+/* فاصله یکسان برای لینک‌های بخش ابزارها */
+#toolsLoop.footer-creative-links.last-posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px !important;
+}
+
+/* اطمینان از یکسان بودن استایل لینک‌ها در همه بخش‌ها */
+.footer-creative-section .footer-creative-links a,
+.footer-creative-section .last-posts-list a {
+    margin-bottom: 0 !important;
+    padding: 12px 15px !important;
+}
+
+/* فاصله بین آیتم‌های لیست در بخش ابزارها */
+#toolsLoop.footer-creative-links.last-posts-list li {
+    margin-bottom: 0 !important;
+}
+
+.last-posts-list a:hover {
+  color: #ffc107;
+  padding-right: 20px;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  background: rgba(255,255,255,0.15);
+}
+
+@keyframes scrollPosts {
+  0% { top: 0; }
+  100% { top: -500px; }
+}
+
+@keyframes scrollPostsLoop {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+/* ریسپانسیو فوتر جدید */
+@media (max-width: 1200px) {
+  .footer-creative-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .footer-creative-section {
+    min-height: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-creative-inner {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .footer-creative-section {
+    min-height: auto;
+    padding: 20px;
+  }
+  
+  .footer-creative-title {
+    font-size: 18px;
+  }
+  
+  .footer-creative-links a,
+  .last-posts-list a {
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+  
+  .footer-creative-social {
+    gap: 10px;
+  }
+  
+  .footer-creative-social a {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  
+  .last-posts-container {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-creative {
+    padding: 30px 0 15px;
+  }
+  
+  .footer-creative-section {
+    padding: 15px;
+  }
+  
+  .footer-creative-title {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .footer-creative-links,
+  .last-posts-list {
+    gap: 8px;
+  }
+  
+  .footer-creative-links a,
+  .last-posts-list a {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+  
+  .footer-creative-social a {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .footer-creative-copyright {
+    font-size: 14px;
+  }
+  
+  .last-posts-container {
+    min-height: 160px;
+  }
+}
+
+/* تنظیمات جدید برای فوتر سکشن‌ها */
+.footer-creative-section {
+  display: flex;
+  flex-direction: column;
+  height: 520px;
+}
+
+.footer-creative-section .scrollable-container {
+  flex: 1;
+  min-height: 200px;
+}
+
+/* استایل دکمه تغییر سرعت */
+.speed-toggle-btn {
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  color: #ffc107;
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.speed-toggle-btn:hover {
+  background: rgba(255, 193, 7, 0.3);
+  transform: scale(1.05);
+}
+
+.speed-toggle-btn.active {
+  background: rgba(255, 193, 7, 0.4);
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.speed-toggle-btn i {
+  font-size: 10px;
+}
+
+/* استایل‌های جدید برای اسلایدر تصاویر مطالب */
+.posts-slider-section {
+  margin: 40px 0;
+  direction: rtl;
+  width: 100%;
+}
+
+.posts-slider-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.posts-slider {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+
+.posts-slider .swiper-slide {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.posts-slider .swiper-slide:hover {
+  transform: scale(1.03);
+}
+
+.posts-slider img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.posts-slider a:hover img {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  transform: translateY(-5px);
+}
+
+.posts-slider .swiper-pagination {
+  bottom: 5px;
+}
+
+.posts-slider .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background: rgba(0,0,0,0.3);
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.posts-slider .swiper-pagination-bullet-active {
+  background: #ff5722;
+  transform: scale(1.2);
+}
+
+.posts-slider .swiper-button-next,
+.posts-slider .swiper-button-prev {
+  color: #ff5722;
+  background: rgba(255,255,255,0.8);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.posts-slider .swiper-button-next:after,
+.posts-slider .swiper-button-prev:after {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.posts-slider .swiper-button-next:hover,
+.posts-slider .swiper-button-prev:hover {
+  background: #ff5722;
+  color: white;
+  transform: scale(1.1);
+}
+
+.posts-slider-title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  position: relative;
+  padding-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.posts-slider-title:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 50%;
+  transform: translateX(50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #ff5722, #ff9800);
+  border-radius: 3px;
+}
+
+/* ریسپانسیو اسلایدر */
+@media (max-width: 768px) {
+  .posts-slider {
+    padding: 15px 0;
+  }
+  
+  .posts-slider img {
+    height: 180px;
+  }
+  
+  .posts-slider-title {
+    font-size: 20px;
+  }
+  
+  .posts-slider .swiper-button-next,
+  .posts-slider .swiper-button-prev {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .posts-slider img {
+    height: 150px;
+  }
+  
+  .posts-slider-title {
+    font-size: 18px;
+  }
+}
+
+/* استایل جدید برای محتوای مطلب با تم سیاه و سفید و خاکستری */
+.post-content-container.grayscale-theme {
+  background: linear-gradient(45deg, #C2BFB0, #ECDFCF);
+  background-size: 200% 200%;
+  animation: gentle-gradient 8s ease infinite;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.5);
+}
+
+.post-content-container.grayscale-theme::before {
+  background: rgba(255,255,255,0.2);
+}
+
+.post-content-container.grayscale-theme > * {
+  color: #333 !important;
+}
+
+.post-content-container.grayscale-theme img {
+  filter: grayscale(30%);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid #888;
+}
+
+/* استایل‌های تم تاریک */
+body.dark-theme {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-theme .post-content-container {
+  background: linear-gradient(45deg, #2c2c2c, #3d3d3d);
+  box-shadow: 0 2px 15px rgba(255,255,255,0.1);
+}
+
+body.dark-theme .post-content-container > * {
+  color: #e0e0e0 !important;
+}
+
+body.dark-theme .post-content-container img {
+  filter: brightness(0.8);
+  border: 1px solid #555;
+}
+
+body.dark-theme .posts-slider-title {
+  color: #e0e0e0;
+}
+
+body.dark-theme .posts-slider {
+  background: linear-gradient(135deg, #2c2c2c, #3d3d3d);
+  box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+}
+
+body.dark-theme .posts-slider .swiper-button-next,
+body.dark-theme .posts-slider .swiper-button-prev {
+  background: rgba(255,255,255,0.2);
+  color: #e0e0e0;
+}
+
+body.dark-theme .posts-slider .swiper-pagination-bullet {
+  background: rgba(255,255,255,0.3);
+}
+
+body.dark-theme .posts-slider .swiper-pagination-bullet-active {
+  background: #ff5722;
+}
+
+/* استایل‌های تم روشن */
+body.light-theme {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+body.light-theme .post-content-container {
+  background: linear-gradient(45deg, #C2BFB0, #ECDFCF);
+  box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+}
+
+body.light-theme .post-content-container > * {
+  color: #333 !important;
+}
+
+body.light-theme .posts-slider-title {
+  color: #333;
+}
+
+/* استایل آیکون X سفارشی */
+.x-icon {
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* استایل پنل انتخاب رنگ - بهبود یافته و تغییر موقعیت به سمت راست دکمه چرخ‌دنده */
+.color-panel {
+  position: fixed;
+  left: auto;
+  right: auto;
+  top: auto;
+  transform: translateY(-50%);
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  display: none;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  z-index: 1002;
+  width: 180px;
+  animation: slideInRight 0.3s ease;
+}
+
+.color-panel.active {
+  display: grid;
+  animation: fadeIn 0.3s ease;
+}
+
+.color-option {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.color-option:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateY(-50%) translateX(50px); }
+  to { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+/* بهبود موقعیت‌یابی برای موبایل */
+@media (max-width: 768px) {
+  .color-panel {
+    width: 160px;
+  }
+  
+  .color-option {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.post-content-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  animation: none !important;
+}
+
+/* استایل‌های جدید برای دکمه‌های close شناور - بهبود یافته */
+.floating-close-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  background: #ff0000;
+  border-radius: 50%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1001;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4);
+  border: 2px solid white;
+}
+
+.floating-close-btn.show {
+  display: flex;
+}
+
+.floating-close-btn i {
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.alarm-btn, .translate-btn, .tool-sidebar {
+  position: relative;
+}
+
+/* استایل‌های جدید برای باکس پربازدیدترین‌ها - اسکرول دستی با دستگیره مشخص */
+.scrollable-container {
+  flex: 1;
+  max-height: 250px; /* ارتفاع ثابت برای نمایش اسکرول */
+  overflow-y: auto;
+  padding-right: 5px; /* فضای اضافی برای scrollbar */
+  scrollbar-width: thin; /* برای فایرفاکس */
+  scrollbar-color: #ffc107 rgba(0, 0, 0, 0.2); /* برای فایرفاکس */
+}
+
+.scrollable-container::-webkit-scrollbar {
+  width: 8px; /* عرض scrollbar */
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1); /* پس‌زمینه track */
+  border-radius: 10px;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ffc107, #ff9800); /* رنگ دستگیره */
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1); /* حاشیه دستگیره */
+  transition: all 0.3s ease;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #ff9800, #ff5722); /* رنگ hover دستگیره */
+  transform: scale(1.1);
+}
+
+.fixed-posts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fixed-posts-list li {
+  margin-bottom: 0;
+}
+
+.fixed-posts-list a {
+  color: #eee;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.fixed-posts-list a:hover {
+  color: #ffc107;
+  padding-right: 20px;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  background: rgba(255,255,255,0.15);
+}
+
+.fixed-posts-list a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background: rgba(255,255,255,0.1);
+  transition: width 0.3s ease;
+  z-index: 0;
+}
+
+.fixed-posts-list a:hover::before {
+  width: 100%;
+}
+
+.fixed-posts-list a i {
+  margin-left: 12px;
+  font-size: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+/* تنظیم موقعیت tool-container برای عرض‌های متوسط مثل 800px */
+@media (max-width: 992px) {
+  .tool-container {
+    left: 10px;
+    top: 100px;
+    gap: 8px;
+  }
+  
+  .alarm-btn, .translate-btn {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .tool-container {
+    left: calc(50% - 300px + 10px - 12.1px + 3.78px);
+    top: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tool-container {
+    left: calc(10px - 12.1px + 3.78px);
+    top: 90px;
+    gap: 5px;
+  }
+  
+  .alarm-btn, .translate-btn {
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 24px !important;
+  }
+}
+
+/* استایل‌های واکنش‌گرا برای محتوای پست - اضافه شده برای رفع مشکل بیرون‌زدگی */
+.post-content-container {
+  max-width: 100%;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+/* استایل برای تمام عناصر داخل محتوای پست */
+.post-content-container * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* استایل برای تصاویر داخل محتوا */
+.post-content-container img {
+  height: auto;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* استایل برای ویدئوها */
+.post-content-container video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* استایل برای iframeها (مثل ویدئوهای یوتیوب، نقشه و...) */
+.post-content-container iframe {
+  max-width: 100%;
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* استایل برای جداول */
+.post-content-container table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+  border-collapse: collapse;
+}
+
+.post-content-container th,
+.post-content-container td {
+  word-break: break-word;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+/* استایل برای کدها و پیش‌فرمت‌ها */
+.post-content-container pre,
+.post-content-container code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* استایل برای لیست‌ها */
+.post-content-container ul,
+.post-content-container ol {
+  padding-right: 20px;
+}
+
+/* استایل برای لینک‌های طولانی */
+.post-content-container a {
+  word-break: break-all;
+}
+
+/* استایل برای عناصر با عرض ثابت */
+.post-content-container .fixed-width,
+.post-content-container [width] {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* استایل برای عناصر خاص که ممکن است مشکل ایجاد کنند */
+.post-content-container .embed-container,
+.post-content-container .video-container,
+.post-content-container .media-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* نسبت 16:9 */
+  margin: 15px 0;
+}
+
+.post-content-container .embed-container iframe,
+.post-content-container .video-container video,
+.post-content-container .media-container iframe {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* جلوگیری از اسکرول افقی */
+.post-content-container {
+  overflow-x: hidden;
+}
+
+/* استایل برای محتوای تولید شده توسط ویرایشگر */
+.post-content-container .wp-caption,
+.post-content-container .aligncenter,
+.post-content-container .alignleft,
+.post-content-container .alignright {
+  max-width: 100%;
+  height: auto;
+}
+
+.post-content-container .alignleft {
+  float: right;
+  margin-left: 15px;
+  margin-bottom: 15px;
+}
+
+.post-content-container .alignright {
+  float: left;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+.post-content-container .aligncenter {
+  display: block;
+  margin: 0 auto 15px;
+}
+
+/* استایل‌های ویژه برای override کردن استایل‌های inline در محتوا - راه‌حل قوی برای iframeها */
+.post-content-container iframe[style*="min-width"],
+.post-content-container [style*="min-width"] {
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* استایل‌های اضافی برای مدیریت iframeهای با عرض ثابت */
+.post-content-container iframe {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* استایل برای iframeهای خاص با ارتفاع زیاد */
+.post-content-container iframe[style*="height"] {
+    height: auto !important;
+}
+
+/* راه‌حل قوی برای override کردن تمام استایل‌های مشکل‌ساز در محتوا */
+.post-content-container * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.post-content-container iframe,
+.post-content-container video,
+.post-content-container object,
+.post-content-container embed {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+/* استایل برای iframeهای تماس که احتمالاً محتوای بیشتری دارند */
+.post-content-container iframe[src*="تماس"],
+.post-content-container iframe[src*="contact"] {
+    /* حذف تمام محدودیت‌های ارتفاع */
+}
+
+/* استایل برای iframeهای داخل containerهای خاص */
+.post-content-container .iframe-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    margin: 15px 0;
+}
+
+.post-content-container .iframe-container iframe {
+    position: relative;
+    width: 100% !important;
+    height: auto !important;
+    border: none;
+}
+
+/* استایل‌های ریسپانسیو برای محتوای پست */
+@media (max-width: 1200px) {
+  .post-content-container {
+    margin: 25px 15px !important;
+    max-width: calc(100% - 30px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .post-content-container {
+    margin: 20px 10px !important;
+    padding: 20px !important;
+    max-width: calc(100% - 20px) !important;
+  }
+  
+  .post-content-container iframe {
+    height: auto;
+  }
+  
+  .post-content-container table {
+    font-size: 14px;
+  }
+  
+  .post-content-container .alignleft,
+  .post-content-container .alignright {
+    float: none;
+    margin: 0 auto 15px;
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-content-container {
+    margin: 15px 5px !important;
+    padding: 15px !important;
+    max-width: calc(100% - 10px) !important;
+    border-radius: 8px !important;
+  }
+  
+  .post-content-container iframe {
+    height: auto;
+  }
+  
+  .post-content-container table {
+    font-size: 12px;
+  }
+  
+  .post-content-container th,
+  .post-content-container td {
+    padding: 6px 4px;
+  }
+}
+
+/* انیمیشن برای gradient پس‌زمینه */
+@keyframes gentle-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* کاهش قطعی سایز فونت عناوین فوتر */
+.footer-creative-section .footer-creative-title {
+    font-size: 20px !important;
+}
+
+/* برای نسخه موبایل */
+@media (max-width: 768px) {
+    .footer-creative-section .footer-creative-title {
+        font-size: 20px !important;
+    }
+}
+
+/* محدود کردن محتوای مطلب به ۱۲۰۰px - راه حل دقیق */
+.post-content-container > div,
+.post-content-container > p,
+.post-content-container > h1,
+.post-content-container > h2,
+.post-content-container > h3,
+.post-content-container > h4,
+.post-content-container > h5,
+.post-content-container > h6,
+.post-content-container > ul,
+.post-content-container > ol,
+.post-content-container > blockquote,
+.post-content-container > table,
+.post-content-container > img,
+.post-content-container > video,
+.post-content-container > iframe {
+    max-width: 1200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+</style>
+
+<!-- SEO additions: canonical, open graph, twitter, robots, structured data -->
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="[RB:Page_Url]">
+<meta name="keywords" content="[RB:Blog_Keywords]">
+<meta name="author" content="[RB:Blog_Author]">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:type" content="website">
+<meta property="og:title" content="[RB:Blog_And_Post_Title]">
+<meta property="og:description" content="[RB:Blog_Description]">
+<meta property="og:url" content="[RB:Page_Url]">
+<meta property="og:image" content="[Profile_Img]">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="[RB:Blog_And_Post_Title]">
+<meta name="twitter:description" content="[RB:Blog_Description]">
+<meta name="twitter:image" content="[Profile_Img]">
+<link rel="alternate" hreflang="fa-IR" href="[RB:Page_Url]">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://rozup.ir/view/3426969/IRANSansWeb.woff" as="font" type="font/woff" crossorigin>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "url": "[RB:Page_Url]",
+      "name": "[RB:Blog_And_Post_Title]",
+      "description": "[RB:Blog_Description]",
+      "publisher": {
+        "@type": "Organization",
+        "name": "[RB:Blog_And_Post_Title]",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "[Profile_Img]"
+        }
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "[RB:Page_Url]?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "خانه",
+          "item": "[RB:Page_Url]"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<!-- End SEO additions -->
+
+</head>
+
+<body data-rsssl=1 class="rtl home page-template page-template-rbc-frontend page-template-rbc-frontend-php page-id-195 wp-embed-responsive hfeed none-nb sticky-nav smart-sticky is-tooltips is-backtop block-header-4 w-header-1 cat-icon-radius ele-round feat-round is-parallax-feat is-fmask mh-p-link mh-p-excerpt" data-theme="default">
+<div id="site" class="site">
+
+<!-- منوی موبایل مدرن -->
+<div class="mobile-menu-container" id="mobileMenu">
+  <div class="mobile-menu-header">
+    <div class="header-inner">
+      <a href="[RB:Page_Url]" class="off-canvas-logo">
+        <img src="http://up.khoobeha.ir/view/4132040/2842411911.png" height="50" width="auto" decoding="async" alt="[تصویر] loading="lazy">
+      </a>
+      <a href="#" onclick="closeMobileMenu()" class="mobile-menu-close">
+        <i class="fas fa-times"></i>
+      </a>
+    </div>
+    <div class="mobile-search-container">
+      <RB:Blog_Search_Block>
+        <input type="search" placeholder="جستجو در سایت..." value="[Search_Value]" name="search">
+        <button type="submit"><i class="fas fa-search"></i></button>
+      </RB:Blog_Search_Block>
+    </div>
+  </div>
+  <nav class="mobile-menu-nav" role="navigation" aria-label="منوی موبایل">
+    <ul>
+      <li><a href="http://khoobeha.ir/"><i class="fas fa-home"></i>Home</a></li>
+      <li><a href="http://khoobeha.ir/tools/"><i class="fas fa-tools"></i>Tools</a></li>
+      <li><a href="http://khoobeha.ir/games/"><i class="fas fa-mobile-alt"></i>Games</a></li>
+      <li><a href="http://khoobeha.ir/categories"><i class="fas fa-play-circle"></i>Categories List</a></li>
+      <li class="mobile-menu-divider"></li>
+      <li><a href="http://khoobeha.ir/category/1/online-tools/"><i class="fas fa-microchip"></i>ابزارها</a></li>
+      <li><a href="http://khoobeha.ir/category/2/games/"><i class="fas fa-tree"></i>بازی‌ها</a></li>
+      <li><a href="http://khoobeha.ir/category"><i class="fas fa-exclamation-triangle"></i>موضوعات</a></li>
+</ul>
+  </nav>
+</div>
+
+<div class="site-outer">
+<div class="site-mask"></div>
+<div class="topbar-wrap is-light-text">
+<div class="rbc-container">
+<div class="topbar-inner rb-m20-gutter">
+<div class="topbar-left">
+<aside class="topbar-info"></aside>
+<nav id="topbar-navigation" class="topbar-menu-wrap">
+<div class="menu-top-container">
+<ul id="topbar-menu" class="topbar-menu rb-menu">
+<li id="menu-item-271" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-271"><a href="#"><span>فروشگاه</span></a></li>
+<li id="menu-item-272" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-272"><a href="http://khoobeha.ir/ads"><span>تبلیغات</span></a></li>
+<li id="menu-item-273" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-273"><a href="http://khoobeha.ir/ContactUs"><span>تماس با ما</span></a></li>
+<li id="menu-item-274" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-274"><a href="#"><span>خانه</span></a></li>
+</ul>
+</div>
+</nav>
+
+</div>
+<div class="topbar-right">
+<div class="topbar-social tooltips-n">
+تاریخ امروز : 
+<p>
+<RB:Counter_Block>
+[RB:Blog_Today_Date]
+</RB:Counter_Block>
+<p> 
+<script>
+/**  Gregorian &amp; Jalali (Hijri_Shamsi,Solar) Date Converter Functions
+Author: JDF.SCR.IR =>> Download Full Version :  http://jdf.scr.ir/jdf
+License: GNU/LGPL _ Open Source &amp; Free :: Version: 2.81 : [2020=1399]
+---------------------------------------------------------------------
+355746=361590-5844 &amp; 361590=(30*33*365)+(30*8) &amp; 5844=(16*365)+(16/4)
+355666=355746-79-1 &amp; 355668=355746-79+1 &amp;  1595=605+990 &amp;  605=621-16
+990=30*33 &amp; 12053=(365*33)+(32/4) &amp; 36524=(365*100)+(100/4)-(100/100)
+1461=(365*4)+(4/4) &amp; 146097=(365*400)+(400/4)-(400/100)+(400/400)  */
+
+function gregorian_to_jalali(gy, gm, gd) {
+  var g_d_m, jy, jm, jd, gy2, days;
+  g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+  gy2 = (gm > 2) ? (gy + 1) : gy;
+  days = 355666 + (365 * gy) + ~~((gy2 + 3) / 4) - ~~((gy2 + 99) / 100) + ~~((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+  jy = -1595 + (33 * ~~(days / 12053));
+  days %= 12053;
+  jy += 4 * ~~(days / 1461);
+  days %= 1461;
+  if (days > 365) {
+    jy += ~~((days - 1) / 365);
+  days = (days - 1) % 365;
+  }
+  if (days < 186) {
+    jm = 1 + ~~(days / 31);
+  jd = 1 + (days % 31);
+  } else {
+    jm = 7 + ~~((days - 186) / 30);
+    jd = 1 + ((days - 186) % 30);
+  }
+  return [jy, jm, jd];
+}
+
+function jalali_to_gregorian(jy, jm, jd) {
+  var sal_a, gy, gm, gd, days;
+  jy += 1595;
+  days = -355668 + (365 * jy) + (~~(jy / 33) * 8) + ~~(((jy % 33) + 3) / 4) + jd + ((jm < 7) ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+  gy = 400 * ~~(days / 146097);
+  days %= 146097;
+  if (days > 36524) {
+    gy += 100 * ~~(--days / 36524);
+  days %= 36524;
+    if (days >= 365) days++;
+  }
+  gy += 4 * ~~(days / 1461);
+  days %= 1461;
+  if (days > 365) {
+    gy += ~~((days - 1) / 365);
+  days = (days - 1) % 365;
+  }
+  gd = days + 1;
+  sal_a = [0, 31, ((gy % 4 === 0 &amp;&amp; gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  for (gm = 0; gm < 13 &amp;&amp; gd > sal_a[gm]; gm++) gd -= sal_a[gm];
+  return [gy, gm, gd];
+}
+</script>
+
+<script>
+//مثال:
+
+ndt=new Date();
+g_y=ndt.getFullYear();
+g_m=ndt.getMonth()+1;
+g_d=ndt.getDate();
+
+shamsi=gregorian_to_jalali(g_y,g_m,g_d);
+document.write(shamsi[0]+'/'+shamsi[1]+'/'+shamsi[2]+'   ');
+
+</script>
+
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<header id="site-header" class="header-wrap header-2">
+<div class="navbar-outer">
+<div class="navbar-wrap">
+<aside id="mobile-navbar" class="mobile-navbar">
+<div class="mobile-nav-inner rb-p20-gutter">
+<div class="m-nav-left">
+<a href="#" onclick="toggleMobileMenu()" class="off-canvas-trigger btn-toggle-wrap btn-toggle-light">
+<span class="btn-toggle">
+<span class="off-canvas-toggle">
+<span class="icon-toggle">
+</span>
+</span>
+</span>
+</a>
+
+</div>
+
+<div class="m-nav-centered">
+<aside class="logo-mobile-wrap is-logo-image">
+<a href="[RB:Page_Url]" class="logo-mobile logo default">
+<img height="90" width="auto" src="http://up.khoobeha.ir/view/4132040/2842411911.png" alt="[تصویر] loading="lazy">
+</a>
+<a href="[RB:Page_Url]" class="logo-mobile logo dark">
+<img height="90" width="auto" src="http://up.khoobeha.ir/view/4132040/2842411911.png" alt="[تصویر] loading="lazy">
+</a>
+</aside>
+</div>
+
+<aside class="navbar-search nav-search-live modern-search">
+  <RB:Blog_Search_Block>
+    <div class="mobile-search-container">
+      <input type="search" placeholder="جستجو در سایت..." value="[Search_Value]" name="search">
+      <button type="submit"><i class="fas fa-search"></i></button>
+  </div>
+  </RB:Blog_Search_Block>
+</aside>
+
+</div>
+</aside>
+
+<aside id="mobile-sticky-nav" class="mobile-sticky-nav">
+<div class="mobile-navbar mobile-sticky-inner">
+<div class="mobile-nav-inner rb-p20-gutter">
+<div class="m-nav-left">
+<a href="#" class="off-canvas-trigger btn-toggle-wrap btn-toggle-light">
+<span class="btn-toggle">
+<span class="off-canvas-toggle">
+<span class="icon-toggle"></span>
+</span>
+</span>
+</a>
+</div>
+<div class="m-nav-centered">
+<aside class="logo-mobile-wrap is-logo-image">
+<a href="[RB:Page_Url]" class="logo-mobile logo default">
+<img height="90" width="auto" src="[Profile_Img]" alt="[تصویر] loading="lazy"> </a> <a href="[RB:Page_Url]" class="logo-mobile logo dark">
+<img height="90" width="auto" src="[Profile_Img]" alt="[تصویر] loading="lazy"> </a></aside></div>
+</div>
+</aside>
+
+<div class="rbc-container navbar-holder is-main-nav">
+<div class="navbar-inner rb-m20-gutter">
+<div class="navbar-left">
+<div class="logo-wrap is-logo-image site-branding"> <a href="[RB:Page_Url]" class="logo default">
+<img class="logo-default" height="44" width="auto" src="[Profile_Img]" alt="[تصویر] loading="lazy"> </a>
+<a href="[RB:Page_Url]" class="logo dark">
+<img class="logo-default" height="44" width="auto" src="[Profile_Img]" alt="[تصویر] loading="lazy"></a>
+</div>
+</div>
+<div class="navbar-right-outer">
+<nav id="site-navigation" class="main-menu-wrap" aria-label="منوی اصلی">
+<ul id="main-menu" class="main-menu rb-menu" itemscope itemtype="https://www.schema.org/SiteNavigationElement">
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-220" itemprop="name">
+<a href="http://khoobeha.ir/tools/" itemprop="url">
+<i class="fas fa-newspaper"></i>
+<span>Tools List</span>
+</a>
+</li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-264" itemprop="name">
+<a href="http://khoobeha.ir/games/" itemprop="url">
+<i class="fas fa-stethoscope"></i>
+<span>Games List</span>
+</a>
+</li>
+
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-279" itemprop="name">
+<a href="http://khoobeha.ir/category/1/online-tools/" itemprop="url">
+<i class="fas fa-star"></i>
+<span>معرفی ابزارها</span></a>
+</li>
+
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-293" itemprop="name">
+<a href="http://khoobeha.ir/category/2/games" itemprop="url">
+<i class="fas fa-music"></i>
+<span>معرفی بازیها</span></a>
+</li>
+
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-280" itemprop="name">
+<a href="http://khoobeha.ir/category" itemprop="url">
+<i class="fas fa-folder"></i>
+<span>موضوعات</span>
+</a>
+</li>
+</ul>
+
+</nav>
+
+<div class="navbar-right">
+  <aside class="navbar-search nav-search-live modern-search desktop-search">
+    <RB:Blog_Search_Block>
+      <div class="search-container">
+        <input type="search" class="search-input" placeholder="جستجو در سایت..." value="[Search_Value]" name="search" />
+        <button type="submit" class="search-button">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </RB:Blog_Search_Block>
+  </aside>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<aside id="sticky-nav" class="section-sticky-holder">
+<div class="section-sticky">
+<div class="navbar-wrap">
+<div class="rbc-container navbar-holder">
+<div class="navbar-inner rb-m20-gutter">
+<div class="navbar-left">
+<div class="logo-wrap is-logo-image site-branding">
+<a href="#" class="logo default" title="دموی تکنولوژی">
+<img class="logo-default" height="44" width="auto" src="[Profile_Img]" alt="دموی تکنولوژی" loading="lazy"> </a>
+<a href="#" class="logo dark" title="دموی تکنولوژی">
+<img class="logo-default" height="44" width="auto" src="[Profile_Img]" alt="دموی تکنولوží" loading="lazy">
+</a>
+</div>
+
+<aside class="main-menu-wrap">
+<ul id="sticky-menu" class="main-menu rb-menu">
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-195 current_page_item menu-item-294">
+<a href="#" aria-current="page">
+<i class="fas fa-home"></i>
+<span>خانه</span></a>
+</li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-220">
+<a href="#">
+<i class="fas fa-newspaper"></i>
+<span>تکنولوژی</span></a>
+</li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-264">
+<a href="http://khoobeha.ir/games/">
+<i class="fas fa-mobile-alt"></i>
+<span>Game Introductions</span></a>
+</li>
+
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-279">
+<a href="#">
+<i class="fas fa-bars"></i>
+<span>مگامنو</span></a>
+</li>
+
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-275">
+<a target="_blank" href="#">
+<i class="fas fa-shopping-cart"></i>
+<span>فروشگاه</span></a>
+</li>
+
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-293">
+<a href="#">
+<i class="fas fa-blog"></i>
+<span>وبلاグ</span></a>
+</li>
+
+</ul>
+</aside>
+</div>
+
+
+</div>
+</div>
+</div>
+</aside>
+</header>
+
+<!-- دکته آلارم و باکس ابزارها در یک container -->
+<div class="tool-container">
+  <div class="alarm-btn" id="alarmBtn" title="ابزارهای سایت">
+    <i class="fas fa-cog"></i>
+    <!-- دکمه close برای alarm-btn -->
+    <div class="floating-close-btn" id="alarmClose">
+      <i class="fas fa-times"></i>
+    </div>
+  </div>
+
+  <!-- دکمه مترجم - دقیقاً پایین دکمه آلارم -->
+  <div class="translate-btn" id="translateBtn" title="مترجم">
+    <i class="fas fa-language"></i>
+    <!-- Tooltip متصل به دکمه مترجم -->
+    <div id="translator-tooltip" class="translator-tooltip">Language Translator</div>
+    <!-- دکمه close برای translate-btn -->
+
+  </div>
+
+  <!-- باکس ابزارهای کناری -->
+  <div class="tool-sidebar" id="toolSidebar">
+    <a href="http://khoobeha.ir" title="خانه"><i class="fas fa-home"></i></a>
+    <a href="#" onclick="window.location.reload()" title="بارگذاری مجدد"><i class="fas fa-sync-alt"></i></a>
+    <a href="http://khoobeha.ir/ContactUs" title="تماس با ما"><i class="fas fa-envelope"></i></a>
+    <a href="#" onclick="increaseFontSize()" title="بزرگ کردن فونت"><i class="fas fa-plus"></i></a>
+    <a href="#" onclick="decreaseFontSize()" title="کوچک کردن فونت"><i class="fas fa-minus"></i></a>
+    <a href="#" onclick="resetFontSize()" title="بازنشانی اندازه فونت"><i class="fas fa-undo"></i></a>
+    <!-- دکمه تغییر پس‌زمینه -->
+    <a href="#" id="colorPanelToggle" title="تغییر پس‌زمینه"><i class="fas fa-palette"></i></a>
+        <!-- دکمه چپ چین کردن -->
+    <a href="#" onclick="toggleTextAlignment()" title="چپ چین کردن متن">
+        <i class="fas fa-align-left"></i>
+    </a>
+    <!-- دکمه close برای tool-sidebar -->
+  </div>
+</div>
+
+<!-- پنل انتخاب رنگ - انتقال به خارج از tool-container و موقعیت جدید در سمت راست -->
+<div class="color-panel" id="colorPanel">
+  <div class="color-option" data-color="#FFBEBE" style="background-color: #FFBEBE;"></div>
+  <div class="color-option" data-color="#C5C5C5" style="background-color: #C5C5C5;"></div>
+  <div class="color-option" data-color="#A3DDE7" style="background-color: #A3DDE7;"></div>
+  <div class="color-option" data-color="#A8DDA4" style="background-color: #A8DDA4;"></div>
+  <div class="color-option" data-color="#EBDE90" style="background-color: #EBDE90;"></div>
+  <div class="color-option" data-color="#FFFFFF" style="background-color: #FFFFFF;"></div>
+  <div class="color-option" data-color="#C2A9CC" style="background-color: #C2A9CC;"></div>
+  <div class="color-option" data-color="#9CD4E9" style="background-color: #9CD4E9;"></div>
+  <div class="color-option" data-color="#ECDCA5" style="background-color: #ECDCA5;"></div>
+  <div class="color-option" data-color="#000000" style="background-color: #000000;"></div>
+</div>
+
+<!-- Overlay برای widget گوگل -->
+<div class="google-translate-overlay" id="translateOverlay">
+  <div class="google-translate-modal">
+    <span class="close-btn" onclick="closeTranslateOverlay()">&times;</span>
+    <h3>انتخاب زبان</h3>
+    <div id="google_translate_element" style="display: block;"></div>
+  </div>
+</div>
+<rozblog>
+
+<div class="post-content-container">[Post_Content]</div>
+</rozblog>
+
+<!-- اسلایدر تصاویر مطالب -->
+<section class="posts-slider-section">
+  <div class="posts-slider-container">
+    <h2 class="posts-slider-title">ابزارهای دیگر</h2>
+    <div class="swiper-container posts-slider">
+      <div class="swiper-wrapper">
+        <RB:Category_Posts_Block=1>
+        <RB:Category_Posts_Loop>
+        <RB:List_Posts_Loop>
+          <div class="swiper-slide">
+            <a href="[Post_Link]">
+              <img src="[Post_Image]" alt="[Post_Title]" loading="lazy">
+            </a>
+          </div>
+        </RB:List_Posts_Loop>
+        </RB:Category_Posts_Loop>	
+        </RB:Category_Posts_Block>
+      </div>
+      <!-- Pagination -->
+      <div class="swiper-pagination"></div>
+      <!-- Navigation buttons -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </div>
+</section>
+
+<div>
+<div>
+<RB:Contact_Block>
+	[Contact_Form]
+<RB:Contact_Submit_Value:ارسال پیام>
+	<RB:Contact_Reset_Value:پاک کردن>
+	<RB:Contact_Field_Style: CSSstyle>
+	<RB:Contact_Field_Size: Size>
+</RB:Contact_Block>
+</div>
+</div>
+</div>
+</div>
+
+<!-- فوتر جدید و خلاقانه -->
+<footer class="footer-creative">
+  <div class="footer-creative-inner">
+    
+    <!-- بخش اول فوتر - آخرین مطالب -->
+    <div class="footer-creative-section">
+      <h3 class="footer-creative-title">
+        <i class="fas fa-newspaper"></i>
+        آخرین مطالب
+        <span class="speed-toggle-btn" data-target="lastPostsLoop" title="تغییر سرعت اسکرول">
+          <i class="fas fa-bolt"></i>×2
+        </span>
+      </h3>
+      <div class="last-posts-container">
+        <ul class="last-posts-list scroll-loop" id="lastPostsLoop">
+          <RB:Blog_Last_Posts_Block>
+            <RB:Blog_Last_Posts_Loop>
+              <li><a href="[Last_Post_Url]">[Last_Post_Title]</a></li>
+            </RB:Blog_Last_Posts_Loop>
+          </RB:Blog_Last_Posts_Block>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- بخش دوم فوتر - ابزارها (تغییر نام از دسته‌بندی‌ها به ابزارها) -->
+    <div class="footer-creative-section">
+      <h3 class="footer-creative-title">
+        <i class="fas fa-laptop-code"></i>
+        ابزارهای آنلاین
+        <span class="speed-toggle-btn" data-target="toolsLoop" title="تغییر سرعت اسکرول">
+          <i class="fas fa-bolt"></i>×2
+        </span>
+      </h3>
+  <div class="last-posts-container">
+    <ul class="footer-creative-links last-posts-list scroll-loop" id="toolsLoop">
+      <RB:Category_Posts_Block=1>
+      <RB:Category_Posts_Loop>
+      <RB:List_Posts_Loop>
+      <li><a href="[Post_Link]"></i> [Post_Title]</a></li>
+      </RB:List_Posts_Loop>
+      </RB:Category_Posts_Loop>	
+      </RB:Category_Posts_Block>
+    </ul>
+  </div>
+</div>
+    
+<!-- بخش سوم فوتر - پربازدیدترین‌ها -->
+<div class="footer-creative-section">
+  <h3 class="footer-creative-title">
+    <i class="fas fa-fire"></i>
+    پربازدیدترین‌ها
+  </h3>
+  <div class="scrollable-container">
+    <ul class="fixed-posts-list" id="monthHitLoop">
+      <RB:Month_Hit_Posts_Block>
+        <RB:Month_Hit_Posts_Loop>
+          <li><a href="[Hit_Posts_Link]">[Hit_Posts_Title]</a></li>
+        </RB:Month_Hit_Posts_Loop>
+      </RB:Month_Hit_Posts_Block>
+    </ul>
+  </div>
+</div>
+    
+<!-- بخش چهارم فوتر - بازی‌ها -->
+<div class="footer-creative-section">
+  <h3 class="footer-creative-title">
+    <i class="fas fa-gamepad"></i>
+    بازی‌ها
+  </h3>
+  
+  <div class="scrollable-container">
+    <ul class="fixed-posts-list">
+      <RB:Category_Posts_Block=2>
+      <RB:Category_Posts_Loop>
+      <RB:List_Posts_Loop>
+      <li><a href="[Post_Link]">[Post_Title]</a></li>
+      </RB:List_Posts_Loop>
+      </RB:Category_Posts_Loop>	
+      </RB:Category_Posts_Block>
+    </ul>
+  </div>
+  
+  <div class="footer-creative-social" style="border-top: none; margin-top: 15px; padding-top: 0;">
+    <a href="https://www.aparat.com/khoobeha" title="آپارات"><i class="fas fa-play-circle"></i></a>
+    <a href="https://x.com/khoobeha_x" title="X"><span class="x-icon">X</span></a>
+    <a href="https://instagram.com/khoobeha_ig" title="اینستاگرام"><i class="fab fa-instagram"></i></a>
+    <a href="https://t.me/khoobeha" title="تلگرام"><i class="fab fa-telegram"></i></a>
+    <a href="https://www.youtube.com/@khoobeha_yt" title="یوتیوب"><i class="fab fa-youtube"></i></a>
+  </div>
+</div>
+    </div>
+    
+    <!-- بخش کپی رایت -->
+    <div class="footer-creative-bottom">
+      <div class="footer-creative-copyright">
+        <p>© ۱۴۰۲ کلیه حقوق برای <a href="[RB:Page_Url]">[RB:Blog_Title]</a> محفوظ است.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- اضافه کردن اسکریپت Swiper -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- اسکریپت Google Translate -->
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+// اسکریپت مدیریت منوی موبایل
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.querySelector('.off-canvas-trigger');
+  
+  menu.classList.toggle('active');
+  document.body.classList.toggle('no-scroll');
+  
+  // مدیریت پس زمینه محو
+  if (menu.classList.contains('active')) {
+    document.querySelector('.site-mask').style.display = 'block';
+    setTimeout(() => {
+      document.querySelector('.site-mask').style.opacity = '0.7';
+    }, 10);
+  } else {
+    document.querySelector('.site-mask').style.opacity = '0';
+    setTimeout(() => {
+      document.querySelector('.site-mask').style.display = 'none';
+    }, 300);
+  }
+}
+
+function closeMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  
+  menu.classList.remove('active');
+  document.body.classList.remove('no-scroll');
+  
+  // حذف پس زمینه محو
+  document.querySelector('.site-mask').style.opacity = '0';
+  setTimeout(() => {
+    document.querySelector('.site-mask').style.display = 'none';
+  }, 300);
+}
+
+// بستن منو با کلیک خارج از آن (بهبود یافته برای کلیک/لمس هر جایی خارج از منو)
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobileMenu');
+  const toggleBtn = document.querySelector('.off-canvas-trigger');
+  const closeBtn = document.querySelector('.mobile-menu-close');
+  
+  // اگر منو باز است و کلیک خارج از منو و دکمه‌های مرتبط باشد
+  if (menu.classList.contains('active') && 
+      !menu.contains(e.target) && 
+      !toggleBtn.contains(e.target) && 
+      !closeBtn.contains(e.target)) {
+    closeMobileMenu();
+  }
+});
+
+// بستن منو با کلیک روی پس زمینه (site-mask)
+document.querySelector('.site-mask').addEventListener('click', closeMobileMenu);
+
+// مدیریت نمایش/مخفی کردن باکس ابزارها
+const alarmBtn = document.getElementById('alarmBtn');
+const toolSidebar = document.getElementById('toolSidebar');
+
+alarmBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  toolSidebar.classList.toggle('active');
+  
+  // تغییر آیکون دکته آلارم
+  const icon = this.querySelector('i');
+  if (toolSidebar.classList.contains('active')) {
+    icon.classList.remove('fa-cog');
+    icon.classList.add('fa-times');
+    this.style.background = 'linear-gradient(135deg, #006400, #004d00)';
+  } else {
+    icon.classList.remove('fa-times');
+    icon.classList.add('fa-cog');
+    this.style.background = 'linear-gradient(135deg, #ff0000, #ff6600)';
+  }
+});
+
+// بستن toolSidebar با کلیک خارج از آن
+document.addEventListener('click', function(e) {
+  if (!toolSidebar.contains(e.target) && e.target !== alarmBtn && !alarmBtn.contains(e.target)) {
+    toolSidebar.classList.remove('active');
+    const icon = alarmBtn.querySelector('i');
+    icon.classList.remove('fa-times');
+    icon.classList.add('fa-cog');
+    alarmBtn.style.background = 'linear-gradient(135deg, #ff0000, #ff6600)';
+  }
+});
+
+// مدیریت پنل انتخاب رنگ
+const colorPanelToggle = document.getElementById('colorPanelToggle');
+const colorPanel = document.getElementById('colorPanel');
+
+colorPanelToggle.addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  const isActive = colorPanel.classList.toggle('active');
+  
+  if (isActive) {
+    // محاسبه موقعیت دقیق نسبت به دکمه (سمت راست)
+    const rect = colorPanelToggle.getBoundingClientRect();
+    colorPanel.style.left = (rect.right + 10) + 'px'; // 10px حاشیه
+    colorPanel.style.top = (rect.top + rect.height / 2) + 'px';
+    colorPanel.style.transform = 'translateY(-50%)';
+  }
+});
+
+// بستن پنل رنگ با کلیک خارج از آن
+document.addEventListener('click', function(e) {
+  if (!colorPanel.contains(e.target) && e.target !== colorPanelToggle && !colorPanelToggle.contains(e.target)) {
+    colorPanel.classList.remove('active');
+  }
+});
+
+// تغییر رنگ پس‌زمینه با انتخاب رنگ
+document.querySelectorAll('.color-option').forEach(option => {
+  option.addEventListener('click', function() {
+    const color = this.getAttribute('data-color');
+    document.body.style.backgroundColor = color;
+    localStorage.setItem('backgroundColor', color);
+    colorPanel.classList.remove('active');
+  });
+});
+
+// مدیریت جستجو
+document.querySelectorAll('.search-button, .mobile-search-container button').forEach(button => {
+  button.addEventListener('click', function(e) {
+    e.preventDefault();
+    const form = this.closest('form');
+    if(form) {
+      const input = form.querySelector('input[type="search"]');
+      if(input && input.value.trim() !== '') {
+        form.submit();
+      } else {
+        // افکت شیک برای زمانی که فیلد جستجو خالی است
+        input.focus();
+        input.style.animation = 'shake 0.5s';
+        setTimeout(() => {
+          input.style.animation = '';
+        }, 500);
+      }
+    }
+  });
+});
+
+// توابع تغییر اندازه فونت برای تمام سایت
+let currentFontSize = 16; // اندازه پیش‌فرض
+
+function updateFontSize() {
+  // حذف تمام کلاس‌های اندازه فونت
+  document.body.classList.remove(
+    'font-size-12', 'font-size-14', 'font-size-16', 
+    'font-size-18', 'font-size-20', 'font-size-22', 'font-size-24'
+  );
+  
+  // اضافه کردن کلاس جدید بر اساس اندازه فعلی
+  document.body.classList.add(`font-size-${currentFontSize}`);
+  
+  // ذخیره در localStorage
+  localStorage.setItem('fontSize', currentFontSize);
+}
+
+function increaseFontSize() {
+  if (currentFontSize < 24) {
+    currentFontSize += 2;
+    updateFontSize();
+  }
+}
+
+function decreaseFontSize() {
+  if (currentFontSize > 12) {
+    currentFontSize -= 2;
+    updateFontSize();
+  }
+}
+
+function resetFontSize() {
+  currentFontSize = 16; /* اندازه پیش‌فرض */
+  updateFontSize();
+}
+
+// سیستم تغییر رنگ فوتر با هر بار لود صفحه
+function setRandomFooterColor() {
+  const footerColors = [
+    "#8b0000", "#cc5500", "#999900", "#006400", "#004d00", 
+    "#008080", "#006666", "#000080", "#000066", "#4b0082", 
+    "#800080", "#800040"
+  ];
+  
+  const randomColor = footerColors[Math.floor(Math.random() * footerColors.length)];
+  
+  // اعمال رنگ به فوترها
+  document.querySelectorAll('.footer-wrap, .footer-creative').forEach(footer => {
+    footer.style.background = randomColor;
+  });
+}
+
+// ایجاد حلقه بی‌انتها برای آخرین مطالب و ابزارها
+function setupInfiniteScroll() {
+  const postsList = document.getElementById('lastPostsLoop');
+  const toolsList = document.getElementById('toolsLoop');
+  
+  if (postsList) {
+    const originalContent = postsList.innerHTML;
+    postsList.innerHTML = originalContent + originalContent;
+    
+    const items = postsList.querySelectorAll('li');
+    const itemCount = items.length / 2;
+    const duration = itemCount * 3;
+    
+    postsList.style.animationDuration = `${duration}s`;
+  }
+  
+  if (toolsList) {
+    const originalContent = toolsList.innerHTML;
+    toolsList.innerHTML = originalContent + originalContent;
+    
+    const items = toolsList.querySelectorAll('li');
+    const itemCount = items.length / 2;
+    const duration = itemCount * 3;
+    
+    toolsList.style.animationDuration = `${duration}s`;
+  }
+}
+
+// مدیریت سرعت اسکرول باکس‌های اتوماتیک
+function toggleScrollSpeed(button) {
+  const targetId = button.getAttribute('data-target');
+  const targetElement = document.getElementById(targetId);
+  
+  if (targetElement) {
+    const isFast = button.classList.toggle('active');
+    const currentSpeed = parseFloat(getComputedStyle(targetElement).animationDuration);
+    
+    if (isFast) {
+      // تغییر به سرعت دو برابر
+      targetElement.style.animationDuration = `${currentSpeed / 2}s`;
+      button.innerHTML = '<i class="fas fa-bolt"></i>×1';
+    } else {
+      // بازگشت به سرعت عادی
+      targetElement.style.animationDuration = `${currentSpeed * 2}s`;
+      button.innerHTML = '<i class="fas fa-bolt"></i>×2';
+    }
+    
+    // ذخیره وضعیت در localStorage
+    saveScrollSpeedState(targetId, isFast);
+  }
+}
+
+// ذخیره وضعیت سرعت اسکرول
+function saveScrollSpeedState(targetId, isFast) {
+  const scrollStates = JSON.parse(localStorage.getItem('scrollSpeedStates') || '{}');
+  scrollStates[targetId] = isFast;
+  localStorage.setItem('scrollSpeedStates', JSON.stringify(scrollStates));
+}
+
+// بارگذاری وضعیت سرعت اسکرول
+function loadScrollSpeedState() {
+  const scrollStates = JSON.parse(localStorage.getItem('scrollSpeedStates') || '{}');
+  
+  Object.keys(scrollStates).forEach(targetId => {
+    const targetElement = document.getElementById(targetId);
+    const button = document.querySelector(`.speed-toggle-btn[data-target="${targetId}"]`);
+    
+    if (targetElement && button && scrollStates[targetId]) {
+      const currentSpeed = parseFloat(getComputedStyle(targetElement).animationDuration);
+      targetElement.style.animationDuration = `${currentSpeed / 2}s`;
+      button.classList.add('active');
+      button.innerHTML = '<i class="fas fa-bolt"></i>×1';
+    }
+  });
+}
+
+// مقداردهی اسلایدر تصاویر مطالب
+function initPostsSlider() {
+  if (document.querySelector('.posts-slider')) {
+    new Swiper('.posts-slider', {
+      slidesPerView: 1,
+      spaceBetween: 10,
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 20,
+        },
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+        },
+        1024: {
+          slidesPerView: 4,
+          spaceBetween: 40,
+        },
+      }
+    });
+  }
+}
+// تابع تغییر چیدمان متن (راست‌چین/چپ‌چین)
+function toggleTextAlignment() {
+    const body = document.body;
+    const isLTR = body.classList.toggle('ltr-direction');
+    
+    // ذخیره وضعیت در localStorage
+    localStorage.setItem('textAlignment', isLTR ? 'ltr' : 'rtl');
+    
+    // نمایش پیام به کاربر
+    showAlignmentMessage(isLTR ? 'چپ‌چین فعال شد' : 'راست‌چین فعال شد');
+}
+
+// تابع نمایش پیام تغییر چیدمان
+function showAlignmentMessage(message) {
+    // ایجاد عنصر پیام
+    let messageElement = document.getElementById('alignmentMessage');
+    
+    if (!messageElement) {
+        messageElement = document.createElement('div');
+        messageElement.id = 'alignmentMessage';
+        messageElement.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 10000;
+            font-size: 16px;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            font-family: 'bigol', sans-serif !important;
+            border: 2px solid #ffc107;
+        `;
+        document.body.appendChild(messageElement);
+    }
+    
+    messageElement.textContent = message;
+    messageElement.style.display = 'block';
+    messageElement.style.opacity = '1';
+    messageElement.style.animation = 'fadeInOut 2s ease-in-out';
+    
+    // مخفی کردن پیام پس از 2 ثانیه
+    setTimeout(() => {
+        messageElement.style.opacity = '0';
+        setTimeout(() => {
+            messageElement.style.display = 'none';
+        }, 300);
+    }, 2000);
+}
+
+// بارگذاری وضعیت چیدمان ذخیره شده
+function loadTextAlignment() {
+    const savedAlignment = localStorage.getItem('textAlignment');
+    if (savedAlignment === 'ltr') {
+        document.body.classList.add('ltr-direction');
+    }
+}
+// تابع پیشرفته برای مدیریت ارتفاع iframeها
+function makeIframesResponsive() {
+    const iframes = document.querySelectorAll('.post-content-container iframe');
+    
+    iframes.forEach(iframe => {
+        // حذف ارتفاع ثابت از استایل inline
+        if (iframe.style.height && iframe.style.height.includes('px')) {
+            iframe.style.height = 'auto';
+        }
+        
+        // حذف aspect-ratio اجباری
+        iframe.style.aspectRatio = 'unset';
+        
+        // اضافه کردن wrapper برای iframeهای بدون container
+        if (!iframe.parentElement.classList.contains('iframe-container')) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'iframe-container';
+            
+            iframe.parentNode.insertBefore(wrapper, iframe);
+            wrapper.appendChild(iframe);
+        }
+    });
+}
+
+// تابع برای تنظیم ارتفاع iframe بر اساس محتوای داخلی (اگر اجازه دسترسی داشته باشیم)
+function adjustIframeHeightToContent() {
+    const iframes = document.querySelectorAll('.post-content-container iframe');
+    
+    iframes.forEach(iframe => {
+        try {
+            // این فقط برای iframeهای با دامین یکسان کار می‌کند
+            if (iframe.contentWindow && iframe.contentWindow.document) {
+                const iframeDoc = iframe.contentWindow.document;
+                const iframeBody = iframeDoc.body;
+                const iframeHtml = iframeDoc.documentElement;
+                
+                const height = Math.max(
+                    iframeBody.scrollHeight,
+                    iframeBody.offsetHeight,
+                    iframeHtml.clientHeight,
+                    iframeHtml.scrollHeight,
+                    iframeHtml.offsetHeight
+                );
+                
+                if (height > 0) {
+                    iframe.style.height = height + 'px';
+                }
+            }
+        } catch (e) {
+            // خطای CORS - استفاده از ارتفاع خودکار
+            console.log('Cannot access iframe content due to CORS');
+        }
+    });
+}
+
+// تابع برای ایجاد iframeهای ریسپانسیو با روش container
+function wrapIframesInContainers() {
+    const iframes = document.querySelectorAll('.post-content-container iframe:not([data-wrapped])');
+    
+    iframes.forEach(iframe => {
+        iframe.setAttribute('data-wrapped', 'true');
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'iframe-container';
+        
+        iframe.parentNode.insertBefore(wrapper, iframe);
+        wrapper.appendChild(iframe);
+    });
+}
+
+// بارگذاری اندازه فونت ذخیره شده هنگام لود صفحه
+window.addEventListener('DOMContentLoaded', () => {
+  const savedSize = localStorage.getItem('fontSize');
+  if (savedSize) {
+    currentFontSize = parseInt(savedSize);
+    updateFontSize();
+  }
+  
+  // بارگذاری رنگ پس‌زمینه ذخیره شده
+  const savedColor = localStorage.getItem('backgroundColor');
+  if (savedColor) {
+    document.body.style.backgroundColor = savedColor;
+  }
+  
+  // تنظیم رنگ تصادفی برای فوتر
+  setRandomFooterColor();
+  
+  // راه‌اندازی اسکرول بی‌انتها برای آخرین مطالب و ابزارها
+  setupInfiniteScroll();
+  
+  // بارگذاری وضعیت سرعت اسکرول
+  loadScrollSpeedState();
+  
+  // مقداردهی اسلایدر تصاویر مطالب
+  initPostsSlider();
+  
+  // راه‌اندازی مدیریت iframeها
+  makeIframesResponsive();
+  wrapIframesInContainers();
+  
+  // تلاش برای تنظیم ارتفاع بر اساس محتوا (با تاخیر برای لود iframe)
+  setTimeout(() => {
+    adjustIframeHeightToContent();
+  }, 2000);
+});
+
+// اجرای توابع هنگام لود و تغییر سایز صفحه
+window.addEventListener('load', function() {
+  makeIframesResponsive();
+  wrapIframesInContainers();
+  
+  setTimeout(() => {
+    adjustIframeHeightToContent();
+  }, 3000);
+});
+
+window.addEventListener('resize', function() {
+  makeIframesResponsive();
+});
+
+// همچنین پس از لود محتوا (مخصوصاً برای محتوای داینامیک)
+document.addEventListener('DOMContentLoaded', function() {
+  // مشاهده تغییرات در محتوای پست
+  const postContent = document.querySelector('.post-content-container');
+  if (postContent) {
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+          makeIframesResponsive();
+          wrapIframesInContainers();
+          
+          setTimeout(() => {
+            adjustIframeHeightToContent();
+          }, 1000);
+        }
+      });
+    });
+    
+    observer.observe(postContent, {
+      childList: true,
+      subtree: true
+    });
+  }
+});
+
+// افزودن انیمیشن shake برای فیلدهای جستجو
+var style = document.createElement('style');
+style.textContent = `
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+`;
+document.head.appendChild(style);
+
+// اسکریپت برای تنظیم ارتفاع داینامیک بخش پربازدیدترین‌ها
+function adjustScrollableHeight() {
+  const scrollableContainers = document.querySelectorAll('.scrollable-container');
+  
+  scrollableContainers.forEach(container => {
+    // محاسبه ارتفاع بر اساس فضای disponible
+    const section = container.closest('.footer-creative-section');
+    const title = section.querySelector('.footer-creative-title');
+    const otherElements = section.querySelectorAll(':scope > *:not(.scrollable-container)');
+    
+    let otherElementsHeight = 0;
+    otherElements.forEach(el => {
+      if (el !== container) {
+        otherElementsHeight += el.offsetHeight;
+      }
+    });
+    
+    const sectionHeight = section.offsetHeight;
+    const availableHeight = sectionHeight - otherElementsHeight - 40; // 40px برای padding و margin
+    
+    container.style.maxHeight = availableHeight + 'px';
+  });
+}
+
+// اجرای تابع هنگام لود و تغییر سایز صفحه
+window.addEventListener('load', adjustScrollableHeight);
+window.addEventListener('resize', adjustScrollableHeight);
+
+// اجرای تابع پس از بارگذاری کامل DOM
+document.addEventListener('DOMContentLoaded', adjustScrollableHeight);
+
+// افزودن event listener برای دکمه‌های تغییر سرعت
+document.querySelectorAll('.speed-toggle-btn').forEach(button => {
+  button.addEventListener('click', function() {
+    toggleScrollSpeed(this);
+  });
+});
+
+// تابع init Google Translate
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'fa',
+    includedLanguages: 'en,fa,ar,ru,es,tr,ku,hi,zh-CN,id',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+
+// مدیریت دکمه مترجم و نمایش مستقیم widget
+const translateBtn = document.getElementById('translateBtn');
+const translateOverlay = document.getElementById('translateOverlay');
+
+translateBtn.addEventListener('click', function() {
+  translateOverlay.style.display = 'flex';
+  
+  // اگر widget لود نشده، لود کن
+  if (typeof google === 'undefined' || !google.translate) {
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.head.appendChild(script);
+    // Init بعد از لود اسکریپت
+    script.onload = function() {
+      googleTranslateElementInit();
+    };
+  } else {
+    googleTranslateElementInit();
+  }
+  
+  // تنظیم زبان پیش‌فرض به انگلیسی (با تاخیر برای لود widget)
+  setTimeout(() => {
+    const select = document.querySelector('.goog-te-combo');
+    if (select) {
+      select.value = 'en';
+      select.dispatchEvent(new Event('change'));
+    }
+  }, 500);
+});
+
+function closeTranslateOverlay() {
+  translateOverlay.style.display = 'none';
+}
+
+// بستن overlay با کلیک خارج
+translateOverlay.addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeTranslateOverlay();
+  }
+});
+
+// نمایش tooltip مترجم برای ۷ ثانیه پس از لود صفحه
+window.addEventListener('load', function() {
+  const tooltip = document.getElementById('translator-tooltip');
+  if (tooltip) {
+    tooltip.classList.add('show');
+    setTimeout(() => {
+      tooltip.classList.remove('show');
+    }, 7000);
+  }
+});
+
+// مدیریت دکمه‌های close برای دکمه‌های شناور - نسخه اصلاح شده
+function setupFloatingCloseButtons() {
+  // دکمه close برای alarmBtn
+  const alarmClose = document.getElementById('alarmClose');
+  alarmBtn.addEventListener('click', function(e) {
+    // فقط اگر روی خود دکمه آلارم کلیک شده (نه روی آیکون یا close)
+    if (e.target === alarmBtn || e.target === alarmBtn.querySelector('i')) {
+      alarmClose.classList.toggle('show');
+    }
+  });
+  
+  alarmClose.addEventListener('click', function(e) {
+    e.stopPropagation();
+    // مخفی کردن دکمه آلارم به جای حذف کامل
+    alarmBtn.style.display = 'none';
+    // همچنین toolSidebar را هم مخفی کن
+    toolSidebar.classList.remove('active');
+    // مخفی کردن خود دکمه close
+    this.classList.remove('show');
+  });
+
+  // دکمه close برای translateBtn
+  
+    // فقط اگر روی خود دکمه مترجم کلیک شده (نه روی آیکون یا close)
+    
+
+  // دکمه close برای toolSidebar
+  
+    // فقط اگر روی خود sidebar کلیک شده (نه روی لینک‌ها یا close)
+  
+    // مخفی کردن toolSidebar
+    // همچنین دکمه آلارم را ریست کن
+    // مخفی کردن خود دکمه close
+}
+
+// listener برای مخفی کردن ضربدرها با کلیک خارج از دکمه‌ها - نسخه اصلاح شده
+document.addEventListener('click', function(e) {
+  const alarmClose = document.getElementById('alarmClose');
+  const translateClose = document.getElementById('translateClose');
+  const sidebarClose = document.getElementById('sidebarClose');
+  
+  // اگر کلیک روی alarmBtn یا المان‌های فرزند آن نیست، close را مخفی کن
+  if (!alarmBtn.contains(e.target)) {
+    if (alarmClose) {
+      alarmClose.classList.remove('show');
+    }
+  }
+  
+  // اگر کلیک روی translateBtn یا المان‌های فرزند آن نیست، close را مخفی کن
+  if (!translateBtn.contains(e.target)) {
+    if (translateClose) {
+      translateClose.classList.remove('show');
+    }
+  }
+  
+  // اگر کلیک روی toolSidebar یا المان‌های فرزند آن نیست، close را مخفی کن
+});
+
+// اضافه کردن تابع بازیابی دکمه‌های مخفی شده
+function restoreHiddenButtons() {
+  alarmBtn.style.display = 'flex';
+  translateBtn.style.display = 'flex';
+  toolSidebar.style.display = 'block';
+}
+
+// راه‌اندازی دکمه‌های close پس از لود DOM
+document.addEventListener('DOMContentLoaded', setupFloatingCloseButtons);
+
+// برای تست: می‌توانید این تابع را صدا بزنید تا دکمه‌های مخفی شده برگردند
+// restoreHiddenButtons();
+</script>
+
+</div>
+</div>
+
+</body>
+</html>
