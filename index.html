@@ -9,7 +9,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    
+    <div class="language-selector-container" id="language-selector">
+        <h1>Select Language / زبان مورد نظر را انتخاب کنید</h1>
+        <div class="button-group">
+            <button id="lang-fa" class="lang-button">فارسی</button>
+            <button id="lang-en" class="lang-button">English</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="game-area" style="display: none;">
         <h1>شطرنج هوشمند</h1>
         <div id="board" style="width: 400px"></div>
         <p class="status-text" id="status">بازی شروع شد. نوبت سفید است.</p>
