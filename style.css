@@ -1,0 +1,267 @@
+/* تنظیمات عمومی */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1f1c2c, #928dab); /* پس زمینه گرادیان تیره و جذاب */
+    color: #f0f0f0;
+    overflow: hidden; /* جلوگیری از اسکرول بی مورد */
+}
+
+/* صفحه نمایش (Screen) و انتخاب زبان */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: inherit;
+    z-index: 10;
+    transition: opacity 0.5s;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+#language-selection h1 {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.language-buttons button {
+    padding: 15px 30px;
+    margin: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+    background: #3a2e5c;
+    color: #fff;
+    border: 2px solid #5a4b8f;
+    border-radius: 8px;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.language-buttons button:hover {
+    background: #5a4b8f;
+    transform: translateY(-2px);
+}
+
+/* ساختار کلی بازی */
+#game-container {
+    max-width: 1200px;
+    width: 90%;
+    display: none; /* تا زمانی که زبان انتخاب نشده، مخفی باشد */
+    flex-direction: column;
+    padding: 20px;
+}
+
+#game-container.active {
+    display: flex;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+#game-title {
+    color: #f7d794; /* رنگ طلایی */
+    font-size: 2.5em;
+    text-shadow: 0 0 10px rgba(247, 215, 148, 0.5);
+}
+
+#lang-switch-btn {
+    background: none;
+    border: 2px solid #aaa;
+    color: #f0f0f0;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+#lang-switch-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#game-area {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+/* پنل اطلاعات و کنترل */
+#info-panel {
+    width: 250px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+#turn-display {
+    color: #ffd700; /* زرد طلایی */
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+#message-box {
+    min-height: 50px;
+    background: #2a2a3a;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#new-game-btn {
+    padding: 10px 20px;
+    background: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#new-game-btn:hover {
+    background: #4cae4c;
+}
+
+/* صفحه شطرنج (مهره‌ها با فونت مخصوص شطرنج نمایش داده می‌شوند) */
+#chessboard-container {
+    perspective: 1000px;
+}
+
+#chessboard {
+    display: grid;
+    grid-template-columns: repeat(8, 70px);
+    grid-template-rows: repeat(8, 70px);
+    border: 5px solid #6b4d32; /* قاب چوبی */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    transform: rotateX(20deg) rotateZ(0deg); /* زاویه دید سه بعدی جذاب */
+    transition: transform 0.5s ease;
+}
+
+.square {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.light {
+    background-color: #f0d9b5; /* رنگ روشن */
+    color: #1a1a1a;
+}
+
+.dark {
+    background-color: #b58863; /* رنگ تیره */
+    color: #f0f0f0;
+}
+
+/* مهره‌ها */
+.piece {
+    user-select: none;
+    font-family: 'Chess Merida', 'Segoe UI Symbol', sans-serif; /* فرض بر استفاده از یک فونت شطرنج استاندارد */
+    /* یا از یونیکد (Unicode) استفاده می‌کنیم: */
+    /* سفید: ♔, ♕, ♖, ♗, ♘, ♙ */
+    /* سیاه: ♚, ♛, ♜, ♝, ♞, ♟ */
+}
+
+.piece.white { color: white; text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
+.piece.black { color: black; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+
+/* حالت‌های ویژه خانه‌ها */
+.selected {
+    background-color: rgba(69, 137, 255, 0.7) !important; /* آبی روشن برای خانه انتخاب شده */
+}
+
+.move-hint {
+    background-color: rgba(144, 238, 144, 0.6) !important; /* سبز روشن برای خانه‌های قابل حرکت */
+    position: relative;
+}
+.move-hint::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #4CAF50;
+}
+
+.capture-hint {
+    box-shadow: inset 0 0 0 5px #ff4d4d; /* حاشیه قرمز برای خانه قابل گرفتن */
+    background-color: rgba(255, 77, 77, 0.3) !important;
+}
+
+/* مهره‌های گرفته شده */
+.captured-pieces {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px;
+    min-height: 50px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+#captured-pieces-white {
+    order: 3; /* در سمت راست یا پایین قرار بگیرد */
+}
+
+#captured-pieces-black {
+    order: 1; /* در سمت چپ یا بالا قرار بگیرد */
+}
+
+.captured-piece {
+    font-size: 24px;
+    margin: 2px;
+}
+
+/* تطبیق با زبان فارسی */
+html[dir="rtl"] #game-area {
+    direction: rtl; /* برای پنل اطلاعات و چیدمان */
+}
+
+/* رسپانسیو (برای دستگاه‌های کوچکتر) */
+@media (max-width: 900px) {
+    #game-area {
+        flex-direction: column;
+    }
+    #info-panel {
+        width: 100%;
+        order: -1; /* برود بالا */
+        margin-bottom: 20px;
+    }
+    #chessboard {
+        grid-template-columns: repeat(8, 10vw);
+        grid-template-rows: repeat(8, 10vw);
+    }
+    .square {
+        width: 10vw;
+        height: 10vw;
+        font-size: 6vw;
+    }
+}
