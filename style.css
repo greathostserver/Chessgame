@@ -7,7 +7,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1f1c2c, #928dab); /* پس زمینه گرادیان تیره و جذاب */
+    background: linear-gradient(135deg, #1f1c2c, #928dab); 
     color: #f0f0f0;
     overflow: hidden; 
 }
@@ -19,24 +19,23 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    display: none;
+    display: none; 
     justify-content: center;
     align-items: center;
     flex-direction: column;
     background: inherit;
     z-index: 10;
-    opacity: 0; /* برای انیمیشن محو شدن/ظاهر شدن */
-    transition: opacity 0.5s;
 }
 
+/* این کلاس باعث نمایش صفحه می‌شود */
 .screen.active {
     display: flex;
-    opacity: 1;
 }
 
 #language-selection h1 {
     margin-bottom: 30px;
     text-align: center;
+    font-size: 2em;
 }
 
 .language-buttons button {
@@ -60,10 +59,8 @@ body {
 #game-container {
     max-width: 1200px;
     width: 90%;
-    display: flex; 
     flex-direction: column;
     padding: 20px;
-    /* این display: flex; در ابتدا به خاطر کلاس screen.active مخفی می‌شود */
 }
 
 header {
@@ -98,7 +95,7 @@ header {
     display: flex;
     justify-content: center;
     gap: 30px;
-    align-items: flex-start; /* تنظیم چیدمان عمودی */
+    align-items: flex-start; 
 }
 
 /* پنل اطلاعات و کنترل */
@@ -178,10 +175,9 @@ header {
     color: #f0f0f0;
 }
 
-/* مهره‌ها */
+/* مهره‌ها (یونیکد) */
 .piece {
     user-select: none;
-    /* استفاده از یونیکد برای مهره‌ها */
 }
 
 .piece.white { color: white; text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
@@ -202,7 +198,7 @@ header {
     height: 15px;
     border-radius: 50%;
     background-color: #4CAF50;
-    pointer-events: none; /* تا روی کلیک اختلال ایجاد نکند */
+    pointer-events: none; 
 }
 
 .capture-hint {
@@ -218,25 +214,15 @@ header {
     align-items: center;
     justify-content: flex-start;
     padding: 10px;
-    min-height: 200px; /* فضای کافی برای مهره‌ها */
+    min-height: 200px; 
     background: rgba(0, 0, 0, 0.2);
     border-radius: 5px;
-    width: 60px; /* عرض کم برای قرارگیری کنار صفحه شطرنج */
+    width: 60px; 
 }
 
 .captured-piece {
     font-size: 30px;
     margin: 2px;
-}
-
-#captured-pieces-black {
-    /* مهره‌های سیاه گرفته شده توسط سفید (نزدیک سفید) */
-    order: 1; 
-}
-
-#captured-pieces-white {
-    /* مهره‌های سفید گرفته شده توسط سیاه (نزدیک سیاه) */
-    order: 3; 
 }
 
 /* تطبیق با زبان فارسی */
@@ -255,21 +241,11 @@ html[dir="rtl"] #game-area {
         width: 90%;
         order: -1; 
     }
-    #chessboard-container {
-        order: 0;
-    }
     .captured-pieces {
         width: 90%;
         min-height: 50px;
         flex-direction: row;
         justify-content: center;
-        order: 2;
-    }
-    #captured-pieces-black {
-        order: 3; 
-    }
-    #captured-pieces-white {
-        order: 4; 
     }
     #chessboard {
         grid-template-columns: repeat(8, 10vw);
