@@ -4,48 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شطرنج پیشرفته | Advanced Chess</title>
-    
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" />
     <link rel="stylesheet" href="style.css">
-    
-    </head>
+</head>
 <body>
-
-    <div id="language-selection" class="screen active">
-        <h1>Welcome! Please select your language.</h1>
-        <h1>به بازی شطرنج خوش آمدید! لطفاً زبان خود را انتخاب کنید.</h1>
-        <div class="language-buttons">
-            <button onclick="setLanguage('en')">English</button>
-            <button onclick="setLanguage('fa')">فارسی</button>
-        </div>
+    <div class="container">
+        <h1>شطرنج هوشمند</h1>
+        <div id="board" style="width: 400px"></div>
+        <p class="status-text" id="status">بازی شروع شد. نوبت سفید است.</p>
+        <button id="reset-button">شروع مجدد بازی</button>
     </div>
-
-    <div id="game-container" class="screen">
-        <header>
-            <h1 id="game-title" data-en="Advanced Chess" data-fa="شطرنج پیشرفته">شطرنج پیشرفته</h1>
-            <button id="lang-switch-btn" onclick="toggleLanguage()">
-                <span id="lang-switch-text" data-en="فارسی" data-fa="English">فارسی</span>
-            </button>
-        </header>
-
-        <div id="game-area">
-            
-            <div id="captured-pieces-black" class="captured-pieces"></div>
-
-            <div id="info-panel">
-                <h2 id="turn-display" data-en="White's Turn (You)" data-fa="نوبت مهره‌های سفید (شما)">نوبت مهره‌های سفید (شما)</h2>
-                <div id="message-box" data-en="Ready to Play!" data-fa="آماده برای بازی!">آماده برای بازی!</div>
-                <div class="controls">
-                    <button id="new-game-btn" data-en="New Game" data-fa="بازی جدید">بازی جدید</button>
-                </div>
-            </div>
-
-            <div id="chessboard-container">
-                </div>
-            
-            <div id="captured-pieces-white" class="captured-pieces"></div>
-        </div>
-    </div>
-
+    
+    <script src="https://unpkg.com/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
