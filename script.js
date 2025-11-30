@@ -2,17 +2,14 @@
 // ** بخش ۱: تنظیمات، چندزبانگی و کتابخانه شطرنج
 //========================================================================================
 
-// برای اجرای این کد در گیت‌هاب پیجز، باید فایل chess.js را در HTML اضافه کنید.
-// اگر این کار را نکرده‌اید، این کد کار نخواهد کرد.
-const Chess = window.Chess; 
-const game = new Chess(); 
+let game = null; // متغیر بازی در ابتدا null است تا بعد از بارگذاری کتابخانه مقداردهی شود.
 let currentLanguage = 'fa'; 
 let selectedSquare = null;
 const BOARD_SIZE = 8;
 const PIECES = {
     // یونیکد مهره‌های شطرنج
-    'p': '♟', 'n': '♞', 'b': '♝', 'r': '♜', 'q': '♛', 'k': '♚',
-    'P': '♙', 'N': '♘', 'B': '♗', 'R': '♖', 'Q': '♕', 'K': '♔'
+    'P': '♙', 'N': '♘', 'B': '♗', 'R': '♖', 'Q': '♕', 'K': '♔', // سفید
+    'p': '♟', 'n': '♞', 'b': '♝', 'r': '♜', 'q': '♛', 'k': '♚'  // سیاه
 };
 const TEXTS = {
     fa: {
@@ -41,7 +38,7 @@ const TEXTS = {
     }
 };
 
-// ** تابع تنظیم زبان (اصلاح شده برای رفع مشکل نمایش) **
+// ** تابع تنظیم زبان (تضمینی) **
 function setLanguage(lang) {
     currentLanguage = lang;
     const langSelectScreen = document.getElementById('language-selection');
@@ -108,6 +105,8 @@ function createBoard() {
 
 // ** به روز رسانی نمایش مهره‌ها بر اساس وضعیت بازی **
 function updateBoard() {
+    if (!game) return; // اطمینان از تعریف شدن شیء بازی
+
     const squares = document.querySelectorAll('.square');
     squares.forEach(square => {
         const squareName = square.getAttribute('data-square');
@@ -119,15 +118,11 @@ function updateBoard() {
         if (piece) {
             const pieceDiv = document.createElement('span');
             pieceDiv.classList.add('piece', piece.color === 'w' ? 'white' : 'black');
-            pieceDiv.textContent = PIECES[piece.type + (piece.color === 'w' ? 'P' : 'p')]; // نمایش یونیکد صحیح
-            pieceDiv.textContent = PIECES[piece.type.toUpperCase()]; 
             
-            // اصلاح برای نمایش رنگ صحیح مهره در یونیکد
-            if (piece.color === 'w') {
-                pieceDiv.textContent = PIECES[piece.type.toUpperCase()]; 
-            } else {
-                pieceDiv.textContent = PIECES[piece.type.toLowerCase()]; 
-            }
+            // استفاده از کاراکتر یونیکد صحیح
+            const pieceChar = piece.color === 'w' ? piece.type.toUpperCase() : piece.type.toLowerCase();
+            pieceDiv.textContent = PIECES[pieceChar]; 
+
             square.appendChild(pieceDiv);
         }
     });
@@ -139,6 +134,7 @@ function updateBoard() {
 
 // ** نمایش نوبت و وضعیت بازی **
 function updateTurnDisplay() {
+    if (!game) return;
     const turnDisplay = document.getElementById('turn-display');
     const isWhiteTurn = game.turn() === 'w';
     const key = isWhiteTurn ? 'turn-display-w' : 'turn-display-b';
@@ -152,7 +148,7 @@ function updateMessageBox(message) {
 
 // ** مدیریت کلیک کاربر روی خانه شطرنج **
 function handleSquareClick(squareName) {
-    if (game.is_game_over() || game.turn() === 'b') return; 
+    if (!game || game.is_game_over() || game.turn() === 'b') return; 
 
     if (selectedSquare) {
         // ۱. تلاش برای حرکت
@@ -178,7 +174,6 @@ function handleSquareClick(squareName) {
                 updateMessageBox(TEXTS[currentLanguage]['message-ready']);
             } else {
                 updateMessageBox(TEXTS[currentLanguage]['message-invalid']);
-                // اگر حرکت نامعتبر بود، انتخاب قبلی را لغو کن
                 selectedSquare = null;
                 updateBoard(); 
             }
@@ -195,6 +190,7 @@ function handleSquareClick(squareName) {
 
 // ** هایلایت کردن خانه‌های قابل حرکت **
 function highlightMoves(square) {
+    if (!game) return;
     document.querySelectorAll('.square').forEach(s => s.classList.remove('selected', 'move-hint', 'capture-hint'));
 
     const selectedDiv = document.querySelector(`[data-square="${square}"]`);
@@ -218,15 +214,15 @@ function highlightMoves(square) {
 
 // ** نمایش مهره‌های گرفته شده **
 function updateCapturedPieces() {
+    if (!game) return;
     const capturedWhiteDiv = document.getElementById('captured-pieces-white');
     const capturedBlackDiv = document.getElementById('captured-pieces-black');
     capturedWhiteDiv.innerHTML = '';
     capturedBlackDiv.innerHTML = '';
 
-    const initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-    const initialGame = new Chess(initialFen);
+    // برای مقایسه، یک شیء بازی اولیه می‌سازیم (بهتر است یکبار ساخته شود)
+    const initialGame = new Chess('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
     
-    // یک کپی از مهره‌های شروع و فعلی برای مقایسه
     const getPieceCounts = (board) => {
         const counts = {};
         board.board().forEach(row => {
@@ -245,7 +241,7 @@ function updateCapturedPieces() {
     const allPieces = ['p', 'n', 'b', 'r', 'q', 'k'];
     
     allPieces.forEach(type => {
-        // مهره‌های سفید گرفته شده (تفاوت بین شروع و اکنون)
+        // مهره‌های سفید گرفته شده (توسط سیاه)
         const whiteCapturedCount = (initialCounts[type.toUpperCase() + 'w'] || 0) - (currentCounts[type.toUpperCase() + 'w'] || 0);
         for (let i = 0; i < whiteCapturedCount; i++) {
             const pieceDiv = document.createElement('span');
@@ -254,7 +250,7 @@ function updateCapturedPieces() {
             capturedWhiteDiv.appendChild(pieceDiv);
         }
         
-        // مهره‌های سیاه گرفته شده
+        // مهره‌های سیاه گرفته شده (توسط سفید)
         const blackCapturedCount = (initialCounts[type.toLowerCase() + 'b'] || 0) - (currentCounts[type.toLowerCase() + 'b'] || 0);
         for (let i = 0; i < blackCapturedCount; i++) {
             const pieceDiv = document.createElement('span');
@@ -267,6 +263,7 @@ function updateCapturedPieces() {
 
 // ** بررسی پایان بازی **
 function checkGameOver() {
+    if (!game) return;
     if (game.is_checkmate()) {
         updateMessageBox(TEXTS[currentLanguage]['message-checkmate']);
     } else if (game.is_stalemate()) {
@@ -280,17 +277,17 @@ function checkGameOver() {
 // ** بخش ۳: هوش مصنوعی (AI) - با الگوریتم Minimax ساده
 //========================================================================================
 
-let globalMaxDepth = 2; // عمق جستجو: ۲ حرکت به جلو
+let globalMaxDepth = 2; 
 
 function makeAIMove() {
-    if (game.turn() === 'b' && !game.is_game_over()) {
-        const bestMove = findBestMove(game); 
-        if (bestMove) {
-            game.move(bestMove);
-            updateBoard();
-            updateMessageBox(TEXTS[currentLanguage]['turn-display-w']);
-            checkGameOver();
-        }
+    if (!game || game.turn() === 'w' || game.is_game_over()) return;
+    
+    const bestMove = findBestMove(game); 
+    if (bestMove) {
+        game.move(bestMove);
+        updateBoard();
+        updateMessageBox(TEXTS[currentLanguage]['turn-display-w']);
+        checkGameOver();
     }
 }
 
@@ -321,24 +318,25 @@ function minimax(board, depth, isMaximizingPlayer) {
     }
 
     const possibleMoves = board.moves();
+    if (possibleMoves.length === 0) return evaluateBoard(board);
 
     if (isMaximizingPlayer) {
         let maxEval = -Infinity;
-        possibleMoves.forEach(move => {
+        for(const move of possibleMoves) {
             board.move(move);
             const evaluation = minimax(board, depth - 1, false);
             board.undo(); 
             maxEval = Math.max(maxEval, evaluation);
-        });
+        }
         return maxEval;
     } else {
         let minEval = Infinity;
-        possibleMoves.forEach(move => {
+        for(const move of possibleMoves) {
             board.move(move);
             const evaluation = minimax(board, depth - 1, true);
             board.undo();
             minEval = Math.min(minEval, evaluation);
-        });
+        }
         return minEval;
     }
 }
@@ -348,11 +346,9 @@ function findBestMove(board) {
     let bestMove = null;
     let bestValue = -Infinity;
 
-    if (possibleMoves.length === 1) {
-        return possibleMoves[0];
-    }
+    if (possibleMoves.length === 0) return null;
     
-    possibleMoves.forEach(move => {
+    for(const move of possibleMoves) {
         board.move(move);
         const boardValue = minimax(board, globalMaxDepth - 1, false); 
         board.undo();
@@ -361,7 +357,7 @@ function findBestMove(board) {
             bestValue = boardValue;
             bestMove = move;
         }
-    });
+    }
     
     return bestMove;
 }
@@ -372,6 +368,14 @@ function findBestMove(board) {
 
 // ** شروع بازی جدید **
 function newGame() {
+    // اگر شیء بازی ساخته نشده، آن را بساز
+    if (!game && typeof Chess !== 'undefined') {
+        game = new Chess();
+    } else if (!game) {
+        updateMessageBox("خطای سیستمی: کتابخانه شطرنج بارگذاری نشده است.");
+        return;
+    }
+
     game.reset(); 
     createBoard();
     updateBoard();
@@ -379,23 +383,29 @@ function newGame() {
     selectedSquare = null;
 }
 
-// ** اجرای اولیه برنامه در زمان بارگذاری صفحه **
+// ** اجرای اولیه برنامه در زمان بارگذاری صفحه (تضمینی) **
 window.onload = function() {
     const langSelectScreen = document.getElementById('language-selection');
     const gameScreen = document.getElementById('game-container');
     const newGameBtn = document.getElementById('new-game-btn');
 
-    // اتصال دکمه بازی جدید
+    // ۱. اتصال دکمه بازی جدید
     newGameBtn.addEventListener('click', newGame);
-
-    // مدیریت نمایش صفحات هنگام بارگذاری اولیه
+    
+    // ۲. بررسی وجود کتابخانه
+    if (typeof Chess === 'undefined') {
+        alert("خطا: کتابخانه chess.js پیدا نشد. لطفاً مطمئن شوید که به اینترنت متصل هستید یا خط CDN در index.html حذف نشده است.");
+        return;
+    }
+    
+    // ۳. مدیریت نمایش صفحات هنگام بارگذاری اولیه
     gameScreen.classList.remove('active');
     langSelectScreen.classList.remove('active');
 
     const savedLang = localStorage.getItem('chessLang');
 
     if (savedLang) {
-        // اگر زبان ذخیره شده بود، مستقیماً بازی را شروع کن
+        // اگر زبان ذخیره شده بود، مستقیماً بازی را شروع کن و صفحه بازی را فعال کن
         setLanguage(savedLang); 
     } else {
         // اگر ذخیره نشده، صفحه انتخاب زبان را نمایش بده
