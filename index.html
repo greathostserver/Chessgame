@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شطرنج پیشرفته | Advanced Chess</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
+    </head>
 <body>
 
     <div id="language-selection" class="screen active">
@@ -22,24 +21,26 @@
         <header>
             <h1 id="game-title" data-en="Advanced Chess" data-fa="شطرنج پیشرفته">شطرنج پیشرفته</h1>
             <button id="lang-switch-btn" onclick="toggleLanguage()">
-                <span id="lang-switch-text" data-en="فارسی" data-fa="English">English</span>
+                <span id="lang-switch-text" data-en="فارسی" data-fa="English">فارسی</span>
             </button>
         </header>
 
         <div id="game-area">
+            
+            <div id="captured-pieces-black" class="captured-pieces"></div>
+
             <div id="info-panel">
                 <h2 id="turn-display" data-en="White's Turn" data-fa="نوبت مهره‌های سفید">نوبت مهره‌های سفید</h2>
                 <div id="message-box" data-en="Ready to Play!" data-fa="آماده برای بازی!">آماده برای بازی!</div>
                 <div class="controls">
-                    <button id="new-game-btn" onclick="newGame()" data-en="New Game" data-fa="بازی جدید">بازی جدید</button>
-                </div>
+                    <button id="new-game-btn" data-en="New Game" data-fa="بازی جدید">بازی جدید</button>
+                    </div>
             </div>
 
             <div id="chessboard-container">
                 </div>
             
             <div id="captured-pieces-white" class="captured-pieces"></div>
-            <div id="captured-pieces-black" class="captured-pieces"></div>
         </div>
     </div>
 
