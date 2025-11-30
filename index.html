@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شطرنج پیشرفته | Advanced Chess</title>
+    
     <link rel="stylesheet" href="style.css">
-    </head>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chess.js@1.0.0/dist/chess.min.js"></script>
+
+</head>
 <body>
 
     <div id="language-selection" class="screen active">
@@ -30,11 +34,11 @@
             <div id="captured-pieces-black" class="captured-pieces"></div>
 
             <div id="info-panel">
-                <h2 id="turn-display" data-en="White's Turn" data-fa="نوبت مهره‌های سفید">نوبت مهره‌های سفید</h2>
+                <h2 id="turn-display" data-en="White's Turn (You)" data-fa="نوبت مهره‌های سفید (شما)">نوبت مهره‌های سفید (شما)</h2>
                 <div id="message-box" data-en="Ready to Play!" data-fa="آماده برای بازی!">آماده برای بازی!</div>
                 <div class="controls">
                     <button id="new-game-btn" data-en="New Game" data-fa="بازی جدید">بازی جدید</button>
-                    </div>
+                </div>
             </div>
 
             <div id="chessboard-container">
