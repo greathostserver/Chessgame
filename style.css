@@ -1,259 +1,107 @@
-/* تنظیمات عمومی */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+    font-family: Tahoma, sans-serif;
+    direction: rtl;
+    text-align: right;
+    background-color: #f4f4f4;
+    padding: 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1f1c2c, #928dab); 
-    color: #f0f0f0;
-    overflow: hidden; 
 }
 
-/* صفحه نمایش (Screen) و انتخاب زبان */
-.screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none; 
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background: inherit;
-    z-index: 10;
-}
-
-/* این کلاس باعث نمایش صفحه می‌شود */
-.screen.active {
-    display: flex;
-}
-
-#language-selection h1 {
-    margin-bottom: 30px;
-    text-align: center;
-    font-size: 2em;
-}
-
-.language-buttons button {
-    padding: 15px 30px;
-    margin: 10px;
-    font-size: 1.2em;
-    cursor: pointer;
-    background: #3a2e5c;
-    color: #fff;
-    border: 2px solid #5a4b8f;
+.container {
+    background-color: #fff;
+    padding: 30px;
     border-radius: 8px;
-    transition: background 0.3s, transform 0.1s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 460px; /* برای متناسب شدن با سایز برد */
+    width: 100%;
+    margin-top: 20px;
 }
 
-.language-buttons button:hover {
-    background: #5a4b8f;
+/* استایل برای صفحه انتخاب زبان */
+.language-selector-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 460px;
+    width: 100%;
+    text-align: center;
+}
+
+.language-selector-container h1 {
+    font-size: 1.6em;
+    color: #333;
+    margin-bottom: 30px;
+    direction: ltr; /* برای نمایش عنوان به صورت چپ به راست */
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-around;
+}
+
+.lang-button {
+    padding: 12px 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    width: 45%;
+}
+
+#lang-fa {
+    background-color: #007bff;
+    color: white;
+}
+
+#lang-en {
+    background-color: #28a745;
+    color: white;
+}
+
+.lang-button:hover {
     transform: translateY(-2px);
 }
 
-/* ساختار کلی بازی */
-#game-container {
-    max-width: 1200px;
-    width: 90%;
-    flex-direction: column;
-    padding: 20px;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 0 10px;
-}
-
-#game-title {
-    color: #f7d794; 
-    font-size: 2.5em;
-    text-shadow: 0 0 10px rgba(247, 215, 148, 0.5);
-}
-
-#lang-switch-btn {
-    background: none;
-    border: 2px solid #aaa;
-    color: #f0f0f0;
-    padding: 8px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-#lang-switch-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-#game-area {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    align-items: flex-start; 
-}
-
-/* پنل اطلاعات و کنترل */
-#info-panel {
-    width: 250px;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+/* استایل های بخش بازی */
+.game-container h1 {
     text-align: center;
-}
-
-#turn-display {
-    color: #ffd700; 
-    margin-bottom: 15px;
+    color: #333;
+    margin-bottom: 20px;
     font-size: 1.5em;
 }
 
-#message-box {
-    min-height: 50px;
-    background: #2a2a3a;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+#board {
+    margin: 0 auto 20px auto;
 }
 
-#new-game-btn {
-    padding: 10px 20px;
-    background: #5cb85c;
+.status-text {
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    margin-top: 15px;
+}
+
+#reset-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background 0.3s;
+    font-size: 1em;
+    transition: background-color 0.3s;
 }
 
-#new-game-btn:hover {
-    background: #4cae4c;
-}
-
-/* صفحه شطرنج */
-#chessboard-container {
-    perspective: 1000px;
-}
-
-#chessboard {
-    display: grid;
-    grid-template-columns: repeat(8, 70px);
-    grid-template-rows: repeat(8, 70px);
-    border: 5px solid #6b4d32; 
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-    transform: rotateX(20deg) rotateZ(0deg); 
-    transition: transform 0.5s ease;
-}
-
-.square {
-    width: 70px;
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 40px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.light {
-    background-color: #f0d9b5; 
-    color: #1a1a1a;
-}
-
-.dark {
-    background-color: #b58863; 
-    color: #f0f0f0;
-}
-
-/* مهره‌ها (یونیکد) */
-.piece {
-    user-select: none;
-}
-
-.piece.white { color: white; text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
-.piece.black { color: black; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
-
-/* حالت‌های ویژه خانه‌ها */
-.selected {
-    background-color: rgba(69, 137, 255, 0.7) !important; 
-}
-
-.move-hint {
-    position: relative;
-}
-.move-hint::after {
-    content: '';
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: #4CAF50;
-    pointer-events: none; 
-}
-
-.capture-hint {
-    box-shadow: inset 0 0 0 5px #ff4d4d; 
-    background-color: rgba(255, 77, 77, 0.3) !important;
-}
-
-/* مهره‌های گرفته شده */
-.captured-pieces {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 10px;
-    min-height: 200px; 
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    width: 60px; 
-}
-
-.captured-piece {
-    font-size: 30px;
-    margin: 2px;
-}
-
-/* تطبیق با زبان فارسی */
-html[dir="rtl"] #game-area {
-    direction: rtl; 
-}
-
-/* رسپانسیو */
-@media (max-width: 1000px) {
-    #game-area {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-    #info-panel {
-        width: 90%;
-        order: -1; 
-    }
-    .captured-pieces {
-        width: 90%;
-        min-height: 50px;
-        flex-direction: row;
-        justify-content: center;
-    }
-    #chessboard {
-        grid-template-columns: repeat(8, 10vw);
-        grid-template-rows: repeat(8, 10vw);
-    }
-    .square {
-        width: 10vw;
-        height: 10vw;
-        font-size: 6vw;
-    }
+#reset-button:hover {
+    background-color: #0056b3;
 }
