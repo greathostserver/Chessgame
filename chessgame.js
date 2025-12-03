@@ -1,4 +1,3 @@
-// دیکشنری زبان‌ها
 const translations = {
     fa: {
         title: 'بازی شطرنج',
@@ -50,7 +49,7 @@ let game;
 let board;
 let difficulty = 4;
 let boardThemeIndex = 0;
-let pieceThemeIndex = 0; // فعلاً فقط یک تم، می‌تونی اضافه کنی
+let pieceThemeIndex = 0;
 let moveHistory = [];
 
 // صداها
@@ -60,35 +59,25 @@ const captureSound = new Audio('https://raw.githubusercontent.com/lichess-org/li
 // boardTheme function
 function getBoardTheme() {
     const themes = [
-        { light: '#f0d9b5', dark: '#b58863' }, // green
-        { light: '#e6f3ff', dark: '#4a90e2' }, // blue
-        { light: '#d18b47', dark: '#ffce9e' }  // dark
+        { light: '#f0d9b5', dark: '#b58863' },
+        { light: '#e6f3ff', dark: '#4a90e2' },
+        { light: '#d18b47', dark: '#ffce9e' }
     ];
-    const theme = themes[boardThemeIndex % themes.length];
+    const theme = themes[boardThemeIndex % 3];
     return function(square) {
         const isEven = ((square.charCodeAt(0) - 97) + parseInt(square[1])) % 2 === 0;
         return isEven ? `background-color: ${theme.dark};` : `background-color: ${theme.light};`;
     };
 }
 
-// pieceTheme function - فیکس اصلی!
+// pieceTheme unicode - فیکس CORS!
 function getPieceTheme() {
-    const pieces = {
-        'wK': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg',
-        'wQ': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
-        'wR': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
-        'wB': 'https://upload.wikimedia.org/wikipedia/commons/9/91/Chess_blt45.svg',
-        'wN': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
-        'wP': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
-        'bK': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
-        'bQ': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
-        'bR': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
-        'bB': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
-        'bN': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
-        'bP': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg'
+    const unicodePieces = {
+        'wK': '♔', 'wQ': '♕', 'wR': '♖', 'wB': '♗', 'wN': '♘', 'wP': '♙',
+        'bK': '♚', 'bQ': '♛', 'bR': '♜', 'bB': '♝', 'bN': '♞', 'bP': '♟'
     };
-    return function(piece) { // function برمی‌گردونه!
-        return pieces[piece] || '';
+    return function(piece) {
+        return `<div class="chess-piece">${unicodePieces[piece] || ''}</div>`;
     };
 }
 
@@ -96,20 +85,18 @@ function setLanguage(langCode) {
     currentLang = langCode;
     lang = translations[langCode];
     document.documentElement.lang = langCode;
-    document.documentElement.dir = langCode === 'fa' || langCode === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = (langCode === 'fa' || langCode === 'ar') ? 'rtl' : 'ltr';
     document.getElementById('language-screen').classList.add('hidden');
     document.getElementById('game-screen').classList.remove('hidden');
     updateUI();
-    setTimeout(initGame, 100); // تاخیر برای لود DOM
+    setTimeout(initGame, 100);
 }
 
 function updateUI() {
     document.getElementById('title').textContent = lang.title;
     document.getElementById('history-title').textContent = lang.historyTitle;
     const options = document.querySelectorAll('#difficulty option');
-    options[0].textContent = lang.easy;
-    options[1].textContent = lang.medium;
-    options[2].textContent = lang.hard;
+    [lang.easy, lang.medium, lang.hard].forEach((text, i) => options[i].textContent = text);
     const buttons = document.querySelectorAll('.controls button');
     buttons[0].textContent = lang.changeBoard;
     buttons[1].textContent = lang.changePiece;
@@ -119,11 +106,7 @@ function updateUI() {
 
 function initGame() {
     try {
-        if (typeof Chessboard === 'undefined') {
-            throw new Error('Chessboard.js not loaded. Check internet.');
-        }
-        if (game) game.reset();
-        else game = new Chess();
+        game = new Chess();
         const config = {
             draggable: true,
             position: 'start',
@@ -131,15 +114,16 @@ function initGame() {
             onDrop: onDrop,
             onSnapEnd: onSnapEnd,
             pieceTheme: getPieceTheme(),
-            boardTheme: getBoardTheme()
+            boardTheme: getBoardTheme(),
+            showNotation: false
         };
         board = Chessboard('board', config);
-        console.log('Board initialized successfully!');
+        console.log('بازی لود شد! Board ready.');
         updateStatus();
         updateHistory();
     } catch (e) {
-        console.error('Init error:', e);
-        alert('خطا: ' + e.message + '\nکنسول (F12) رو چک کن.');
+        console.error('خطا:', e);
+        alert('خطا در لود: ' + e.message + ' - اینترنت یا مرورگر چک کن.');
     }
 }
 
@@ -156,7 +140,7 @@ function onDrop(source, target) {
         return 'snapback';
     }
     moveHistory.push(move.san);
-    (move.captured ? captureSound : moveSound).play().catch(e => console.log('Sound error:', e));
+    (move.captured ? captureSound : moveSound).play().catch(console.log);
     updateStatus();
     if (game.turn() === 'b') setTimeout(makeRandomMove, 300);
     updateHistory();
@@ -171,56 +155,56 @@ function makeRandomMove() {
     const bestMove = minimaxRoot(difficulty, game);
     game.move(bestMove);
     moveHistory.push(bestMove.san);
-    (bestMove.captured ? captureSound : moveSound).play().catch(() => {});
+    (bestMove.captured ? captureSound : moveSound).play().catch(console.log);
     board.position(game.fen());
     updateStatus();
     updateHistory();
 }
 
 function minimaxRoot(depth, game) {
-    let best = -Infinity;
-    let move = null;
-    game.moves().forEach(m => {
-        game.move(m);
-        const val = minimax(depth - 1, game, -Infinity, Infinity, false);
+    let bestValue = -Infinity;
+    let bestMove = null;
+    game.moves().forEach(move => {
+        game.move(move);
+        const value = minimax(depth - 1, game, -Infinity, Infinity, false);
         game.undo();
-        if (val > best) {
-            best = val;
-            move = m;
+        if (value > bestValue) {
+            bestValue = value;
+            bestMove = move;
         }
     });
-    return move;
+    return bestMove;
 }
 
-function minimax(depth, game, alpha, beta, max) {
+function minimax(depth, game, alpha, beta, maximizing) {
     if (depth === 0 || game.game_over()) return evaluateBoard(game.board());
-    if (max) {
-        let best = -Infinity;
-        game.moves().forEach(m => {
-            game.move(m);
-            best = Math.max(best, minimax(depth - 1, game, alpha, beta, false));
+    if (maximizing) {
+        let maxEval = -Infinity;
+        game.moves().forEach(move => {
+            game.move(move);
+            maxEval = Math.max(maxEval, minimax(depth - 1, game, alpha, beta, false));
             game.undo();
-            alpha = Math.max(alpha, best);
+            alpha = Math.max(alpha, maxEval);
             if (beta <= alpha) return;
         });
-        return best;
+        return maxEval;
     } else {
-        let best = Infinity;
-        game.moves().forEach(m => {
-            game.move(m);
-            best = Math.min(best, minimax(depth - 1, game, alpha, beta, true));
+        let minEval = Infinity;
+        game.moves().forEach(move => {
+            game.move(move);
+            minEval = Math.min(minEval, minimax(depth - 1, game, alpha, beta, true));
             game.undo();
-            beta = Math.min(beta, best);
+            beta = Math.min(beta, minEval);
             if (beta <= alpha) return;
         });
-        return best;
+        return minEval;
     }
 }
 
 function evaluateBoard(board) {
-    const val = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+    const values = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
     let score = 0;
-    board.flat().forEach(p => { if (p) score += (p.color === 'w' ? val[p.type] : -val[p.type]); });
+    board.flat().forEach(p => { if (p) score += p.color === 'w' ? values[p.type] : -values[p.type]; });
     return score;
 }
 
@@ -235,17 +219,19 @@ function updateStatus() {
 function updateHistory() {
     const el = document.getElementById('move-history');
     el.innerHTML = '';
-    moveHistory.forEach((move, i) => {
+    for (let i = 0; i < moveHistory.length; i += 2) {
         const li = document.createElement('li');
-        li.textContent = `${Math.floor(i / 2) + 1}. ${move}`;
-        li.onclick = () => goToMove(i);
+        li.textContent = `${Math.floor(i / 2) + 1}. ${moveHistory[i]}${moveHistory[i+1] ? ' ' + moveHistory[i+1] : ''}`;
+        li.onclick = () => goToMove(i / 2);
         el.appendChild(li);
-    });
+    }
 }
 
 function goToMove(index) {
     game.reset();
-    moveHistory.slice(0, index + 1).forEach(m => game.move(m));
+    for (let i = 0; i < index * 2; i++) {
+        if (moveHistory[i]) game.move(moveHistory[i]);
+    }
     board.position(game.fen());
     updateStatus();
     updateHistory();
@@ -253,34 +239,24 @@ function goToMove(index) {
 
 function setDifficulty(level) {
     difficulty = { easy: 2, medium: 4, hard: 6 }[level] || 4;
-    console.log('Difficulty set to:', difficulty);
 }
 
 function changeBoardTheme() {
     boardThemeIndex = (boardThemeIndex + 1) % 3;
-    console.log('Board theme changed to:', boardThemeIndex);
-    if (board) {
-        board.destroy();
-        initGame(); // بازسازی برای apply تم
-    }
+    if (board) board.start();
 }
 
 function changePieceTheme() {
-    pieceThemeIndex = (pieceThemeIndex + 1) % 2; // فعلاً ۲ تم، یکی wiki یکی default
-    console.log('Piece theme changed');
-    if (board) {
-        board.destroy();
-        initGame();
-    }
+    pieceThemeIndex = (pieceThemeIndex + 1) % 2; // unicode vs simple text
+    initGame(); // بازسازی
 }
 
 function newGame() {
     game.reset();
     moveHistory = [];
-    if (board) board.start();
+    board.start();
     updateStatus();
     updateHistory();
-    console.log('New game started');
 }
 
 function showWarning() {
@@ -289,9 +265,7 @@ function showWarning() {
     setTimeout(() => w.classList.add('hidden'), 3000);
 }
 
-// شروع
 document.addEventListener('DOMContentLoaded', () => {
     moveSound.load();
     captureSound.load();
-    console.log('DOM loaded, ready for language select.');
 });
