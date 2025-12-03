@@ -1,4 +1,4 @@
-// دیکشنری زبان‌ها (i18n)
+// دیکشنری زبان‌ها
 const translations = {
     fa: {
         title: 'بازی شطرنج',
@@ -50,30 +50,28 @@ let game;
 let board;
 let difficulty = 4;
 let boardThemeIndex = 0;
-let pieceThemeIndex = 0;
+let pieceThemeIndex = 0; // فعلاً فقط یک تم، می‌تونی اضافه کنی
 let moveHistory = [];
-let selectedSquare = null;
 
-// صداهای جدید از Lichess (royalty-free)
+// صداها
 const moveSound = new Audio('https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/move.mp3');
 const captureSound = new Audio('https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/capture.mp3');
 
-// تابع boardTheme سفارشی (function برمی‌گردونه CSS)
+// boardTheme function
 function getBoardTheme() {
     const themes = [
         { light: '#f0d9b5', dark: '#b58863' }, // green
         { light: '#e6f3ff', dark: '#4a90e2' }, // blue
         { light: '#d18b47', dark: '#ffce9e' }  // dark
     ];
-    const theme = themes[boardThemeIndex];
+    const theme = themes[boardThemeIndex % themes.length];
     return function(square) {
-        // محاسبه رنگ بر اساس موقعیت (a1 dark)
-        const isDark = (square.charCodeAt(0) - 97 + parseInt(square[1])) % 2 === 0;
-        return isDark ? `background-color: ${theme.dark};` : `background-color: ${theme.light};`;
+        const isEven = ((square.charCodeAt(0) - 97) + parseInt(square[1])) % 2 === 0;
+        return isEven ? `background-color: ${theme.dark};` : `background-color: ${theme.light};`;
     };
 }
 
-// تابع pieceTheme (wiki SVG)
+// pieceTheme function - فیکس اصلی!
 function getPieceTheme() {
     const pieces = {
         'wK': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg',
@@ -89,27 +87,22 @@ function getPieceTheme() {
         'bN': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
         'bP': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg'
     };
-    return pieces;
+    return function(piece) { // function برمی‌گردونه!
+        return pieces[piece] || '';
+    };
 }
 
-// تنظیم زبان
 function setLanguage(langCode) {
-    try {
-        currentLang = langCode;
-        lang = translations[langCode];
-        document.documentElement.lang = langCode;
-        document.documentElement.dir = langCode === 'fa' || langCode === 'ar' ? 'rtl' : 'ltr';
-        document.body.className = `board-theme-${['green', 'blue', 'dark'][boardThemeIndex]}`;
-        document.getElementById('language-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
-        updateUI();
-        initGame();
-    } catch (e) {
-        console.error('Language set error:', e);
-    }
+    currentLang = langCode;
+    lang = translations[langCode];
+    document.documentElement.lang = langCode;
+    document.documentElement.dir = langCode === 'fa' || langCode === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('language-screen').classList.add('hidden');
+    document.getElementById('game-screen').classList.remove('hidden');
+    updateUI();
+    setTimeout(initGame, 100); // تاخیر برای لود DOM
 }
 
-// به‌روزرسانی UI
 function updateUI() {
     document.getElementById('title').textContent = lang.title;
     document.getElementById('history-title').textContent = lang.historyTitle;
@@ -117,18 +110,20 @@ function updateUI() {
     options[0].textContent = lang.easy;
     options[1].textContent = lang.medium;
     options[2].textContent = lang.hard;
-    document.querySelectorAll('.controls button')[0].textContent = lang.changeBoard;
-    document.querySelectorAll('.controls button')[1].textContent = lang.changePiece;
-    document.querySelectorAll('.controls button')[2].textContent = lang.newGame;
+    const buttons = document.querySelectorAll('.controls button');
+    buttons[0].textContent = lang.changeBoard;
+    buttons[1].textContent = lang.changePiece;
+    buttons[2].textContent = lang.newGame;
     document.getElementById('warning').textContent = lang.invalidMove;
 }
 
-// مقداردهی اولیه
 function initGame() {
     try {
-        if (typeof Chess === 'undefined') throw new Error('Chess.js not loaded');
-        game = new Chess();
-        const boardEl = document.getElementById('board');
+        if (typeof Chessboard === 'undefined') {
+            throw new Error('Chessboard.js not loaded. Check internet.');
+        }
+        if (game) game.reset();
+        else game = new Chess();
         const config = {
             draggable: true,
             position: 'start',
@@ -139,15 +134,15 @@ function initGame() {
             boardTheme: getBoardTheme()
         };
         board = Chessboard('board', config);
+        console.log('Board initialized successfully!');
         updateStatus();
         updateHistory();
     } catch (e) {
         console.error('Init error:', e);
-        alert('خطا در لود بازی. اینترنت چک کن.');
+        alert('خطا: ' + e.message + '\nکنسول (F12) رو چک کن.');
     }
 }
 
-// رویدادهای بورد
 function onDragStart(source, piece) {
     if (game.game_over() || (game.turn() === 'w' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
         return false;
@@ -160,17 +155,10 @@ function onDrop(source, target) {
         showWarning();
         return 'snapback';
     }
-
     moveHistory.push(move.san);
-    if (move.captured) {
-        captureSound.play().catch(e => console.log('Capture sound error:', e));
-    } else {
-        moveSound.play().catch(e => console.log('Move sound error:', e));
-    }
+    (move.captured ? captureSound : moveSound).play().catch(e => console.log('Sound error:', e));
     updateStatus();
-    if (game.turn() === 'b') {
-        setTimeout(() => makeRandomMove(), 500); // تاخیر برای AI
-    }
+    if (game.turn() === 'b') setTimeout(makeRandomMove, 300);
     updateHistory();
 }
 
@@ -178,75 +166,70 @@ function onSnapEnd() {
     board.position(game.fen());
 }
 
-// AI Minimax (بهینه)
 function makeRandomMove() {
     if (game.game_over()) return;
     const bestMove = minimaxRoot(difficulty, game);
     game.move(bestMove);
     moveHistory.push(bestMove.san);
+    (bestMove.captured ? captureSound : moveSound).play().catch(() => {});
     board.position(game.fen());
-    if (bestMove.captured) captureSound.play().catch(() => {});
-    else moveSound.play().catch(() => {});
     updateStatus();
     updateHistory();
 }
 
 function minimaxRoot(depth, game) {
-    let bestMove = null;
-    let bestValue = -Infinity;
-    game.moves().forEach(move => {
-        game.move(move);
-        const value = minimax(depth - 1, game, -Infinity, Infinity, false);
+    let best = -Infinity;
+    let move = null;
+    game.moves().forEach(m => {
+        game.move(m);
+        const val = minimax(depth - 1, game, -Infinity, Infinity, false);
         game.undo();
-        if (value > bestValue) {
-            bestValue = value;
-            bestMove = move;
+        if (val > best) {
+            best = val;
+            move = m;
         }
     });
-    return bestMove;
+    return move;
 }
 
-function minimax(depth, game, alpha, beta, maximizing) {
+function minimax(depth, game, alpha, beta, max) {
     if (depth === 0 || game.game_over()) return evaluateBoard(game.board());
-    if (maximizing) {
-        let maxEval = -Infinity;
-        game.moves().forEach(move => {
-            game.move(move);
-            maxEval = Math.max(maxEval, minimax(depth - 1, game, alpha, beta, false));
+    if (max) {
+        let best = -Infinity;
+        game.moves().forEach(m => {
+            game.move(m);
+            best = Math.max(best, minimax(depth - 1, game, alpha, beta, false));
             game.undo();
-            alpha = Math.max(alpha, maxEval);
+            alpha = Math.max(alpha, best);
             if (beta <= alpha) return;
         });
-        return maxEval;
+        return best;
     } else {
-        let minEval = Infinity;
-        game.moves().forEach(move => {
-            game.move(move);
-            minEval = Math.min(minEval, minimax(depth - 1, game, alpha, beta, true));
+        let best = Infinity;
+        game.moves().forEach(m => {
+            game.move(m);
+            best = Math.min(best, minimax(depth - 1, game, alpha, beta, true));
             game.undo();
-            beta = Math.min(beta, minEval);
+            beta = Math.min(beta, best);
             if (beta <= alpha) return;
         });
-        return minEval;
+        return best;
     }
 }
 
 function evaluateBoard(board) {
-    const values = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+    const val = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
     let score = 0;
-    board.forEach(row => row.forEach(piece => {
-        if (piece) score += (piece.color === 'w' ? values[piece.type] : -values[piece.type]);
-    }));
+    board.flat().forEach(p => { if (p) score += (p.color === 'w' ? val[p.type] : -val[p.type]); });
     return score;
 }
 
-// وضعیت و تاریخچه
 function updateStatus() {
-    let status = '';
-    if (game.in_checkmate()) status = game.turn() === 'w' ? lang.checkmateBlack : lang.checkmateWhite;
-    else if (game.in_stalemate()) status = lang.stalemate;
-    else status = game.turn() === 'w' ? lang.turnWhite : lang.turnBlack;
-    document.getElementById('status').innerHTML = status;
+    let msg = '';
+    if (game.in_checkmate()) msg = game.turn() === 'w' ? lang.checkmateBlack : lang.checkmateWhite;
+    else if (game.in_stalemate()) msg = lang.stalemate;
+    else msg = game.turn() === 'w' ? lang.turnWhite : lang.turnBlack;
+    document.getElementById('status').innerHTML = msg;
 }
 
 function updateHistory() {
@@ -254,55 +237,61 @@ function updateHistory() {
     el.innerHTML = '';
     moveHistory.forEach((move, i) => {
         const li = document.createElement('li');
-        li.textContent = `${Math.floor(i/2)+1}. ${move}`;
+        li.textContent = `${Math.floor(i / 2) + 1}. ${move}`;
         li.onclick = () => goToMove(i);
         el.appendChild(li);
     });
 }
 
 function goToMove(index) {
-    const history = game.history({ verbose: true });
-    game.load('');
-    history.slice(0, index + 1).forEach(m => game.move(m));
+    game.reset();
+    moveHistory.slice(0, index + 1).forEach(m => game.move(m));
     board.position(game.fen());
-    moveHistory = game.history();
     updateStatus();
     updateHistory();
 }
 
-// کنترل‌ها
 function setDifficulty(level) {
-    difficulty = { easy: 2, medium: 4, hard: 6 }[level];
+    difficulty = { easy: 2, medium: 4, hard: 6 }[level] || 4;
+    console.log('Difficulty set to:', difficulty);
 }
 
 function changeBoardTheme() {
     boardThemeIndex = (boardThemeIndex + 1) % 3;
-    document.body.className = `board-theme-${['green', 'blue', 'dark'][boardThemeIndex]}`;
-    if (board) board.start(); // اعمال
+    console.log('Board theme changed to:', boardThemeIndex);
+    if (board) {
+        board.destroy();
+        initGame(); // بازسازی برای apply تم
+    }
 }
 
 function changePieceTheme() {
-    pieceThemeIndex = (pieceThemeIndex + 1) % 3; // می‌تونی تم‌های بیشتر اضافه کنی
-    initGame(); // بازسازی
+    pieceThemeIndex = (pieceThemeIndex + 1) % 2; // فعلاً ۲ تم، یکی wiki یکی default
+    console.log('Piece theme changed');
+    if (board) {
+        board.destroy();
+        initGame();
+    }
 }
 
 function newGame() {
     game.reset();
     moveHistory = [];
-    board.start();
+    if (board) board.start();
     updateStatus();
     updateHistory();
+    console.log('New game started');
 }
 
 function showWarning() {
-    const warning = document.getElementById('warning');
-    warning.classList.remove('hidden');
-    setTimeout(() => warning.classList.add('hidden'), 3000);
+    const w = document.getElementById('warning');
+    w.classList.remove('hidden');
+    setTimeout(() => w.classList.add('hidden'), 3000);
 }
 
 // شروع
 document.addEventListener('DOMContentLoaded', () => {
-    // preload sounds
     moveSound.load();
     captureSound.load();
+    console.log('DOM loaded, ready for language select.');
 });
