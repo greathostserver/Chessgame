@@ -1,11 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap'); /* فونت عربی */
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif; /* فونت فارسی پیش‌فرض */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     margin: 0;
     padding: 20px;
     color: #333;
-    direction: rtl; /* برای فارسی/عربی */
+    direction: rtl;
+    min-height: 100vh;
 }
+
+[dir="ltr"] {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    direction: ltr;
+}
+
+[dir="rtl"] h1, [dir="rtl"] h3 { font-family: 'Vazirmatn', sans-serif; }
+[dir="ar"] { font-family: 'Amiri', serif; } /* عربی */
 
 .screen {
     display: flex;
@@ -23,22 +34,32 @@ body {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-.screen button {
+.screen button, .controls button {
     background: #4CAF50;
     color: white;
     border: none;
-    padding: 15px 30px;
+    padding: 12px 24px;
     margin: 10px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     border-radius: 25px;
     cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
+    transition: all 0.3s ease;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.screen button:hover {
+.screen button:hover, .controls button:hover {
     background: #45a049;
     transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+.controls select {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    margin: 0 10px;
 }
 
 .hidden {
@@ -54,55 +75,61 @@ body {
     padding: 15px;
     border-radius: 10px;
     color: white;
+    flex-wrap: wrap;
 }
 
-.controls select, .controls button {
-    margin-left: 10px;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background: white;
-    cursor: pointer;
-}
+[dir="rtl"] .header { flex-direction: row-reverse; }
+[dir="ltr"] .header { flex-direction: row; }
 
 .game-container {
     display: flex;
     justify-content: center;
     gap: 20px;
+    flex-wrap: wrap;
+}
+
+#board {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .sidebar {
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.95);
     padding: 20px;
     border-radius: 10px;
-    width: 200px;
-    height: 400px;
+    width: 220px;
+    min-height: 400px;
     overflow-y: auto;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    direction: ltr; /* تاریخچه LTR برای SAN */
 }
 
 #move-history {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 #move-history li {
-    padding: 5px;
+    padding: 8px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
+    transition: background 0.2s;
 }
 
 #move-history li:hover {
-    background: #f0f0f0;
+    background: #e3f2fd;
 }
 
 .status {
     margin-top: 20px;
     padding: 10px;
-    background: #e7f3ff;
+    background: #e8f5e8;
     border-radius: 5px;
     text-align: center;
     font-weight: bold;
+    color: #2e7d32;
 }
 
 .warning {
@@ -112,26 +139,37 @@ body {
     transform: translateX(-50%);
     background: #ff9800;
     color: white;
-    padding: 15px;
+    padding: 15px 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     z-index: 1000;
-    animation: fadeInOut 3s;
+    animation: fadeInOut 3s ease-in-out;
+    text-align: center;
+    min-width: 200px;
 }
 
 @keyframes fadeInOut {
-    0% { opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { opacity: 0; }
+    0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* تم‌های بورد سفارشی */
+/* تم‌های بورد - override chessboard classes */
+.light-square {
+    background-color: var(--light-square, #f0d9b5) !important;
+}
+
+.dark-square {
+    background-color: var(--dark-square, #b58863) !important;
+}
+
 .board-theme-green { --light-square: #f0d9b5; --dark-square: #b58863; }
 .board-theme-blue { --light-square: #e6f3ff; --dark-square: #4a90e2; }
 .board-theme-dark { --light-square: #d18b47; --dark-square: #ffce9e; }
 
-/* برای عربی، dir=rtl حفظ می‌شه */
-[dir=rtl] .header { flex-direction: row-reverse; }
-[dir=ltr] body { direction: ltr; }
-[dir=ltr] .header { flex-direction: row; }
+/* Responsive */
+@media (max-width: 768px) {
+    #board { width: 300px !important; }
+    .sidebar { width: 100%; max-width: 300px; }
+    .header { flex-direction: column; gap: 10px; }
+    body { padding: 10px; }
+}
