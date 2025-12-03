@@ -1,0 +1,111 @@
+body {
+    font-family: 'Vazirmatn', 'Noto Sans Arabic', 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.modal {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #4CAF50;
+    color: white;
+    transition: background 0.3s;
+}
+
+.modal button:hover { background: #45a049; }
+
+.hidden { display: none; }
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.controls label, .controls select, .controls button {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: white;
+}
+
+.game-board {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+
+.status {
+    margin-top: 10px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.history {
+    width: 200px;
+    background: rgba(255,255,255,0.9);
+    padding: 10px;
+    border-radius: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.history ul {
+    list-style: none;
+    padding: 0;
+}
+
+.history li {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+    font-family: monospace;
+}
+
+/* RTL support */
+[dir="rtl"] .controls { direction: rtl; }
+[dir="rtl"] .history { direction: rtl; }
+
+/* انیمیشن برای بورد */
+#board .square-55d63 { transition: background 0.2s; }
+.highlight { background: rgba(255,255,0,0.4) !important; }
