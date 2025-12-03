@@ -1,119 +1,111 @@
-/* ========== استایل‌های مودال زبان ========== */
+body {
+    font-family: 'Vazirmatn', 'Noto Sans Arabic', 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
 .modal {
+    display: flex;
     position: fixed;
-    z-index: 9999;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    display: flex;
-    justify-content: center;
+    background-color: rgba(0,0,0,0.5);
     align-items: center;
-    transition: opacity 0.5s ease;
+    justify-content: center;
 }
 
 .modal-content {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px);
-    padding: 50px;
-    border-radius: 25px;
-    text-align: center;
-    max-width: 700px;
-    width: 90%;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-}
-
-.language-options {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 25px;
-    margin: 40px 0;
-}
-
-.lang-btn {
-    padding: 25px 40px;
-    border: none;
+    background: white;
+    padding: 30px;
     border-radius: 15px;
-    font-size: 1.4em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 200px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.lang-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-}
-
-.start-btn {
-    padding: 18px 50px;
+.modal button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
     border: none;
-    border-radius: 50px;
-    font-size: 1.4em;
-    font-weight: 700;
+    border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    background: #4CAF50;
     color: white;
-    margin-top: 30px;
+    transition: background 0.3s;
 }
 
-.start-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+.modal button:hover { background: #45a049; }
+
+.hidden { display: none; }
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* ========== استایل‌های RTL برای فارسی و عربی ========== */
-body.rtl {
-    direction: rtl;
-    text-align: right;
+h1 { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
 }
 
-body.rtl .container {
-    text-align: right;
+.controls label, .controls select, .controls button {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: white;
 }
 
-body.rtl .side-panel {
-    text-align: right;
+.game-board {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
 }
 
-body.rtl .move-history {
-    direction: ltr; /* تاریخچه حرکات همیشه LTR */
-    text-align: left;
+.status {
+    margin-top: 10px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
 }
 
-body.rtl button {
-    flex-direction: row-reverse;
+.history {
+    width: 200px;
+    background: rgba(255,255,255,0.9);
+    padding: 10px;
+    border-radius: 10px;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
-body.rtl .controls {
-    flex-direction: row-reverse;
+.history ul {
+    list-style: none;
+    padding: 0;
 }
 
-/* فونت مخصوص فارسی */
-body[lang="fa"] {
-    font-family: 'Sahel', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.history li {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+    font-family: monospace;
 }
 
-/* فونت مخصوص عربی */
-body[lang="ar"] {
-    font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+/* RTL support */
+[dir="rtl"] .controls { direction: rtl; }
+[dir="rtl"] .history { direction: rtl; }
 
-/* ========== استایل‌های عمومی ========== */
-.hidden {
-    display: none !important;
-}
-
-.fade-out {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
+/* انیمیشن برای بورد */
+#board .square-55d63 { transition: background 0.2s; }
+.highlight { background: rgba(255,255,0,0.4) !important; }
