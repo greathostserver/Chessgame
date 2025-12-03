@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی شطرنج کامل</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>بازی شطرنج با هوش مصنوعی</h1>
+        <div id="board" style="width: 400px; margin: 0 auto;"></div>
+        <p id="status">شروع بازی: نوبت سفید</p>
+        
+        <div class="controls">
+            <button id="startBtn">شروع مجدد بازی</button>
+            <button id="undoBtn">عقب‌گرد</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
