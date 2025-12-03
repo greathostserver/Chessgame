@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی شطرنج هوشمند - Smart Chess Game</title>
+    <title>بازی شطرنج - Chess Game (فیکس‌شده)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <link rel="stylesheet" href="chessgame.css">
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
@@ -11,7 +11,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 </head>
 <body>
-    <!-- صفحه انتخاب زبان -->
     <div id="language-screen" class="screen">
         <h1>انتخاب زبان / Select Language / اختيار اللغة</h1>
         <button onclick="setLanguage('fa')">فارسی</button>
@@ -19,7 +18,6 @@
         <button onclick="setLanguage('ar')">العربية</button>
     </div>
 
-    <!-- صفحه اصلی بازی -->
     <div id="game-screen" class="screen hidden">
         <div class="header">
             <h1 id="title">بازی شطرنج</h1>
@@ -29,23 +27,22 @@
                     <option value="medium" selected>متوسط / Medium / متوسط</option>
                     <option value="hard">سخت / Hard / صعب</option>
                 </select>
-                <button onclick="changeBoardTheme()">تغییر تم بورد / Change Board Theme</button>
-                <button onclick="changePieceTheme()">تغییر تم مهره‌ها / Change Piece Theme</button>
-                <button onclick="newGame()">بازی جدید / New Game</button>
+                <button onclick="changeBoardTheme()">تغییر تم بورد</button>
+                <button onclick="changePieceTheme()">تغییر تم مهره‌ها</button>
+                <button onclick="newGame()">بازی جدید</button>
             </div>
         </div>
         <div class="game-container">
             <div id="board" style="width: 400px"></div>
             <div class="sidebar">
-                <h3 id="history-title">تاریخچه حرکات / Move History / تاريخ الحركات</h3>
+                <h3 id="history-title">تاریخچه حرکات</h3>
                 <ul id="move-history"></ul>
                 <div id="status" class="status"></div>
             </div>
         </div>
     </div>
 
-    <!-- هشدار -->
-    <div id="warning" class="warning hidden">حرکت غیرقانونی! / Invalid move! / حركة غير قانونية!</div>
+    <div id="warning" class="warning hidden">حرکت غیرقانونی!</div>
 
     <script src="chessgame.js"></script>
 </body>
