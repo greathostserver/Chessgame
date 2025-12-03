@@ -3,11 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی شطرنج کامل</title>
+    <title>بازی شطرنج کامل - نسخه تک‌فایلی</title>
     
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #e9ebee;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            direction: rtl; 
+            text-align: center;
+        }
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard-1.0.0.min.css">
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        #status {
+            margin: 15px 0;
+            font-size: 1.1em;
+            font-weight: bold;
+            min-height: 20px;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .controls button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* استایل‌های ضروری برای نمایش تخته شطرنج (از chessboard.js) */
+        .board-b72b1 { 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        .square-55d63 {
+            float: left;
+            position: relative;
+            /* این دو رنگ را می‌توانید تغییر دهید */
+            background-color: rgb(240, 217, 181); 
+        }
+        .square-55d63.black-3c85d {
+            background-color: rgb(181, 136, 99); 
+        }
+        .highlight1-32417, .highlight2-9c5d2 {
+            box-shadow: inset 0 0 3px 3px yellow;
+        }
+        /* ... سایر استایل‌های لازم برای مهره‌ها (اینجا مهره‌ها از یک پوشه تصاویر محلی استفاده می‌کنند که باید آن‌ها را دانلود کنید) */
+        /* برای ساده‌سازی، بهتر است از CDN استفاده کنیم. */
+        .piece-417db {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1000;
+        }
+
+        /* برای اینکه مهره ها نمایش داده شوند، نیاز به تصاویر دارید */
+        /* اگر این قسمت کار نکرد، یعنی مرورگر تصاویر را پیدا نکرده است */
+        .wP { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/wP.png"); background-size: cover;}
+        .wN { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/wN.png"); background-size: cover;}
+        .wB { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/wB.png"); background-size: cover;}
+        .wR { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/wR.png"); background-size: cover;}
+        .wQ { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/wQ.png"); background-size: cover;}
+        .wK { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/wK.png"); background-size: cover;}
+        .bP { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/bP.png"); background-size: cover;}
+        .bN { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/bN.png"); background-size: cover;}
+        .bB { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/bB.png"); background-size: cover;}
+        .bR { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/bR.png"); background-size: cover;}
+        .bQ { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/bQ.png"); background-size: cover;}
+        .bK { background-image: url("https://images.chesscomfiles.com/chess-themes/pieces/merida/150/bK.png"); background-size: cover;}
+
+
+    </style>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard-1.0.0.min.js"></script>
+    
 </head>
 <body>
     <div class="container">
@@ -20,11 +114,117 @@
             <button id="undoBtn">عقب‌گرد</button>
         </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboardjs/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script>
+        // ایجاد دو شیء: 
+        // 1. game: منطق قوانین شطرنج را نگه می‌دارد. (از کتابخانه chess.js)
+        // 2. board: نمایش گرافیکی صفحه شطرنج را مدیریت می‌کند. (از کتابخانه chessboard.js)
+        var game = new Chess();
+        var board = null;
 
-    <script src="script.js"></script>
+        // سرعت حرکت AI بر حسب میلی ثانیه 
+        var AI_MOVE_TIME = 200; 
+
+        // --- هوش مصنوعی (AI Logic) ---
+        function chooseAIMove() {
+            var possibleMoves = game.moves();
+            if (possibleMoves.length === 0) return;
+            var randomIdx = Math.floor(Math.random() * possibleMoves.length);
+            return possibleMoves[randomIdx];
+        }
+
+        function makeAIMove() {
+            if (game.turn() !== 'b') return; 
+
+            // دکمه‌ها را غیرفعال کن
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('undoBtn').disabled = true;
+
+            var move = chooseAIMove();
+            
+            window.setTimeout(function() {
+                game.move(move);
+                board.position(game.fen());
+                updateStatus();
+                // دکمه‌ها را فعال کن
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('undoBtn').disabled = false;
+            }, AI_MOVE_TIME);
+        }
+        // ------------------------------------
+
+
+        // --- منطق نمایش و تعامل (User Interaction) ---
+
+        function onDrop(source, target) {
+            // اگر نوبت کامپیوتر (سیاه) است، حرکت نده
+            if (game.turn() === 'b') return 'snapback';
+
+            var move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // همیشه به وزیر تبدیل کن
+            });
+
+            if (move === null) return 'snapback';
+
+            updateStatus();
+            window.setTimeout(makeAIMove, 250); 
+        }
+
+        function updateStatus() {
+            var status = '';
+            var moveColor = 'سفید';
+            if (game.turn() === 'b') {
+                moveColor = 'سیاه';
+            }
+
+            if (game.in_checkmate()) {
+                status = 'بازی تمام شد. ' + moveColor + ' کیش و مات شد.';
+            } else if (game.in_draw()) {
+                status = 'بازی مساوی شد.';
+            } else {
+                status = 'نوبت: ' + moveColor;
+                if (game.in_check()) {
+                    status += ' (' + moveColor + ' در کیش است)';
+                }
+            }
+            
+            document.getElementById('status').innerHTML = status;
+        }
+
+        // تنظیمات اصلی صفحه شطرنج
+        var config = {
+            draggable: true, 
+            position: 'start',
+            onDrop: onDrop,
+            orientation: 'white'
+        };
+        
+        // اطمینان از اینکه DOM کاملاً بارگذاری شده است
+        document.addEventListener('DOMContentLoaded', function() {
+            // ایجاد تخته شطرنج
+            board = Chessboard('board', config); 
+            updateStatus();
+        });
+        
+        
+        // --- کنترل‌های دکمه‌ها ---
+
+        document.getElementById('startBtn').addEventListener('click', function() {
+            game.reset();
+            board.start();
+            updateStatus();
+        });
+
+        document.getElementById('undoBtn').addEventListener('click', function() {
+            // دو حرکت را برگردان (هم حرکت کاربر و هم حرکت AI)
+            game.undo(); 
+            game.undo(); 
+            board.position(game.fen()); 
+            updateStatus();
+        });
+        
+    </script>
 </body>
 </html>
