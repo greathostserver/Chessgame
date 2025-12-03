@@ -1,36 +1,462 @@
-<!-- جایگزین کردن بخش مودال زبان با این کد -->
-<div id="languageModal" class="modal" style="display: flex; opacity: 1;">
-    <div class="modal-content">
-        <h2 id="modalTitle">Welcome to Chess Master</h2>
-        <p style="margin: 20px 0; font-size: 1.2em;" id="selectLang">Select Your Language</p>
-        
-        <div class="language-options">
-            <button id="lang-en" class="lang-btn" style="background: linear-gradient(135deg, #4e54c8, #8f94fb);">
-                <i class="fas fa-flag-usa"></i> <span>English</span>
-            </button>
-            
-            <button id="lang-fa" class="lang-btn" style="background: linear-gradient(135deg, #da2c43, #f9a825);">
-                <i class="fas fa-flag"></i> <span>فارسی</span>
-            </button>
-            
-            <button id="lang-ar" class="lang-btn" style="background: linear-gradient(135deg, #007a3d, #ce1126);">
-                <i class="fas fa-flag"></i> <span>العربية</span>
-            </button>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ChessGame — Greathostserver</title>
+  <style>
+    :root{--bg:#0f1724;--panel:#0b1220;--accent:#60a5fa;--text:#e6eef8}
+    *{box-sizing:border-box;font-family:Inter, system-ui, Arial}
+    body{margin:0;background:linear-gradient(180deg,#041126 0%,#071830 100%);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+    .app{width:1100px;max-width:100%;display:grid;grid-template-columns:560px 1fr;gap:18px}
+    .card{background:rgba(255,255,255,0.03);border-radius:14px;padding:16px;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    header h1{font-size:18px;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    select,input[type=range]{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);color:var(--text);padding:6px;border-radius:8px}
+    .board{width:100%;height:560px;display:grid;grid-template-columns:repeat(8,1fr);aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:3px solid rgba(255,255,255,0.03)}
+    .square{display:flex;align-items:center;justify-content:center;font-size:34px;user-select:none}
+    .light{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))}
+    .dark{background:linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6))}
+    .right{display:flex;flex-direction:column;gap:12px}
+    .history{height:260px;overflow:auto;background:rgba(255,255,255,0.02);padding:8px;border-radius:8px}
+    .moves{display:flex;gap:8px;flex-wrap:wrap}
+    .move{background:rgba(0,0,0,0.25);padding:6px 8px;border-radius:6px}
+    .lang-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6)}
+    .lang-box{width:420px;background:var(--panel);padding:18px;border-radius:12px}
+    .btn{background:var(--accent);color:#04203a;padding:8px 12px;border-radius:10px;border:0;cursor:pointer}
+    .small{font-size:13px;padding:6px 8px}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:#ea4f4f;padding:10px 14px;border-radius:8px;color:white}
+    footer{font-size:12px;opacity:0.8}
+    .theme-picker{display:flex;gap:8px;align-items:center}
+    .swatch{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid rgba(255,255,255,0.05)}
+    .sound-toggle{display:flex;align-items:center;gap:6px}
+    @media(max-width:1000px){.app{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <header>
+        <h1 id="title">ChessGame</h1>
+        <div class="controls">
+          <label class="small">AI:</label>
+          <select id="aiLevel" title="AI level">
+            <option value="none">Human vs Human</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+          <label class="small">Sound</label>
+          <input id="soundToggle" type="checkbox" checked />
         </div>
-        
-        <div style="margin-top: 40px; text-align: center;">
-            <button id="playButton" class="start-btn" 
-                    style="padding: 15px 50px; font-size: 1.3em; background: linear-gradient(135deg, #00b09b, #96c93d);">
-                <i class="fas fa-play-circle"></i> Start Playing
-            </button>
-        </div>
+      </header>
+
+      <div id="board" class="board" aria-label="Chess board"></div>
     </div>
-</div>
 
-<!-- در بخش head فونت‌های فارسی و عربی را اضافه کنید -->
-<link href="https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v3.4.0/dist/font-face.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600&display=swap" rel="stylesheet">
+    <div class="card right">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600" id="turnLabel">White to move</div>
+          <div style="font-size:13px;opacity:0.8" id="statusLabel">Game ready</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="theme-picker" style="align-items:center">
+            <div class="swatch" title="Classic" data-theme="classic" style="background:linear-gradient(180deg,#f0d9b5,#e6c89a)"></div>
+            <div class="swatch" title="Blue" data-theme="blue" style="background:linear-gradient(180deg,#cfe8ff,#91c0ff)"></div>
+            <div class="swatch" title="Dark" data-theme="dark" style="background:linear-gradient(180deg,#6b7280,#111827)"></div>
+          </div>
+          <button id="resetBtn" class="small">Reset</button>
+        </div>
+      </div>
 
-<!-- در بخش قبل از بستن body -->
-<script src="translations.js"></script>
-<script src="script.js"></script>
+      <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
+        <label class="small">Theme:</label>
+        <select id="pieceStyle">
+          <option value="unicode">Unicode</option>
+          <option value="icons">Fancy</option>
+        </select>
+        <label class="small">Flip board</label>
+        <input id="flip" type="checkbox" />
+      </div>
+
+      <div style="margin-top:12px">
+        <div style="font-weight:600;margin-bottom:8px">Move history</div>
+        <div id="history" class="history"></div>
+      </div>
+
+      <div style="margin-top:8px;display:flex;gap:8px;flex-direction:column">
+        <div style="display:flex;gap:8px">
+          <button id="undo" class="small">Undo</button>
+          <button id="redo" class="small">Redo</button>
+          <button id="exportPGN" class="small">Export PGN</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label class="small">AI colour</label>
+          <select id="aiColor"><option value="black">Black</option><option value="white">White</option></select>
+        </div>
+      </div>
+
+      <footer style="margin-top:auto">Made for GitHub Pages — put this file at <code>greathostserver.github.io/chessgame/index.html</code></footer>
+    </div>
+  </div>
+
+  <div id="langModal" class="lang-modal">
+    <div class="lang-box">
+      <h2 style="margin-top:0">Select language / اختر اللغة / انتخاب زبان</h2>
+      <p id="langDesc">Please choose your language before starting.</p>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" data-lang="en">English</button>
+        <button class="btn" data-lang="fa">فارسی</button>
+        <button class="btn" data-lang="ar">العربية</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <!-- dependencies: chess.js (move generation + legality) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
+
+  <script>
+    // ======= Simple single-file chess app =======
+    // - Uses chess.js for move legality
+    // - AI: easy=random, medium=1-ply greedy, hard=2-ply minimax w/ piece values
+    // - Sounds are embedded as base64 click beep
+
+    // Translations
+    const I18N = {
+      en:{title:'ChessGame',choose:'Please choose your language before starting.',white:'White to move',check:'Check!',illegal:'Illegal move',mate:'Checkmate',draw:'Draw',reset:'Reset',export:'Export PGN'},
+      fa:{title:'بازی شطرنج',choose:'لطفاً پیش از شروع زبان را انتخاب کنید.',white:'نوبت سفید',check:'کیش!',illegal:'حرکت غیرقانونی',mate:'مات',draw:'مساوی',reset:'بازنشانی',export:'خروجی PGN'},
+      ar:{title:'لعبة الشطرنج',choose:'اختر لغتك قبل البدء.',white:'دور الأبيض',check:'كش!',illegal:'حركة غير قانونية',mate:'كِشّ مات',draw:'تعادل',reset:'إعادة'}
+    };
+
+    // Base64 click sound (short)
+    const clickB64 = 'data:audio/wav;base64,UklGRngAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA='; // tiny silent placeholder
+
+    const boardEl = document.getElementById('board');
+    const historyEl = document.getElementById('history');
+    const turnLabel = document.getElementById('turnLabel');
+    const statusLabel = document.getElementById('statusLabel');
+    const langModal = document.getElementById('langModal');
+    const toast = document.getElementById('toast');
+
+    let lang = 'en';
+    let game = new Chess();
+    let selected = null;
+    let boardOrientation = 'white';
+    let soundOn = true;
+    let undoStack = [];
+    let redoStack = [];
+
+    const pieceUnicode = {
+      p:'♟',r:'♜',n:'♞',b:'♝',q:'♛',k:'♚'
+    };
+    const pieceWhiteUnicode = {p:'♙',r:'♖',n:'♘',b:'♗',q:'♕',k:'♔'};
+
+    const pieceValues = {p:100,r:500,n:320,b:330,q:900,k:20000};
+
+    // UI / build board
+    function buildBoard(){
+      boardEl.innerHTML = '';
+      const squares = algebraicSquares(boardOrientation);
+      const lightColor = getComputedStyle(document.documentElement).getPropertyValue('--light') || '';
+      squares.forEach((sq,i)=>{
+        const el = document.createElement('div');
+        el.className = 'square ' + ((Math.floor(i/8)+i)%2? 'dark':'light');
+        el.dataset.square = sq;
+        el.addEventListener('click',onSquareClick);
+        boardEl.appendChild(el);
+      });
+      renderPieces();
+    }
+
+    function algebraicSquares(orientation){
+      const files = ['a','b','c','d','e','f','g','h'];
+      const ranks = orientation==='white'? [8,7,6,5,4,3,2,1] : [1,2,3,4,5,6,7,8];
+      const sqs = [];
+      ranks.forEach(r=>files.forEach(f=>sqs.push(f+r)));
+      return sqs;
+    }
+
+    function renderPieces(){
+      const squares = boardEl.querySelectorAll('.square');
+      squares.forEach(sqEl=>{
+        sqEl.innerHTML = '';
+        const piece = game.get(sqEl.dataset.square);
+        if(piece){
+          const span = document.createElement('div');
+          span.style.cursor='pointer';
+          span.dataset.color = piece.color;
+          span.dataset.type = piece.type;
+          span.innerText = piece.color==='w'? pieceWhiteUnicode[piece.type] : pieceUnicode[piece.type];
+          span.style.fontSize='36px';
+          sqEl.appendChild(span);
+        }
+      });
+      updateTurn();
+    }
+
+    function onSquareClick(e){
+      const sq = e.currentTarget.dataset.square;
+      if(selected){
+        if(selected===sq){ selected=null; renderPieces(); return; }
+        // try move
+        const move = {from:selected,to:sq,promotion:'q'};
+        const result = game.move(move);
+        if(result){
+          playSound();
+          undoStack.push(result);
+          redoStack = [];
+          selected=null;
+          renderPieces();
+          pushHistory();
+          checkGameState();
+          // if AI enabled, trigger
+          setTimeout(aiMaybeMove, 80);
+        } else {
+          warn(I18N[lang].illegal || 'Illegal move');
+          // visual shake
+          flashSquare(sq);
+        }
+      } else {
+        const piece = game.get(sq);
+        if(!piece) return;
+        if((aiPlays() && game.turn()!==aiPlaysColor()[0]) && piece.color!==game.turn()){
+          // if AI playing, ensure human tries to move only their color
+        }
+        // highlight
+        selected = sq;
+        renderPieces();
+        const el = boardEl.querySelector(`[data-square="${sq}"]`);
+        if(el) el.style.outline = '3px solid rgba(96,165,250,0.45)';
+      }
+    }
+
+    function flashSquare(sq){
+      const el = boardEl.querySelector(`[data-square="${sq}"]`);
+      if(!el) return;
+      const orig = el.style.transform;
+      el.style.transition = 'transform 0.12s';
+      el.style.transform = 'translateX(-6px)';
+      setTimeout(()=>el.style.transform = orig,120);
+    }
+
+    function pushHistory(){
+      historyEl.innerHTML='';
+      const moves = game.history({verbose:true});
+      const rows = [];
+      for(let i=0;i<moves.length;i+=2){
+        const num = Math.floor(i/2)+1;
+        const w = moves[i] ? san(moves[i]) : '';
+        const b = moves[i+1] ? san(moves[i+1]) : '';
+        const div = document.createElement('div');
+        div.className='moveRow';
+        div.innerHTML = `<strong>${num}.</strong> <span class="move">${w}</span> <span class="move">${b}</span>`;
+        historyEl.appendChild(div);
+      }
+      historyEl.scrollTop = historyEl.scrollHeight;
+    }
+
+    function san(m){
+      // m is verbose move
+      return m.san || (m.from+m.to);
+    }
+
+    function updateTurn(){
+      turnLabel.innerText = game.turn()==='w' ? (I18N[lang].white || 'White to move') : (I18N[lang].white? 'Black to move':'Black to move');
+      statusLabel.innerText = game.in_check()? I18N[lang].check : 'In progress';
+    }
+
+    function warn(msg){
+      toast.style.display='block';
+      toast.innerText = msg;
+      setTimeout(()=>toast.style.display='none',1700);
+    }
+
+    function playSound(){
+      if(!soundOn) return;
+      const a = new Audio(clickB64);
+      a.volume = 0.6;
+      a.play().catch(()=>{});
+    }
+
+    // ===== AI =====
+    function aiPlays(){
+      const v = document.getElementById('aiLevel').value;
+      return v!=='none';
+    }
+    function aiPlaysColor(){
+      const c = document.getElementById('aiColor').value;
+      return c;
+    }
+
+    function aiMaybeMove(){
+      const lvl = document.getElementById('aiLevel').value;
+      if(lvl==='none') return;
+      const aiColor = document.getElementById('aiColor').value[0];
+      if(game.turn()!==aiColor) return; // only move on AI turn
+      setTimeout(()=>{
+        let mv;
+        if(lvl==='easy') mv = aiRandom();
+        else if(lvl==='medium') mv = aiGreedy();
+        else mv = aiMinimax(2);
+        if(mv){
+          const result = game.move(mv);
+          if(result){ playSound(); undoStack.push(result); pushHistory(); renderPieces(); checkGameState(); }
+        }
+      }, 250);
+    }
+
+    function aiRandom(){
+      const moves = game.moves();
+      if(!moves.length) return null;
+      return moves[Math.floor(Math.random()*moves.length)];
+    }
+
+    function aiGreedy(){
+      const moves = game.moves({verbose:true});
+      let best=null; let bestScore=-999999;
+      for(const m of moves){
+        const score = captureValue(m);
+        if(score>bestScore){bestScore=score; best=m.san||m.from+m.to}
+      }
+      return best || aiRandom();
+    }
+    function captureValue(m){
+      if(!m.captured) return 0; return pieceValues[m.captured]||0;
+    }
+
+    function aiMinimax(depth){
+      const us = game.turn();
+      function minimax(d,alpha,beta,maximizing){
+        if(d===0 || game.game_over()) return evaluateBoard();
+        const moves = game.moves({verbose:true});
+        if(maximizing){
+          let maxEval=-999999; let bestMove=null;
+          for(const m of moves){
+            game.move(m);
+            const evalv = minimax(d-1,alpha,beta,false);
+            game.undo();
+            if(evalv>maxEval){maxEval=evalv; bestMove=m}
+            alpha = Math.max(alpha,evalv);
+            if(beta<=alpha) break;
+          }
+          if(d===depth) return bestMove ? (bestMove.san||bestMove.from+bestMove.to) : null;
+          return maxEval;
+        } else {
+          let minEval=999999;
+          for(const m of moves){
+            game.move(m);
+            const evalv = minimax(d-1,alpha,beta,true);
+            game.undo();
+            if(evalv<minEval) minEval=evalv;
+            beta = Math.min(beta,evalv);
+            if(beta<=alpha) break;
+          }
+          return minEval;
+        }
+      }
+      return minimax(depth,-999999,999999,true);
+    }
+
+    function evaluateBoard(){
+      let sum = 0;
+      const board = game.board();
+      for(const row of board){
+        for(const piece of row){
+          if(!piece) continue;
+          const v = pieceValues[piece.type] || 0;
+          sum += (piece.color==='w'? v : -v);
+        }
+      }
+      return sum * (game.turn()==='w'? 1 : -1);
+    }
+
+    // ===== game state checks =====
+    function checkGameState(){
+      if(game.in_checkmate()){
+        statusLabel.innerText = I18N[lang].mate || 'Checkmate';
+        warn(I18N[lang].mate || 'Checkmate');
+      } else if(game.in_draw() || game.in_stalemate() || game.in_threefold_repetition()){
+        statusLabel.innerText = I18N[lang].draw || 'Draw';
+        warn(I18N[lang].draw || 'Draw');
+      } else if(game.in_check()){
+        statusLabel.innerText = I18N[lang].check || 'Check!';
+      } else {
+        statusLabel.innerText = 'In progress';
+      }
+      pushHistory();
+    }
+
+    // ===== controls =====
+    document.getElementById('resetBtn').addEventListener('click',()=>{game.reset(); undoStack=[];redoStack=[];renderPieces();pushHistory();});
+    document.getElementById('undo').addEventListener('click',()=>{ const m = game.undo(); if(m){redoStack.push(m); renderPieces(); pushHistory();}});
+    document.getElementById('redo').addEventListener('click',()=>{ const m = redoStack.pop(); if(m){ game.move(m); renderPieces(); pushHistory();}});
+    document.getElementById('exportPGN').addEventListener('click',()=>{ const p = game.pgn(); download('game.pgn', p); });
+
+    document.getElementById('aiLevel').addEventListener('change',()=>{ /* if set and it's AI turn, move */ aiMaybeMove(); });
+    document.getElementById('soundToggle').addEventListener('change', (e)=>{ soundOn = e.target.checked; });
+
+    // theme swatches
+    document.querySelectorAll('.swatch').forEach(s=>s.addEventListener('click',()=>{ const t=s.dataset.theme; applyTheme(t);}));
+
+    function applyTheme(t){
+      if(t==='blue'){ document.documentElement.style.setProperty('--accent','#60a5fa'); }
+      else if(t==='dark'){ document.documentElement.style.setProperty('--accent','#9ca3af'); }
+      else { document.documentElement.style.setProperty('--accent','#d97706'); }
+    }
+
+    function download(filename, text){
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+      a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    }
+
+    // language buttons
+    document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click', (e)=>{
+      lang = e.currentTarget.dataset.lang;
+      applyLang();
+      langModal.style.display='none';
+      buildBoard();
+    }));
+
+    function applyLang(){
+      document.getElementById('title').innerText = I18N[lang].title;
+      document.getElementById('langDesc').innerText = I18N[lang].choose;
+      document.getElementById('resetBtn').innerText = I18N[lang].reset || 'Reset';
+      document.getElementById('exportPGN').innerText = I18N[lang].export || 'Export PGN';
+      updateTurn();
+    }
+
+    // initial setup
+    applyTheme('classic');
+    buildBoard();
+    pushHistory();
+
+    // close modal if user refreshes language saved
+    if(!localStorage.getItem('chess_lang')){
+      langModal.style.display='flex';
+    } else {
+      lang = localStorage.getItem('chess_lang'); applyLang(); langModal.style.display='none';
+    }
+
+    // store language on selection
+    document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click', (e)=>{ localStorage.setItem('chess_lang', e.currentTarget.dataset.lang); }));
+
+    // auto AI move if starting with AI color
+    document.getElementById('aiLevel').addEventListener('change', ()=>aiMaybeMove());
+
+    // support flip
+    document.getElementById('flip').addEventListener('change',(e)=>{ boardOrientation = e.target.checked? 'black':'white'; buildBoard(); });
+
+    // ensure board re-renders on window resize
+    window.addEventListener('resize', ()=>{ buildBoard(); });
+
+    // initial AI check
+    aiMaybeMove();
+
+  </script>
+</body>
+</html>
