@@ -1,0 +1,32 @@
+{
+    "title": "Chess Master",
+    "themeText": "Change Theme",
+    "aiText": "AI Level",
+    "undoText": "Undo Move",
+    "resetText": "New Game",
+    "moveHistoryTitle": "Move History",
+    "gameStatusTitle": "Game Status",
+    "colorTitle": "Customize Colors",
+    "boardColorLabel": "Board Color:",
+    "pieceColorLabel": "Piece Style:",
+    "aiLevels": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+    },
+    "status": {
+        "waiting": "Waiting to start...",
+        "whiteTurn": "👑 White's Turn",
+        "blackTurn": "⚫ Black's Turn",
+        "check": "Check!",
+        "checkmate": "Checkmate! Winner: ",
+        "stalemate": "Stalemate - Draw",
+        "illegalMove": "⚠ Illegal move! Please try again."
+    },
+    "languageModal": {
+        "title": "Select Your Language",
+        "english": "🇺🇸 English",
+        "persian": "🇮🇷 Persian",
+        "arabic": "🇸🇦 Arabic"
+    }
+}
