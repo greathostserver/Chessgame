@@ -1,235 +1,122 @@
-// =========================================================================
-// بخش ۱: تعریف متغیرها و ترجمه‌ها در حوزه‌ی سراسری (Global Scope)
-// این کار باعث می شود متغیر زبان در تمام توابع قابل دسترسی باشد.
-// =========================================================================
-
-// متغیر سراسری برای نگهداری زبان فعلی (در ابتدا فارسی)
-let currentLanguage = 'fa'; 
-
-// آرایه‌ای از ترجمه‌ها (ترجیحاً در Global برای دسترسی سریعتر)
-const translations = {
-    'fa': {
-        'title': 'شطرنج هوشمند',
-        'reset': 'شروع مجدد بازی',
-        'white_turn': 'نوبت سفید است.',
-        'black_turn': 'نوبت سیاه است.',
-        'checkmate_white': 'کیش و مات! سیاه برنده شد.',
-        'checkmate_black': 'کیش و مات! سفید برنده شد.',
-        'draw': 'تساوی!',
-        'stalemate': 'تساوی! بازی به بن‌بست رسید.',
-        'check': '(کیش!)',
-        'start_status': 'بازی شروع شد. نوبت سفید است.'
-    },
-    'en': {
-        'title': 'Smart Chess',
-        'reset': 'Reset Game',
-        'white_turn': 'White to move.',
-        'black_turn': 'Black to move.',
-        'checkmate_white': 'Checkmate! Black wins.',
-        'checkmate_black': 'Checkmate! White wins.',
-        'draw': 'Draw!',
-        'stalemate': 'Stalemate! Game is drawn.',
-        'check': '(Check!)',
-        'start_status': 'Game started. White to move.'
-    }
-};
-
-// =========================================================================
-// بخش ۲: منطق انتخاب زبان و شروع بازی (JQuery Ready)
-// =========================================================================
+// 1. تعریف متغیرهای اصلی و پیکربندی
+let board, game, stockfish, currentLanguage = 'en';
+let moveSound = new Audio('audio/move.mp3');
+let config;
 
 $(document).ready(function() {
+    // 2. مقداردهی اولیه
+    game = new Chess();
+    stockfish = new Worker('https://unpkg.com/stockfish.js@14.1.0/stockfish.js');
     
-    const langSelector = $('#language-selector');
-    const gameArea = $('#game-area');
-    const faButton = $('#lang-fa');
-    const enButton = $('#lang-en');
-    const statusText = $('#status');
-    const title = $('h1');
-
-    // تابع برای به‌روزرسانی متن‌ها بر اساس زبان انتخاب شده
-    function updateText(language) {
-        currentLanguage = language; // به‌روزرسانی متغیر سراسری
-        
-        // به‌روزرسانی جهت (Direction) صفحه
-        if (currentLanguage === 'fa') {
-             $('html').attr('lang', 'fa').attr('dir', 'rtl');
-             $('.game-container').css('direction', 'rtl');
-        } else {
-             $('html').attr('lang', 'en').attr('dir', 'ltr');
-             $('.game-container').css('direction', 'ltr');
-        }
-
-        title.text(translations[language].title);
-        $('#reset-button').text(translations[language].reset);
-        statusText.text(translations[language].start_status);
-    }
-    
-    // تابع برای شروع بازی پس از انتخاب زبان
-    function startGame(language) {
-        updateText(language); // ۱. به‌روزرسانی زبان
-        langSelector.hide();   // ۲. مخفی کردن صفحه انتخاب زبان
-        gameArea.show();      // ۳. نمایش صفحه بازی
-        startChessGame();     // ۴. شروع تابع اصلی بازی
-    }
-
-    // اضافه کردن شنونده برای دکمه‌های زبان
-    faButton.on('click', function() {
-        startGame('fa'); // شروع با فارسی
-    });
-
-    enButton.on('click', function() {
-        startGame('en'); // شروع با انگلیسی
-    });
-    
-    // نمایش صفحه انتخاب زبان در ابتدای بارگذاری
-    langSelector.show();
-    gameArea.hide();
-});
-
-// =========================================================================
-// بخش ۳: کتابخانه CHESS.JS (منطق بازی)
-// ... (کد طولانی کتابخانه chess.js در اینجا قرار می‌گیرد) ...
-// (همان کدی که در پاسخ قبل فرستادم و شما در script.js قرار دادید)
-// =========================================================================
-var Chess = function(fen) {
-    // ... محتوای کامل تابع Chess ...
-    // ... محتوای کامل تابع Chess ...
-    // ... محتوای کامل تابع Chess ...
-};
-
-
-// =========================================================================
-// بخش ۴: موتور هوش مصنوعی (Minimax)
-// ... (کد طولانی Minimax در اینجا قرار می‌گیرد) ...
-// (همان کدی که در پاسخ قبل فرستادم و شما در script.js قرار دادید)
-// =========================================================================
-var minimax = function() {
-    // ... محتوای کامل تابع minimax ...
-    // ... محتوای کامل تابع minimax ...
-    // ... محتوای کامل تابع minimax ...
-};
-
-
-// =========================================================================
-// بخش ۵: منطق اصلی بازی (ChessBoard.js) - شامل اصلاحات زبان
-// =========================================================================
-
-var startChessGame = function() {
-    
-    // متغیرهای بازی
-    var game = new Chess();
-    var board;
-    var $status = $('#status');
-    var $resetButton = $('#reset-button');
-    
-    // برای سادگی، عمق جستجوی هوش مصنوعی را ۲ قرار می دهیم (سریعتر است)
-    var AI_DEPTH = 2; 
-
-    // تنظیمات برد شطرنج
-    var cfg = {
+    // 3. پیکربندی chessboard.js
+    config = {
         draggable: true,
         position: 'start',
         onDragStart: onDragStart,
         onDrop: onDrop,
-        onSnapEnd: onSnapEnd
+        onSnapEnd: onSnapEnd,
+        onMouseoutSquare: onMouseoutSquare,
+        onMouseoverSquare: onMouseoverSquare,
+        pieceTheme: 'lib/chessboardjs-1.0.0/img/chesspieces/alpha/{piece}.png',
+        orientation: 'white' // کاربر همیشه سفید بازی می‌کند
     };
-
-    // مقداردهی اولیه به برد
-    board = Chessboard('board', cfg);
+    board = Chessboard('board', config);
     
-    // ---------------------------------------------------------------------
-    // توابع رابط کاربری (بدون تغییر)
-    // ---------------------------------------------------------------------
-
-    function onDragStart(source, piece, position, orientation) {
-        if (game.game_over() || piece.search(/^b/) !== -1) {
-            return false;
-        }
-    }
-
-    function onDrop(source, target) {
-        var move = game.move({
-            from: source,
-            to: target,
-            promotion: 'q' 
-        });
-
-        if (move === null) return 'snapback';
-        
+    // 4. مدیریت رویداد دکمه‌ها
+    $('#resetBtn').on('click', function() {
+        game.reset();
+        board.start();
         updateStatus();
-        window.setTimeout(makeAiMove, 250);
-    }
-
-    function onSnapEnd() {
-        board.position(game.fen());
-    }
+        $('#moveHistory').empty();
+    });
     
-    // ---------------------------------------------------------------------
-    // توابع هوش مصنوعی (بدون تغییر)
-    // ---------------------------------------------------------------------
+    $('#themeBtn').on('click', function() {
+        // تغییر تم بین تاریک و روشن
+        $('body').toggleClass('light-theme');
+    });
+    
+    // 5. تغییر رنگ صفحه به صورت زنده
+    $('#boardColor').on('input', function() {
+        $('.board-container .white-1e1d7').css('background-color', $(this).val());
+    });
+});
 
-    function makeAiMove() {
-        var bestMove = minimax.getBestMove(game, AI_DEPTH);
-        game.move(bestMove);
-        board.position(game.fen());
-        updateStatus();
+// 6. تابع اصلی کنترل کشیدن و رها کردن مهره
+function onDragStart(source, piece) {
+    // جلوگیری از حرکت اگر نوبت کاربر نباشد یا بازی تمام شده باشد
+    if (game.game_over() || 
+        (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+        return false;
     }
-    
-    // ---------------------------------------------------------------------
-    // توابع وضعیت بازی (با استفاده از متغیر سراسری currentLanguage)
-    // ---------------------------------------------------------------------
+}
 
-    function updateStatus() {
-        var status = '';
-        var moveColor = (currentLanguage === 'fa' ? 'سفید' : 'White'); // از متغیر سراسری استفاده می کند
-        
-        // ۱. بررسی وضعیت‌های پایان بازی
-        if (game.in_checkmate()) {
-            // Checkmate
-            status = (game.turn() === 'w' ? translations[currentLanguage].checkmate_white : translations[currentLanguage].checkmate_black);
-
-        } else if (game.in_draw()) {
-            // Draw
-            status = translations[currentLanguage].draw;
-
-        } else {
-            // ۲. نمایش نوبت
-            if (game.turn() === 'b') {
-                moveColor = (currentLanguage === 'fa' ? 'سیاه' : 'Black');
-            }
-            
-            // نمایش وضعیت فعلی
-            status = translations[currentLanguage][game.turn() + '_turn'].replace(game.turn() === 'w' ? 'سفید' : 'سیاه', moveColor);
-
-            // اگر کیش باشد، هشدار دهید
-            if (game.in_check()) {
-                status += ' ' + translations[currentLanguage].check;
-            }
-        }
-
-        $status.html(status);
-        
-        // تنظیم جهت متن
-        if (currentLanguage === 'fa') {
-             $status.css('direction', 'rtl').css('text-align', 'right');
-        } else {
-             $status.css('direction', 'ltr').css('text-align', 'center');
-        }
-    }
-    
-    // ---------------------------------------------------------------------
-    // کنترل دکمه ریست
-    // ---------------------------------------------------------------------
-    
-    $resetButton.on('click', function() {
-        game.reset(); 
-        board.position('start'); 
-        updateStatus(); // وضعیت جدید را با زبان فعلی به‌روز می‌کند
+function onDrop(source, target) {
+    // 7. بررسی قانونی بودن حرکت با chess.js
+    let move = game.move({
+        from: source,
+        to: target,
+        promotion: 'q' // پیش‌فرض تبدیل به وزیر
     });
 
-    // در این قسمت، نیازی به updateStatus() نیست چون قبلاً توسط تابع startGame فراخوانی شده است.
-    // اما برای اطمینان از تنظیمات اولیه برد، آن را می‌گذاریم:
-    board.position(game.fen());
+    if (move === null) {
+        // 8. هشدار برای حرکت غیرقانونی
+        alert(i18n[currentLanguage].illegalMove || "Illegal move!");
+        return 'snapback'; // بازگشت مهره به جای اول
+    }
+
+    // 9. پخش صدا
+    moveSound.currentTime = 0;
+    moveSound.play();
     
+    // 10. به‌روزرسانی تاریخچه حرکات
+    updateMoveHistory(move);
+    
+    // 11. اگر کاربر حرکت کرد، نوبت هوش مصنوعی
+    if (game.turn() === 'b') {
+        getAIMove();
+    }
+    
+    updateStatus();
+    return true;
+}
+
+// 12. گرفتن حرکت از هوش مصنوعی (Stockfish)
+function getAIMove() {
+    // ارسال موقعیت فعلی به استوک فیش
+    stockfish.postMessage(`position fen ${game.fen()}`);
+    // تنظیم سطح دشواری (مدت زمان فکر کردن)
+    let level = $('#aiLevel').val() || 'medium';
+    let depth = { easy: 10, medium: 15, hard: 20 }[level];
+    stockfish.postMessage(`go depth ${depth}`);
+}
+
+// پردازش پاسخ استوک فیش
+stockfish.onmessage = function(event) {
+    if (event.data.startsWith('bestmove')) {
+        let bestMove = event.data.split(' ')[1];
+        if (bestMove && bestMove !== '(none)') {
+            // اجرای حرکت پیشنهادی روی صفحه
+            let move = game.move({
+                from: bestMove.substring(0, 2),
+                to: bestMove.substring(2, 4),
+                promotion: bestMove.substring(4, 5) || 'q'
+            });
+            if (move) {
+                board.position(game.fen());
+                updateMoveHistory(move);
+                updateStatus();
+            }
+        }
+    }
 };
+
+// 13. تابع به‌روزرسانی تاریخچه حرکات
+function updateMoveHistory(move) {
+    let moveNumber = Math.ceil(game.history().length / 2);
+    let moveText = `${moveNumber}. ${move.from} → ${move.to}`;
+    if (move.flags.includes('c')) moveText += ' ⚔'; // علامت گرفتن
+    if (move.flags.includes('e')) moveText += ' (en passant)';
+    $('#moveHistory').append(`<div>${moveText}</div>`);
+    $('#moveHistory').scrollTop($('#moveHistory')[0].scrollHeight);
+}
