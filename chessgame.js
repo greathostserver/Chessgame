@@ -1,4 +1,4 @@
-// دیکشنری زبان‌ها (i18n ساده)
+// دیکشنری زبان‌ها (i18n)
 const translations = {
     fa: {
         title: 'بازی شطرنج',
@@ -46,65 +46,35 @@ const translations = {
 
 let currentLang = 'fa';
 let lang = translations[currentLang];
-let game = new Chess();
-let board = null;
-let difficulty = 4; // متوسط پیش‌فرض
-let boardTheme = 'green'; // تم پیش‌فرض بورد
-let pieceTheme = 'wiki'; // تم پیش‌فرض مهره‌ها (SVG از ویکی‌مدیا)
+let game;
+let board;
+let difficulty = 4;
+let boardThemeIndex = 0;
+let pieceThemeIndex = 0;
 let moveHistory = [];
 let selectedSquare = null;
 
-// صداها
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const moveSound = new Audio('https://www.soundjay.com/misc-sounds-1/chess-piece-move-1.mp3');
-const captureSound = new Audio('https://www.soundjay.com/misc-sounds-1/chess-piece-capture-1.mp3');
+// صداهای جدید از Lichess (royalty-free)
+const moveSound = new Audio('https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/move.mp3');
+const captureSound = new Audio('https://raw.githubusercontent.com/lichess-org/lila/master/public/sound/capture.mp3');
 
-// تنظیم زبان
-function setLanguage(langCode) {
-    currentLang = langCode;
-    lang = translations[langCode];
-    document.documentElement.lang = langCode;
-    document.documentElement.dir = langCode === 'fa' || langCode === 'ar' ? 'rtl' : 'ltr';
-    document.getElementById('language-screen').classList.add('hidden');
-    document.getElementById('game-screen').classList.remove('hidden');
-    updateUI();
-    initGame();
-}
-
-// به‌روزرسانی متن‌های UI
-function updateUI() {
-    document.getElementById('title').innerHTML = lang.title;
-    document.getElementById('history-title').textContent = lang.historyTitle;
-    document.querySelector('#difficulty option[value="easy"]').textContent = lang.easy;
-    document.querySelector('#difficulty option[value="medium"]').textContent = lang.medium;
-    document.querySelector('#difficulty option[value="hard"]').textContent = lang.hard;
-    document.querySelector('.controls button:nth-of-type(1)').textContent = lang.changeBoard;
-    document.querySelector('.controls button:nth-of-type(2)').textContent = lang.changePiece;
-    document.querySelector('.controls button:nth-of-type(3)').textContent = lang.newGame;
-    document.getElementById('warning').textContent = lang.invalidMove;
-}
-
-// مقداردهی اولیه بازی
-function initGame() {
-    const boardEl = document.getElementById('board');
-    const pieceThemeUrl = pieceTheme === 'wiki' ? getWikiPieces() : 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png';
-    
-    const config = {
-        draggable: true,
-        position: 'start',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd,
-        pieceTheme: pieceThemeUrl,
-        boardTheme: boardTheme
+// تابع boardTheme سفارشی (function برمی‌گردونه CSS)
+function getBoardTheme() {
+    const themes = [
+        { light: '#f0d9b5', dark: '#b58863' }, // green
+        { light: '#e6f3ff', dark: '#4a90e2' }, // blue
+        { light: '#d18b47', dark: '#ffce9e' }  // dark
+    ];
+    const theme = themes[boardThemeIndex];
+    return function(square) {
+        // محاسبه رنگ بر اساس موقعیت (a1 dark)
+        const isDark = (square.charCodeAt(0) - 97 + parseInt(square[1])) % 2 === 0;
+        return isDark ? `background-color: ${theme.dark};` : `background-color: ${theme.light};`;
     };
-    board = Chessboard('board', config);
-    updateStatus();
-    updateHistory();
 }
 
-// تابع برای SVG مهره‌های ویکی‌مدیا
-function getWikiPieces() {
+// تابع pieceTheme (wiki SVG)
+function getPieceTheme() {
     const pieces = {
         'wK': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg',
         'wQ': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
@@ -119,7 +89,62 @@ function getWikiPieces() {
         'bN': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
         'bP': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg'
     };
-    return function(piece) { return pieces[piece] || ''; };
+    return pieces;
+}
+
+// تنظیم زبان
+function setLanguage(langCode) {
+    try {
+        currentLang = langCode;
+        lang = translations[langCode];
+        document.documentElement.lang = langCode;
+        document.documentElement.dir = langCode === 'fa' || langCode === 'ar' ? 'rtl' : 'ltr';
+        document.body.className = `board-theme-${['green', 'blue', 'dark'][boardThemeIndex]}`;
+        document.getElementById('language-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        updateUI();
+        initGame();
+    } catch (e) {
+        console.error('Language set error:', e);
+    }
+}
+
+// به‌روزرسانی UI
+function updateUI() {
+    document.getElementById('title').textContent = lang.title;
+    document.getElementById('history-title').textContent = lang.historyTitle;
+    const options = document.querySelectorAll('#difficulty option');
+    options[0].textContent = lang.easy;
+    options[1].textContent = lang.medium;
+    options[2].textContent = lang.hard;
+    document.querySelectorAll('.controls button')[0].textContent = lang.changeBoard;
+    document.querySelectorAll('.controls button')[1].textContent = lang.changePiece;
+    document.querySelectorAll('.controls button')[2].textContent = lang.newGame;
+    document.getElementById('warning').textContent = lang.invalidMove;
+}
+
+// مقداردهی اولیه
+function initGame() {
+    try {
+        if (typeof Chess === 'undefined') throw new Error('Chess.js not loaded');
+        game = new Chess();
+        const boardEl = document.getElementById('board');
+        const config = {
+            draggable: true,
+            position: 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd,
+            pieceTheme: getPieceTheme(),
+            boardTheme: getBoardTheme()
+        };
+        board = Chessboard('board', config);
+        updateStatus();
+        updateHistory();
+    } catch (e) {
+        console.error('Init error:', e);
+        alert('خطا در لود بازی. اینترنت چک کن.');
+    }
 }
 
 // رویدادهای بورد
@@ -127,22 +152,24 @@ function onDragStart(source, piece) {
     if (game.game_over() || (game.turn() === 'w' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
         return false;
     }
-    selectedSquare = source;
 }
 
 function onDrop(source, target) {
     const move = game.move({ from: source, to: target, promotion: 'q' });
-    if (move === null) return 'snapback'; // حرکت نامعتبر
+    if (move === null) {
+        showWarning();
+        return 'snapback';
+    }
 
     moveHistory.push(move.san);
     if (move.captured) {
-        captureSound.play().catch(() => {}); // پخش صدای capture
+        captureSound.play().catch(e => console.log('Capture sound error:', e));
     } else {
-        moveSound.play().catch(() => {}); // پخش صدای حرکت
+        moveSound.play().catch(e => console.log('Move sound error:', e));
     }
     updateStatus();
     if (game.turn() === 'b') {
-        window.setTimeout(makeRandomMove, 250); // AI حرکت کنه
+        setTimeout(() => makeRandomMove(), 500); // تاخیر برای AI
     }
     updateHistory();
 }
@@ -151,131 +178,112 @@ function onSnapEnd() {
     board.position(game.fen());
 }
 
-// AI با Minimax
+// AI Minimax (بهینه)
 function makeRandomMove() {
     if (game.game_over()) return;
-    const depth = difficulty;
-    const bestMove = minimaxRoot(depth, game);
+    const bestMove = minimaxRoot(difficulty, game);
     game.move(bestMove);
     moveHistory.push(bestMove.san);
     board.position(game.fen());
+    if (bestMove.captured) captureSound.play().catch(() => {});
+    else moveSound.play().catch(() => {});
     updateStatus();
     updateHistory();
 }
 
-// Minimax ساده با Alpha-Beta (برای سطوح مختلف)
 function minimaxRoot(depth, game) {
     let bestMove = null;
-    let bestValue = -9999;
-    for (let i = 0; i < game.moves().length; i++) {
-        const move = game.moves()[i];
+    let bestValue = -Infinity;
+    game.moves().forEach(move => {
         game.move(move);
-        const boardValue = minimax(depth - 1, game, -10000, 10000, false);
+        const value = minimax(depth - 1, game, -Infinity, Infinity, false);
         game.undo();
-        if (boardValue > bestValue) {
-            bestValue = boardValue;
+        if (value > bestValue) {
+            bestValue = value;
             bestMove = move;
         }
-    }
+    });
     return bestMove;
 }
 
-function minimax(depth, game, alpha, beta, isMaximizingPlayer) {
-    if (depth === 0) {
-        return evaluateBoard(game.board());
-    }
-    const possibleMoves = game.moves();
-    if (isMaximizingPlayer) {
-        let maxEval = -9999;
-        for (let i = 0; i < possibleMoves.length; i++) {
-            game.move(possibleMoves[i]);
-            const evalScore = minimax(depth - 1, game, alpha, beta, false);
+function minimax(depth, game, alpha, beta, maximizing) {
+    if (depth === 0 || game.game_over()) return evaluateBoard(game.board());
+    if (maximizing) {
+        let maxEval = -Infinity;
+        game.moves().forEach(move => {
+            game.move(move);
+            maxEval = Math.max(maxEval, minimax(depth - 1, game, alpha, beta, false));
             game.undo();
-            maxEval = Math.max(maxEval, evalScore);
-            alpha = Math.max(alpha, evalScore);
-            if (beta <= alpha) break;
-        }
+            alpha = Math.max(alpha, maxEval);
+            if (beta <= alpha) return;
+        });
         return maxEval;
     } else {
-        let minEval = 9999;
-        for (let i = 0; i < possibleMoves.length; i++) {
-            game.move(possibleMoves[i]);
-            const evalScore = minimax(depth - 1, game, alpha, beta, true);
+        let minEval = Infinity;
+        game.moves().forEach(move => {
+            game.move(move);
+            minEval = Math.min(minEval, minimax(depth - 1, game, alpha, beta, true));
             game.undo();
-            minEval = Math.min(minEval, evalScore);
-            beta = Math.min(beta, evalScore);
-            if (beta <= alpha) break;
-        }
+            beta = Math.min(beta, minEval);
+            if (beta <= alpha) return;
+        });
         return minEval;
     }
 }
 
-// ارزیابی بورد ساده (امتیاز مهره‌ها)
 function evaluateBoard(board) {
-    const pieceValues = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
-    let total = 0;
-    board.forEach(row => {
-        row.forEach(piece => {
-            if (piece) {
-                const value = pieceValues[piece.type];
-                total += (piece.color === 'w' ? value : -value);
-            }
-        });
-    });
-    return total;
+    const values = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+    let score = 0;
+    board.forEach(row => row.forEach(piece => {
+        if (piece) score += (piece.color === 'w' ? values[piece.type] : -values[piece.type]);
+    }));
+    return score;
 }
 
-// به‌روزرسانی وضعیت
+// وضعیت و تاریخچه
 function updateStatus() {
     let status = '';
-    if (game.in_checkmate()) {
-        status = game.turn() === 'w' ? lang.checkmateBlack : lang.checkmateWhite;
-    } else if (game.in_stalemate()) {
-        status = lang.stalemate;
-    } else {
-        status = game.turn() === 'w' ? lang.turnWhite : lang.turnBlack;
-    }
+    if (game.in_checkmate()) status = game.turn() === 'w' ? lang.checkmateBlack : lang.checkmateWhite;
+    else if (game.in_stalemate()) status = lang.stalemate;
+    else status = game.turn() === 'w' ? lang.turnWhite : lang.turnBlack;
     document.getElementById('status').innerHTML = status;
 }
 
-// به‌روزرسانی تاریخچه
 function updateHistory() {
-    const historyEl = document.getElementById('move-history');
-    historyEl.innerHTML = '';
-    moveHistory.forEach((move, index) => {
+    const el = document.getElementById('move-history');
+    el.innerHTML = '';
+    moveHistory.forEach((move, i) => {
         const li = document.createElement('li');
-        li.textContent = move;
-        li.onclick = () => goToMove(index); // کلیک برای برگشت
-        historyEl.appendChild(li);
+        li.textContent = `${Math.floor(i/2)+1}. ${move}`;
+        li.onclick = () => goToMove(i);
+        el.appendChild(li);
     });
 }
 
 function goToMove(index) {
-    game.load(game.history({ verbose: true }).slice(0, index + 1));
+    const history = game.history({ verbose: true });
+    game.load('');
+    history.slice(0, index + 1).forEach(m => game.move(m));
     board.position(game.fen());
+    moveHistory = game.history();
     updateStatus();
+    updateHistory();
 }
 
-// رویدادهای کنترل
+// کنترل‌ها
 function setDifficulty(level) {
-    difficulty = level === 'easy' ? 2 : level === 'medium' ? 4 : 6;
+    difficulty = { easy: 2, medium: 4, hard: 6 }[level];
 }
 
-let boardThemeIndex = 0;
-const boardThemes = ['green', 'blue', 'dark'];
 function changeBoardTheme() {
-    boardThemeIndex = (boardThemeIndex + 1) % boardThemes.length;
-    boardTheme = boardThemes[boardThemeIndex];
-    document.body.className = `board-theme-${boardTheme}`;
-    board.start(); // اعمال تم
+    boardThemeIndex = (boardThemeIndex + 1) % 3;
+    document.body.className = `board-theme-${['green', 'blue', 'dark'][boardThemeIndex]}`;
+    if (board) board.start(); // اعمال
 }
 
-let pieceThemeIndex = 0;
-const pieceThemes = ['wiki', 'wikipedia', 'google'];
 function changePieceTheme() {
-    pieceThemeIndex = (pieceThemeIndex + 1) % pieceThemes.length;
-    pieceTheme = pieceThemes[pieceThemeIndex];
-    initGame(); // بازسازی بورد با تم جدید
+    pieceThemeIndex = (pieceThemeIndex + 1) % 3; // می‌تونی تم‌های بیشتر اضافه کنی
+    initGame(); // بازسازی
 }
 
 function newGame() {
@@ -286,17 +294,15 @@ function newGame() {
     updateHistory();
 }
 
-// هشدار حرکت نامعتبر
 function showWarning() {
     const warning = document.getElementById('warning');
     warning.classList.remove('hidden');
     setTimeout(() => warning.classList.add('hidden'), 3000);
 }
 
-// در onDrop، اگر invalid، showWarning() رو صدا بزن (در کد بالا اضافه شده)
-
-// شروع: نمایش صفحه زبان
+// شروع
 document.addEventListener('DOMContentLoaded', () => {
-    // اعمال تم پیش‌فرض
-    document.body.className = `board-theme-${boardTheme}`;
+    // preload sounds
+    moveSound.load();
+    captureSound.load();
 });
