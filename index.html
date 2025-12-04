@@ -144,7 +144,7 @@ footer { opacity: 0.7; font-size: 0.9rem; }
   <source src="data:audio/wav;base64,UklGRoYBAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YYMBAAAAgP8AAP8AgICAf39/f4CAgICAf39/gICAf4CAgH9/f4CAgICAf39/f4CAgICAf39/gICAf4CAgH9/f4CAgICAf39/f4CAgICAf39/gICAf4CAgA==" type="audio/wav">
 </audio>
 <audio id="illegalSound" preload="auto">
-  <source src="data:audio/wav;base64,UklGRqIBAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YY0BAAAAAP8AAICAf39/gICAf39/gICAf39/gP8AAP8AAP8AAP8AAICAf39/gICAf39/gICAf39/gP8AAP8AAP8AAP8A" type="audio/wav">
+  <source src="data:audio/wav;base64,UklGRqIBAABXQVZFZm10 IBAAAAABAAEAESsAACJWAAACABAAZGF0YY0BAAAAAP8AAICAf39/gICAf39/gICAf39/gP8AAP8AAP8AAP8AAICAf39/gICAf39/gICAf39/gP8AAP8AAP8AAP8A" type="audio/wav">
 </audio>
 
 <script>
@@ -333,7 +333,7 @@ function aiPickMove(side,level){
     for(const mv of legal){const snap=snapshotState(); makeMove(mv); const sc=evaluateBoard(); restoreSnapshot(snap); if(side==='w'?sc>bestScore:sc<bestScore){bestScore=sc; best=mv;}}
     return best||legal[0];
   }
-  const depth=Math.min(level,3); /* محدودسازی عمق برای جلوگیری از قفل شدن UI */
+  const depth=Math.min(level,3);
   let bestMove=legal[0]; let bestScore=side==='w'?-Infinity:Infinity;
   for(const mv of orderMoves(legal)){const snap=snapshotState(); makeMove(mv); const sc=alphabeta(depth-1,-Infinity,Infinity,side!=='w'); restoreSnapshot(snap); if(side==='w'){if(sc>bestScore){bestScore=sc; bestMove=mv;}} else {if(sc<bestScore){bestScore=sc; bestMove=mv;}}}
   return bestMove;
@@ -413,6 +413,8 @@ let selectedIdx=null; let legalHints=[];
 function bindDragAndClick(){
   const squares=[...document.querySelectorAll('.square')];
   const pieces=[...document.querySelectorAll('.piece')];
+
+  // Click-to-select piece, single-click to move to destination
   squares.forEach(sq=>{
     sq.addEventListener('click',()=>{
       const idx=parseInt(sq.dataset.idx,10);
@@ -421,11 +423,16 @@ function bindDragAndClick(){
         selectedIdx=idx;
         legalHints=generateMoves(whiteToMove).filter(m=>m.from===idx).map(m=>m.to);
         highlightSelection();
-      } else if(selectedIdx!==null){
+      } else if(selectedIdx!==null) {
         attemptMove(selectedIdx,idx);
+        selectedIdx=null;
+        legalHints=[];
+        highlightSelection();
       }
     });
   });
+
+  // Drag support
   pieces.forEach(pc=>{
     pc.addEventListener('dragstart',(e)=>{
       const idx=parseInt(pc.dataset.idx,10);
@@ -443,6 +450,9 @@ function bindDragAndClick(){
       const from=selectedIdx??parseInt(e.dataTransfer.getData('text/plain'),10);
       const to=parseInt(sq.dataset.idx,10);
       attemptMove(from,to);
+      selectedIdx=null;
+      legalHints=[];
+      highlightSelection();
     });
   });
 }
@@ -466,7 +476,7 @@ function illegalBlink(idx){
 function attemptMove(fromIdx,toIdx){
   const legal=generateMoves(whiteToMove);
   const mv=legal.find(m=>m.from===fromIdx&&m.to===toIdx);
-  if(!mv){illegalBlink(fromIdx); selectedIdx=null; legalHints=[]; highlightSelection(); return;}
+  if(!mv){illegalBlink(fromIdx); return;}
   const san=toSAN(mv);
   makeMove(mv);
   history.push(san);
@@ -474,7 +484,6 @@ function attemptMove(fromIdx,toIdx){
   renderHistory();
   moveSound.currentTime=0; moveSound.play().catch(()=>{});
   showMessage(i18n[state.lang].moved,'ok');
-  selectedIdx=null; legalHints=[]; highlightSelection();
   maybeAITurn();
 }
 function toSAN(mv){
@@ -525,7 +534,7 @@ function maybeAITurn(){
   const aiS=state.aiSide;
   const sideToMove=whiteToMove?'w':'b';
   if(aiS!==sideToMove) return;
-  showMessage(i18n[state.lang].aiThinking,'ok'); /* پیام شروع فکر کردن AI */
+  showMessage(i18n[state.lang].aiThinking,'ok');
   const mv=aiPickMove(aiS,state.aiLevel);
   if(!mv) return;
   setTimeout(()=>{
@@ -536,7 +545,7 @@ function maybeAITurn(){
     renderHistory();
     moveSound.currentTime=0; moveSound.play().catch(()=>{});
     renderStatus();
-  },300); /* تاخیر بیشتر برای رندر روان‌تر */
+  },300);
 }
 
 document.getElementById('newGameBtn').addEventListener('click',()=>{loadFEN(initialFEN); renderBoard(); renderHistory(); showMessage(i18n[state.lang].applied,'ok');});
