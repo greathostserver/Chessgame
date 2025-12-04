@@ -26,7 +26,19 @@ const dom = {
   applyAI: document.getElementById('applyAI')
 };
 
-const uiState = { lang: localStorage.getItem('chess_lang')||'fa', flipped:false, aiSide: localStorage.getItem('chess_ai_side')||'none', aiDepth: parseInt(localStorage.getItem('chess_ai_depth')||'10',10), theme:{light:localStorage.getItem('chess_light')||'#f0d9b5',dark:localStorage.getItem('chess_dark')||'#b58863',pieceW:localStorage.getItem('chess_pieceW')||'#ffffff',pieceB:localStorage.getItem('chess_pieceB')||'#111111'}, moveListLAN: [] };
+const uiState = {
+  lang: localStorage.getItem('chess_lang')||'fa',
+  flipped:false,
+  aiSide: localStorage.getItem('chess_ai_side')||'none',
+  aiDepth: parseInt(localStorage.getItem('chess_ai_depth')||'10',10),
+  theme:{
+    light:localStorage.getItem('chess_light')||'#f0d9b5',
+    dark:localStorage.getItem('chess_dark')||'#b58863',
+    pieceW:localStorage.getItem('chess_pieceW')||'#ffffff',
+    pieceB:localStorage.getItem('chess_pieceB')||'#111111'
+  },
+  moveListLAN: []
+};
 
 function showModal(text,type='ok',duration=1400){
   dom.modalText.className=type==='warning'?'warning':'ok';
@@ -112,4 +124,188 @@ function renderStatus(){
   if(isCheckmate(state.whiteToMove)) s=t.stateMate;
   else if(isStalemate(state.whiteToMove)) s=t.stateStalemate;
   else if(inCheck(state.whiteToMove)) s=t.stateCheck;
-  dom
+  dom.stateBadge.textContent=s;
+  if(s===t.stateMate) showModal(t.stateMate,'warning',2200);
+  else if(s===t.stateStalemate) showModal(t.stateStalemate,'warning',2000);
+  else if(s===t.stateCheck) showModal(t.stateCheck,'warning',1200);
+}
+
+function renderHistory(){
+  dom.history.innerHTML='';
+  const hdr=document.createElement('div'); hdr.className='history-item'; hdr.innerHTML=`<div class="num">#</div><div>Moves</div><div></div>`;
+  dom.history.appendChild(hdr);
+  for(let i=0;i<state.historySAN.length;i+=2){
+    const w=state.historySAN[i]||'', b=state.historySAN[i+1]||'';
+    const row=document.createElement('div');
+    row.className='history-item';
+    row.innerHTML=`<div class="num">${Math.floor(i/2)+1}.</div><div>${w}</div><div>${b}</div>`;
+    dom.history.appendChild(row);
+  }
+  dom.history.scrollTop=dom.history.scrollHeight;
+}
+
+let selectedIdx=null; let legalTargets=[];
+function bindInteractions(){
+  const squares=[...document.querySelectorAll('.square')];
+  const pieces=[...document.querySelectorAll('.piece')];
+
+  squares.forEach(sq=>{
+    sq.addEventListener('pointerup',()=>{
+      const idx=parseInt(sq.dataset.idx,10);
+      const p=state.board[idx];
+      if(p&&((state.whiteToMove&&p===p.toUpperCase())||(!state.whiteToMove&&p===p.toLowerCase()))){
+        selectedIdx=idx;
+        legalTargets=legalMoves(state.whiteToMove).filter(m=>m.from===idx).map(m=>m.to);
+        highlightSelection();
+      } else if(selectedIdx!==null) {
+        attemptMove(selectedIdx,idx);
+        clearSelection();
+      }
+    },{passive:true});
+  });
+
+  pieces.forEach(pc=>{
+    pc.addEventListener('dragstart',(e)=>{
+      const idx=parseInt(pc.dataset.idx,10);
+      if(!canDragPiece(idx)){e.preventDefault(); showModal(i18n[uiState.lang].illegal,'warning'); return;}
+      selectedIdx=idx;
+      legalTargets=legalMoves(state.whiteToMove).filter(m=>m.from===idx).map(m=>m.to);
+      e.dataTransfer.setData('text/plain',idx.toString());
+      highlightSelection();
+    });
+  });
+  squares.forEach(sq=>{
+    sq.addEventListener('dragover',(e)=>{e.preventDefault();});
+    sq.addEventListener('drop',(e)=>{
+      e.preventDefault();
+      const from=selectedIdx??parseInt(e.dataTransfer.getData('text/plain'),10);
+      const to=parseInt(sq.dataset.idx,10);
+      attemptMove(from,to);
+      clearSelection();
+    });
+  });
+}
+function canDragPiece(idx){const p=state.board[idx]; if(!p) return false; if(state.whiteToMove&&p!==p.toUpperCase()) return false; if(!state.whiteToMove&&p!==p.toLowerCase()) return false; return true;}
+function highlightSelection(){
+  document.querySelectorAll('.square').forEach(s=>s.classList.remove('highlight','hint'));
+  if(selectedIdx===null) return;
+  const selSq=[...document.querySelectorAll('.square')].find(s=>parseInt(s.dataset.idx,10)===selectedIdx);
+  if(selSq) selSq.classList.add('highlight');
+  legalTargets.forEach(to=>{
+    const tSq=[...document.querySelectorAll('.square')].find(s=>parseInt(s.dataset.idx,10)===to);
+    if(tSq) tSq.classList.add('hint');
+  });
+}
+function clearSelection(){selectedIdx=null; legalTargets=[]; highlightSelection();}
+
+function attemptMove(fromIdx,toIdx){
+  const mv=legalMoves(state.whiteToMove).find(m=>m.from===fromIdx&&m.to===toIdx);
+  if(!mv){showModal(i18n[uiState.lang].illegal,'warning'); return;}
+  const san=moveToSAN(mv);
+  const from = idxToCoord(mv.from); const to = idxToCoord(mv.to);
+  const lan = (mv.prom ? `${from}${to}${mv.prom.toLowerCase()}` : `${from}${to}`);
+  uiState.moveListLAN.push(lan);
+
+  makeMove(mv);
+  state.historySAN.push(san);
+  setUndoEnabled(state.undoStack.length>0);
+  renderBoard();
+  renderHistory();
+  scheduleAI();
+}
+
+function scheduleAI(){
+  const sideToMove=state.whiteToMove?'w':'b';
+  if(uiState.aiSide==='none') return;
+  if(uiState.aiSide!==sideToMove) return;
+
+  const fen=fenFromBoard();
+  const depth=uiState.aiDepth||10;
+  const movesStr=uiState.moveListLAN.join(' ');
+  goBestMove(fen, depth, movesStr);
+}
+
+function applyAIControls(){
+  uiState.aiSide = dom.aiSide.value;
+  uiState.aiDepth = parseInt(dom.aiLevel.value,10);
+  localStorage.setItem('chess_ai_side', uiState.aiSide);
+  localStorage.setItem('chess_ai_depth', String(uiState.aiDepth));
+  showModal(i18n[uiState.lang].applied,'ok');
+  scheduleAI();
+}
+
+function onBestMoveHandler(bestmove){
+  if(!bestmove || bestmove.length<4) return;
+  const fromFile=bestmove[0], fromRank=bestmove[1];
+  const toFile=bestmove[2], toRank=bestmove[3];
+  const fromIdx = (8 - parseInt(fromRank,10))*8 + 'abcdefgh'.indexOf(fromFile);
+  const toIdx = (8 - parseInt(toRank,10))*8 + 'abcdefgh'.indexOf(toFile);
+
+  // پیدا کردن حرکت قانونی متناظر
+  let mv = legalMoves(state.whiteToMove).find(m=>m.from===fromIdx&&m.to===toIdx) || null;
+  if(!mv && bestmove.length>=5){
+    const prom = bestmove[4].toUpperCase();
+    const candidate = legalMoves(state.whiteToMove).find(m=>m.from===fromIdx&&m.to===toIdx&&m.prom===prom);
+    if(candidate) mv=candidate;
+  }
+  if(!mv) return;
+
+  const san=moveToSAN(mv);
+  makeMove(mv);
+  state.historySAN.push(san);
+  uiState.moveListLAN.push(bestmove);
+  setUndoEnabled(state.undoStack.length>0);
+  renderBoard();
+  renderHistory();
+}
+
+function boot(){
+  // Engine init
+  initEngine();
+  setOptions({Threads: 1, Hash: 32}); // می‌توانی افزایش دهی
+
+  // Apply labels and theme
+  applyLang();
+  applyTheme();
+
+  // Defaults
+  dom.langSel.value = uiState.lang;
+  dom.aiSide.value = uiState.aiSide;
+  dom.aiLevel.value = String(uiState.aiDepth);
+
+  // Events
+  dom.newBtn.addEventListener('pointerup',()=>{
+    loadFEN(initialFEN);
+    uiState.moveListLAN.length=0;
+    renderBoard(); renderHistory(); setUndoEnabled(false);
+    showModal(i18n[uiState.lang].applied,'ok');
+  });
+  dom.flipBtn.addEventListener('pointerup',()=>{uiState.flipped=!uiState.flipped; renderBoard(); showModal(i18n[uiState.lang].applied,'ok');});
+  dom.undoBtn.addEventListener('pointerup',()=>{
+    if(!state.undoStack.length){showModal(i18n[uiState.lang].illegal,'warning'); return;}
+    import('./chess-rules.js').then(mod=>{
+      const ok = mod.undo();
+      if(ok){ uiState.moveListLAN.pop(); }
+      renderBoard(); renderHistory(); setUndoEnabled(state.undoStack.length>0); showModal(i18n[uiState.lang].applied,'ok');
+    });
+  });
+  dom.applyLang.addEventListener('pointerup',()=>{
+    uiState.lang=dom.langSel.value; localStorage.setItem('chess_lang',uiState.lang);
+    applyLang(); renderBoard(); renderHistory(); showModal(i18n[uiState.lang].applied,'ok');
+  });
+  dom.applyTheme.addEventListener('pointerup',()=>{
+    uiState.theme.light=dom.lightColor.value; uiState.theme.dark=dom.darkColor.value; uiState.theme.pieceW=dom.whitePieceColor.value; uiState.theme.pieceB=dom.blackPieceColor.value;
+    localStorage.setItem('chess_light',uiState.theme.light); localStorage.setItem('chess_dark',uiState.theme.dark); localStorage.setItem('chess_pieceW',uiState.theme.pieceW); localStorage.setItem('chess_pieceB',uiState.theme.pieceB);
+    applyTheme(); renderBoard(); showModal(i18n[uiState.lang].applied,'ok');
+  });
+  dom.applyAI.addEventListener('pointerup',applyAIControls);
+
+  // این خط حیاتی برای دریافت حرکت موتور
+  onBestMove(onBestMoveHandler);
+
+  // Start
+  loadFEN(initialFEN);
+  renderBoard();
+  renderHistory();
+}
+boot();
