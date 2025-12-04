@@ -8,7 +8,7 @@ export function idxToCoord(i){return files[i%8]+ranks[Math.floor(i/8)];}
 export function coordToIdx(c){const f=files.indexOf(c[0]);const r=ranks.indexOf(c[1]);return r*8+f;}
 export function inBoardIdx(i){return i>=0&&i<64;}
 export function isWhite(p){return p&&p===p.toUpperCase();}
-export function isBlack(p){return p&&p===p.toLowerCase();}
+export function isBlack(p){return p&&p.toLowerCase()===p;}
 
 export const state = {
   board: Array(64).fill(null),
@@ -24,15 +24,23 @@ export const state = {
 export function loadFEN(fen){
   state.board = Array(64).fill(null);
   const parts=fen.split('/'); let i=0;
-  for(let row=0;row<8;row++){const s=parts[row]; for(const ch of s){if(/[1-8]/.test(ch)) i+=parseInt(ch,10); else state.board[i++]=ch;}}
-  state.whiteToMove=true; state.castleRights={K:true,Q:true,k:true,q:true};
-  state.enPassant=null; state.halfmoveClock=0; state.fullmoveNumber=1;
-  state.historySAN.length=0; state.undoStack.length=0;
+  for(let row=0;row<8;row++){
+    const s=parts[row];
+    for(const ch of s){
+      if(/[1-8]/.test(ch)) i+=parseInt(ch,10);
+      else state.board[i++]=ch;
+    }
+  }
+  state.whiteToMove=true;
+  state.castleRights={K:true,Q:true,k:true,q:true};
+  state.enPassant=null;
+  state.halfmoveClock=0;
+  state.fullmoveNumber=1;
+  state.historySAN.length=0;
+  state.undoStack.length=0;
 }
 
 function knightReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);const dx=Math.abs(tx-fx),dy=Math.abs(ty-fy);return dx*dy===2;}
-function kingReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);return Math.max(Math.abs(tx-fx),Math.abs(ty-fy))===1;}
-
 export function squareAttacked(idx,byWhite,board=state.board){
   for(let i=0;i<64;i++){
     const p=board[i]; if(!p) continue;
@@ -48,7 +56,9 @@ export function squareAttacked(idx,byWhite,board=state.board){
         }
       }
     } else if(P==='N'){
-      for(const d of[15,17,6,10,-15,-17,-6,-10]){const t=i+d; if(inBoardIdx(t)&&t===idx&&knightReach(i,t)) return true;}
+      for(const d of[15,17,6,10,-15,-17,-6,-10]){
+        const to=i+d; if(inBoardIdx(to)&&to===idx&&knightReach(i,to)) return true;
+      }
     } else if(P==='B'||P==='R'||P==='Q'){
       const rays=(P==='B')?[[1,1],[1,-1],[-1,1],[-1,-1]]
                  :(P==='R')?[[1,0],[-1,0],[0,1],[0,-1]]
@@ -127,7 +137,7 @@ export function generatePseudoMoves(w=true){
           if(!t||(w?isBlack(t):isWhite(t))) moves.push({from,to,piece:p,capture:t||null});
         }
       }
-      // Castling checks
+      // Castling (simplified but safe squares checked)
       if(w){
         const e1=coordToIdx('e1'),f1=coordToIdx('f1'),g1=coordToIdx('g1'),d1=coordToIdx('d1'),c1=coordToIdx('c1'),b1=coordToIdx('b1');
         if(from===e1&&state.castleRights.K&&!board[f1]&&!board[g1]&&!squareAttacked(e1,false,board)&&!squareAttacked(f1,false,board)&&!squareAttacked(g1,false,board)) moves.push({from:e1,to:g1,piece:p,castle:'K'});
