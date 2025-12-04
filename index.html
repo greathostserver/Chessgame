@@ -19,7 +19,6 @@
       </header>
 
       <div class="controls">
-        <!-- زبان -->
         <div class="card">
           <label id="langLabel"></label>
           <div class="row">
@@ -32,7 +31,6 @@
           </div>
         </div>
 
-        <!-- رنگ‌ها -->
         <div class="card">
           <label id="themeLabel"></label>
           <div class="row">
@@ -44,7 +42,6 @@
           </div>
         </div>
 
-        <!-- هوش مصنوعی -->
         <div class="card">
           <label id="aiLabel"></label>
           <div class="row">
@@ -54,11 +51,10 @@
               <option value="b">سیاه</option>
             </select>
             <select id="aiLevel" aria-label="AI level">
-              <option value="3">عمق 3 (سریع)</option>
+              <option value="6">عمق 6 (سریع)</option>
               <option value="10">عمق 10 (میانه)</option>
               <option value="18">عمق 18 (قوی)</option>
               <option value="22">عمق 22 (خیلی قوی)</option>
-              <option value="28">عمق 28 (رقابتی)</option>
             </select>
             <button id="applyAI" class="primary" type="button"></button>
           </div>
@@ -73,14 +69,14 @@
         </div>
       </div>
 
-      <footer>Client-side • Stockfish WASM Worker • No server needed</footer>
+      <footer>Client-side • Stockfish WASM Worker</footer>
     </div>
   </div>
 
   <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true"></div>
   <div id="modal" class="modal" role="dialog" aria-modal="true" aria-live="polite"><span id="modalText" class="ok"></span></div>
 
-  <!-- فقط فایل اصلی را به صورت ماژول بارگذاری کن -->
+  <!-- نکته حیاتی: فقط فایل اصلی را به صورت ماژول بارگذاری کن -->
   <script type="module" src="js/chess-ui.js"></script>
 </body>
 </html>
