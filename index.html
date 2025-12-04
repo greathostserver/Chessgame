@@ -31,8 +31,13 @@ select, button, input[type="color"] { appearance: none; border: 1px solid rgba(2
 button.primary { background: var(--accent); color: #082032; font-weight: 900; border-color: transparent; }
 .layout { display: grid; grid-template-columns: minmax(280px, 520px) minmax(280px, 520px); gap: 16px; justify-items: center; }
 @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+
 .board-wrap { width: min(92vw, 520px); height: min(92vw, 520px); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); }
-.board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; height: 100%; user-select: none; touch-action: manipulation; }
+.board {
+  display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+  width: 100%; height: 100%; user-select: none; touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
 .square { display: flex; align-items: center; justify-content: center; }
 .light { background-color: var(--board-light); }
 .dark { background-color: var(--board-dark); }
@@ -52,11 +57,24 @@ button.primary { background: var(--accent); color: #082032; font-weight: 900; bo
 .history { min-height: 220px; max-height: 320px; overflow: auto; }
 .history-item { display: grid; grid-template-columns: 48px 1fr 1fr; gap: 8px; align-items: center; padding: 6px 8px; border-bottom: 1px dashed rgba(255,255,255,0.08); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace; }
 .history-item .num { opacity: 0.75; }
-.warning { color: var(--warning); font-weight: 700; }
-.ok { color: var(--ok); font-weight: 700; }
 footer { opacity: 0.7; font-size: 0.9rem; }
 
-.message-bar { min-height: 28px; }
+/* Modal popup for apply messages */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35); opacity: 0; pointer-events: none; transition: opacity .15s ease;
+  z-index: 9998;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.modal {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -52%);
+  background: #101528; color: var(--text); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px; padding: 14px 16px; box-shadow: 0 10px 35px rgba(0,0,0,0.45);
+  min-width: 280px; max-width: 90vw; opacity: 0; pointer-events: none; transition: opacity .15s ease, transform .15s ease;
+  z-index: 9999; text-align: center; font-weight: 800;
+}
+.modal.open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+.modal .ok { color: var(--ok); }
+.modal .warning { color: var(--warning); }
 </style>
 </head>
 <body>
@@ -134,13 +152,16 @@ footer { opacity: 0.7; font-size: 0.9rem; }
       <div class="side">
         <div class="card status"><div class="badge" id="turnBadge"></div><div class="badge" id="stateBadge"></div></div>
         <div class="card history" id="history"></div>
-        <div class="card message-bar"><div id="message"></div></div>
       </div>
     </div>
 
     <footer>Hosted on GitHub Pages • Client-side only • No external dependencies</footer>
   </div>
 </div>
+
+<!-- Modal elements -->
+<div id="modalBackdrop" class="modal-backdrop"></div>
+<div id="modal" class="modal"><span id="modalText" class="ok"></span></div>
 
 <audio id="moveSound" preload="auto">
   <source src="data:audio/wav;base64,UklGRoYBAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YYMBAAAAgP8AAP8AgICAf39/f4CAgICAf39/gICAf4CAgH9/f4CAgICAf39/f4CAgICAf39/gICAf4CAgH9/f4CAgICAf39/f4CAgICAf39/gICAf4CAgA==" type="audio/wav">
@@ -163,10 +184,30 @@ function isBlack(p){return p&&p===p.toLowerCase();}
 let board=[]; let whiteToMove=true; let castleRights={K:true,Q:true,k:true,q:true}; let enPassant=null; let halfmoveClock=0; let fullmoveNumber=1; const history=[]; const undoStack=[];
 const initialFEN="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
-function loadFEN(fen){board=Array(64).fill(null);const parts=fen.split('/');let i=0;for(let row=0;row<8;row++){const s=parts[row];for(const ch of s){if(/[1-8]/.test(ch))i+=parseInt(ch,10);else board[i++]=ch;}}whiteToMove=true;castleRights={K:true,Q:true,k:true,q:true};enPassant=null;halfmoveClock=0;fullmoveNumber=1;history.length=0;undoStack.length=0;}
+/* Modal helpers */
+const modal=document.getElementById('modal');
+const modalBackdrop=document.getElementById('modalBackdrop');
+const modalText=document.getElementById('modalText');
+let modalTimer=null;
+function showModal(text,type='ok',duration=1600){
+  modalText.className=type==='warning'?'warning':'ok';
+  modalText.textContent=text;
+  modal.classList.add('open');
+  modalBackdrop.classList.add('open');
+  if(modalTimer) clearTimeout(modalTimer);
+  modalTimer=setTimeout(()=>{modal.classList.remove('open'); modalBackdrop.classList.remove('open');},duration);
+}
 
-/* Helpers */
-function findKingIdx(w){const t=w?'K':'k';for(let i=0;i<64;i++)if(board[i]===t)return i;return-1;}
+/* Load FEN */
+function loadFEN(fen){
+  board=Array(64).fill(null);
+  const parts=fen.split('/'); let i=0;
+  for(let row=0;row<8;row++){const s=parts[row]; for(const ch of s){if(/[1-8]/.test(ch)) i+=parseInt(ch,10); else board[i++]=ch;}}
+  whiteToMove=true; castleRights={K:true,Q:true,k:true,q:true}; enPassant=null; halfmoveClock=0; fullmoveNumber=1; history.length=0; undoStack.length=0;
+}
+
+/* Attack and move helpers */
+function findKingIdx(w){const t=w?'K':'k'; for(let i=0;i<64;i++) if(board[i]===t) return i; return -1;}
 function knightReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);const dx=Math.abs(tx-fx),dy=Math.abs(ty-fy);return dx*dy===2;}
 function kingReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);return Math.max(Math.abs(tx-fx),Math.abs(ty-fy))===1;}
 function sameLine(f,t,step){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);const sfx=step%8,sfy=Math.floor(step/8);if(Math.abs(sfx)===1&&sfy===0)return fy===ty; if(sfx===0&&Math.abs(sfy)===1)return fx===tx; if(Math.abs(sfx)===1&&Math.abs(sfy)===1)return Math.abs(tx-fx)===Math.abs(ty-fy); return false;}
@@ -175,21 +216,17 @@ function squareAttacked(idx,byWhite){
     const p=board[i]; if(!p) continue;
     if(byWhite?!isWhite(p):!isBlack(p)) continue;
     const piece=p.toUpperCase(); const dir=byWhite?-1:1;
-    if(piece==='P'){
-      for(const df of[-1,1]){const cap=i+8*dir+df; if(cap===idx&&inBoardIdx(cap)) return true;}
-    } else if(piece==='N'){
-      for(const d of[15,17,6,10,-15,-17,-6,-10]){const t=i+d; if(t===idx&&inBoardIdx(t)&&knightReach(i,t)) return true;}
-    } else if(piece==='B'||piece==='R'||piece==='Q'){
+    if(piece==='P'){for(const df of[-1,1]){const cap=i+8*dir+df; if(cap===idx&&inBoardIdx(cap)) return true;}}
+    else if(piece==='N'){for(const d of[15,17,6,10,-15,-17,-6,-10]){const t=i+d; if(t===idx&&inBoardIdx(t)&&knightReach(i,t)) return true;}}
+    else if(piece==='B'||piece==='R'||piece==='Q'){
       const dirs=[]; if(piece!=='R') dirs.push(...[9,7,-9,-7]); if(piece!=='B') dirs.push(...[8,-8,1,-1]);
       for(const d of dirs){let t=i+d; while(inBoardIdx(t)&&sameLine(i,t,d)){if(t===idx) return true; if(board[t]) break; t+=d;}}
-    } else if(piece==='K'){
-      for(const d of[8,-8,1,-1,9,7,-9,-7]){const t=i+d; if(t===idx&&inBoardIdx(t)&&kingReach(i,t)) return true;}
-    }
+    } else if(piece==='K'){for(const d of[8,-8,1,-1,9,7,-9,-7]){const t=i+d; if(t===idx&&inBoardIdx(t)&&kingReach(i,t)) return true;}}
   }
   return false;
 }
 
-/* Move generation — fixed pawn double-step logic */
+/* Pawn and move generation */
 function addPawnAdvance(moves,from,to,w){
   const toRank=Math.floor(to/8); const promRank=w?0:7;
   if(toRank===promRank){for(const promo of['Q','R','B','N']){moves.push({from,to,piece:board[from],prom:promo,capture:null});}}
@@ -207,13 +244,15 @@ function generateMoves(w=true){
       const two=from+16*dir;
       const startRank=w?6:1;
 
-      if(inBoardIdx(one)&&!board[one]){
-        addPawnAdvance(moves,from,one,w);
-      }
+      // one-step
+      if(inBoardIdx(one)&&!board[one]) addPawnAdvance(moves,from,one,w);
+
+      // two-step: strictly start rank and both squares empty
       if(Math.floor(from/8)===startRank && inBoardIdx(one) && inBoardIdx(two) && !board[one] && !board[two]){
         moves.push({from,to:two,piece:p,capture:null,prom:null,double:true});
       }
 
+      // captures + en passant
       for(const df of[-1,1]){
         const cap=from+8*dir+df;
         if(!inBoardIdx(cap)) continue;
@@ -230,7 +269,7 @@ function generateMoves(w=true){
     } else if(piece==='N'){
       for(const d of[15,17,6,10,-15,-17,-6,-10]){
         const to=from+d; if(!inBoardIdx(to)||!knightReach(from,to)) continue;
-        const t=board[to]; if(!t||(w?isBlack(t):isWhite(t))){moves.push({from,to,piece:p,capture:t||null});}
+        const t=board[to]; if(!t||(w?isBlack(t):isWhite(t))) moves.push({from,to,piece:p,capture:t||null});
       }
     } else if(piece==='B'||piece==='R'||piece==='Q'){
       const dirs=[]; if(piece!=='R') dirs.push(...[9,7,-9,-7]); if(piece!=='B') dirs.push(...[8,-8,1,-1]);
@@ -238,16 +277,17 @@ function generateMoves(w=true){
         let to=from+d;
         while(inBoardIdx(to)&&sameLine(from,to,d)){
           const t=board[to];
-          if(!t){moves.push({from,to,piece:p,capture:null});}
-          else {if(w?isBlack(t):isWhite(t)) moves.push({from,to,piece:p,capture:t}); break;}
+          if(!t) moves.push({from,to,piece:p,capture:null});
+          else { if(w?isBlack(t):isWhite(t)) moves.push({from,to,piece:p,capture:t}); break; }
           to+=d;
         }
       }
     } else if(piece==='K'){
       for(const d of[8,-8,1,-1,9,7,-9,-7]){
         const to=from+d; if(!inBoardIdx(to)||!kingReach(from,to)) continue;
-        const t=board[to]; if(!t||(w?isBlack(t):isWhite(t))){moves.push({from,to,piece:p,capture:t||null});}
+        const t=board[to]; if(!t||(w?isBlack(t):isWhite(t))) moves.push({from,to,piece:p,capture:t||null});
       }
+      // castling
       if(w){
         const e1=coordToIdx('e1'),f1=coordToIdx('f1'),g1=coordToIdx('g1'),d1=coordToIdx('d1'),c1=coordToIdx('c1'),b1=coordToIdx('b1');
         if(from===e1&&castleRights.K&&!board[f1]&&!board[g1]&&!squareAttacked(e1,false)&&!squareAttacked(f1,false)&&!squareAttacked(g1,false)){
@@ -267,14 +307,16 @@ function generateMoves(w=true){
       }
     }
   }
+  // legality filter
   return moves.filter(m=>!leavesKingInCheck(m,w));
 }
 
-/* Mutations */
+/* State mutation */
 function snapshotState(){return{board:board.slice(),whiteToMove,castleRights:{...castleRights},enPassant,halfmoveClock,fullmoveNumber};}
 function restoreSnapshot(s){board=s.board.slice();whiteToMove=s.whiteToMove;castleRights={...s.castleRights};enPassant=s.enPassant;halfmoveClock=s.halfmoveClock;fullmoveNumber=s.fullmoveNumber;}
 let _makeMove=function(move,opts={simulate:false}){
   const from=move.from,to=move.to; const piece=board[from];
+
   if(move.enp){const dir=isWhite(piece)?-1:1; const behind=to-8*dir; board[behind]=null;}
   if(move.castle){
     if(move.castle==='K'){board[coordToIdx('f1')]=board[coordToIdx('h1')]; board[coordToIdx('h1')]=null;}
@@ -282,8 +324,12 @@ let _makeMove=function(move,opts={simulate:false}){
     else if(move.castle==='k'){board[coordToIdx('f8')]=board[coordToIdx('h8')]; board[coordToIdx('h8')]=null;}
     else if(move.castle==='q'){board[coordToIdx('d8')]=board[coordToIdx('a8')]; board[coordToIdx('a8')]=null;}
   }
+
+  // place piece (promotion)
   board[to]=move.prom?(isWhite(piece)?move.prom:move.prom.toLowerCase()):piece;
   board[from]=null;
+
+  // en passant target after double-step
   if(move.double){
     const toC=idxToCoord(to); const file=toC[0]; const rank=parseInt(toC[1],10);
     const epRank=isWhite(piece)?rank+1:rank-1;
@@ -291,6 +337,8 @@ let _makeMove=function(move,opts={simulate:false}){
   } else {
     enPassant=null;
   }
+
+  // update castle rights
   const fromCoord=idxToCoord(from); const toCoord=idxToCoord(to); const pieceUpper=piece.toUpperCase();
   if(pieceUpper==='K'){if(isWhite(piece)){castleRights.K=false; castleRights.Q=false;} else {castleRights.k=false; castleRights.q=false;}}
   if(pieceUpper==='R'){
@@ -305,6 +353,8 @@ let _makeMove=function(move,opts={simulate:false}){
     if(toCoord==='h8') castleRights.k=false;
     if(toCoord==='a8') castleRights.q=false;
   }
+
+  // clocks
   const isPawn=pieceUpper==='P';
   if(isPawn||move.capture) halfmoveClock=0; else halfmoveClock++;
   if(!opts.simulate){
@@ -319,7 +369,7 @@ function inCheck(w){const k=findKingIdx(w); return squareAttacked(k,!w);}
 function isCheckmate(w){if(!inCheck(w)) return false; return generateMoves(w).length===0;}
 function isStalemate(w){if(inCheck(w)) return false; return generateMoves(w).length===0;}
 
-/* Evaluation and AI */
+/* Evaluation and simple AI (depth limited to keep UI responsive) */
 const val={p:100,n:320,b:330,r:500,q:900,k:20000};
 const pstW={p:[0,5,5,0,5,10,50,0,0,10,-5,0,5,10,50,0,0,10,-10,20,25,30,50,0,0,20,0,30,35,40,50,0,0,25,5,35,40,45,55,0,5,30,10,40,45,50,60,5,10,35,20,50,55,60,70,10,0,0,0,0,0,0,0,0],n:[-50,-40,-30,-30,-30,-30,-40,-50,-40,-20,0,0,0,0,-20,-40,-30,0,10,15,15,10,0,-30,-30,5,15,20,20,15,5,-30,-30,0,15,20,20,15,0,-30,-30,5,10,15,15,10,5,-30,-40,-20,0,5,5,0,-20,-40,-50,-40,-30,-30,-30,-30,-40,-50],b:[-20,-10,-10,-10,-10,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,10,10,5,0,-10,-10,5,5,10,10,5,5,-10,-10,0,10,10,10,10,0,-10,-10,10,10,10,10,10,10,-10,-10,5,0,0,0,0,5,-10,-20,-10,-10,-10,-10,-10,-10,-20],r:[0,0,0,5,5,0,0,0,5,10,10,10,10,10,10,5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,0,0,0,5,5,0,0,0],q:Array(64).fill(0),k:[20,30,10,0,0,10,30,20,20,20,0,0,0,0,20,20,-10,-20,-20,-20,-20,-20,-20,-10,-20,-30,-30,-40,-40,-30,-30,-20,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30]};
 function pstScore(p,idx){const isW=isWhite(p);const type=p.toLowerCase();const table=pstW[type]||Array(64).fill(0);const mirrorIdx=isW?idx:(Math.floor(idx/8)*8+(7-(idx%8)));return isW?table[idx]:-table[mirrorIdx];}
@@ -328,33 +378,17 @@ function orderMoves(moves){return moves.slice().sort((a,b)=>{const av=a.capture?
 function aiPickMove(side,level){
   const legal=generateMoves(side==='w'); if(legal.length===0) return null;
   if(level===0) return legal[Math.floor(Math.random()*legal.length)];
-  if(level<=2){
-    let best=null,bestScore=side==='w'?-Infinity:Infinity;
-    for(const mv of legal){const snap=snapshotState(); makeMove(mv); const sc=evaluateBoard(); restoreSnapshot(snap); if(side==='w'?sc>bestScore:sc<bestScore){bestScore=sc; best=mv;}}
-    return best||legal[0];
+  const cappedLevel=Math.min(level,2); // محدودسازی برای جلوگیری از قفل شدن
+  let best=legal[0]; let bestScore=side==='w'?-Infinity:Infinity;
+  for(const mv of orderMoves(legal)){
+    const snap=snapshotState(); makeMove(mv); const sc=evaluateBoard(); restoreSnapshot(snap);
+    if(side==='w'?sc>bestScore:sc<bestScore){bestScore=sc; best=mv;}
   }
-  const depth=Math.min(level,3);
-  let bestMove=legal[0]; let bestScore=side==='w'?-Infinity:Infinity;
-  for(const mv of orderMoves(legal)){const snap=snapshotState(); makeMove(mv); const sc=alphabeta(depth-1,-Infinity,Infinity,side!=='w'); restoreSnapshot(snap); if(side==='w'){if(sc>bestScore){bestScore=sc; bestMove=mv;}} else {if(sc<bestScore){bestScore=sc; bestMove=mv;}}}
-  return bestMove;
-}
-function alphabeta(depth,alpha,beta,whiteTurn){
-  if(depth===0) return evaluateBoard();
-  const moves=orderMoves(generateMoves(whiteTurn));
-  if(moves.length===0){if(inCheck(whiteTurn)) return whiteTurn?-999999:999999; return 0;}
-  if(whiteTurn){
-    let value=-Infinity;
-    for(const mv of moves){const snap=snapshotState(); makeMove(mv); value=Math.max(value,alphabeta(depth-1,alpha,beta,false)); restoreSnapshot(snap); alpha=Math.max(alpha,value); if(alpha>=beta)break;}
-    return value;
-  } else {
-    let value=Infinity;
-    for(const mv of moves){const snap=snapshotState(); makeMove(mv); value=Math.min(value,alphabeta(depth-1,alpha,beta,true)); restoreSnapshot(snap); beta=Math.min(beta,value); if(alpha>=beta)break;}
-    return value;
-  }
+  return best;
 }
 
 /* UI */
-const boardEl=document.getElementById('board'); const historyEl=document.getElementById('history'); const messageEl=document.getElementById('message'); const moveSound=document.getElementById('moveSound'); const illegalSound=document.getElementById('illegalSound');
+const boardEl=document.getElementById('board'); const historyEl=document.getElementById('history'); const moveSound=document.getElementById('moveSound'); const illegalSound=document.getElementById('illegalSound');
 
 function applyLangTexts(){
   const t=i18n[state.lang];
@@ -415,8 +449,9 @@ function bindInteractions(){
   const squares=[...document.querySelectorAll('.square')];
   const pieces=[...document.querySelectorAll('.piece')];
 
+  // Use pointerup for instant response (no mobile click delay)
   squares.forEach(sq=>{
-    sq.addEventListener('click',()=>{
+    sq.addEventListener('pointerup',()=>{
       const idx=parseInt(sq.dataset.idx,10);
       const p=board[idx];
       if(p&&((whiteToMove&&isWhite(p))||(!whiteToMove&&isBlack(p)))){
@@ -424,7 +459,7 @@ function bindInteractions(){
         legalHints=generateMoves(whiteToMove).filter(m=>m.from===idx).map(m=>m.to);
         highlightSelection();
       } else if(selectedIdx!==null) {
-        attemptMove(selectedIdx,idx);
+        attemptMove(selectedIdx,idx); // instant
         selectedIdx=null;
         legalHints=[];
         highlightSelection();
@@ -449,7 +484,7 @@ function bindInteractions(){
       e.preventDefault();
       const from=selectedIdx??parseInt(e.dataTransfer.getData('text/plain'),10);
       const to=parseInt(sq.dataset.idx,10);
-      attemptMove(from,to);
+      attemptMove(from,to); // instant
       selectedIdx=null;
       legalHints=[];
       highlightSelection();
@@ -469,22 +504,22 @@ function highlightSelection(){
 }
 function illegalBlink(idx){
   const sq=[...document.querySelectorAll('.square')].find(s=>parseInt(s.dataset.idx,10)===idx);
-  if(sq){sq.classList.add('illegal'); setTimeout(()=>sq.classList.remove('illegal'),300);}
-  showMessage(i18n[state.lang].illegal,'warning');
+  if(sq){sq.classList.add('illegal'); setTimeout(()=>sq.classList.remove('illegal'),280);}
   illegalSound.currentTime=0; illegalSound.play().catch(()=>{});
+  showModal(i18n[state.lang].illegal,'warning',1600);
 }
 function attemptMove(fromIdx,toIdx){
   const legal=generateMoves(whiteToMove);
   const mv=legal.find(m=>m.from===fromIdx&&m.to===toIdx);
   if(!mv){illegalBlink(fromIdx); return;}
   const san=toSAN(mv);
-  makeMove(mv);
+  makeMove(mv);               // instant
   history.push(san);
   renderBoard();
   renderHistory();
   moveSound.currentTime=0; moveSound.play().catch(()=>{});
-  showMessage(i18n[state.lang].moved,'ok');
-  maybeAITurn();
+  // No modal here to avoid blocking; movement is self-evident
+  maybeAITurn();              // schedule AI independently
 }
 function toSAN(mv){
   const from=idxToCoord(mv.from); const to=idxToCoord(mv.to); const p=mv.piece.toUpperCase();
@@ -524,21 +559,18 @@ function renderStatus(){
   else if(inCheck(whiteToMove)) s=t.stateCheck;
   document.getElementById('stateBadge').textContent=s;
 }
-function showMessage(text,type='info'){
-  const cls=type==='warning'?'warning':'ok';
-  messageEl.innerHTML=`<span class="${cls}">${text}</span>`;
-  setTimeout(()=>{messageEl.textContent='';},2000);
-}
 
-/* AI — no delay for player moves, small delay only for AI if needed */
+/* AI — compute after frame, no delay for player */
 function maybeAITurn(){
   const aiS=state.aiSide;
   const sideToMove=whiteToMove?'w':'b';
   if(aiS!==sideToMove) return;
-  showMessage(i18n[state.lang].aiThinking,'ok');
-  const mv=aiPickMove(aiS,state.aiLevel);
-  if(!mv) return;
-  setTimeout(()=>{
+  showModal(i18n[state.lang].aiThinking,'ok',1000);
+  // let the UI render first, then think
+  requestAnimationFrame(()=>{
+    const mv=aiPickMove(aiS,state.aiLevel);
+    if(!mv) return;
+    // apply immediately after thinking
     const san=toSAN(mv);
     makeMove(mv);
     history.push(san);
@@ -546,41 +578,41 @@ function maybeAITurn(){
     renderHistory();
     moveSound.currentTime=0; moveSound.play().catch(()=>{});
     renderStatus();
-  },150);
+  });
 }
 
-/* Controls — with apply messages */
-document.getElementById('newGameBtn').addEventListener('click',()=>{
+/* Controls — show apply modal */
+document.getElementById('newGameBtn').addEventListener('pointerup',()=>{
   loadFEN(initialFEN);
   renderBoard();
   renderHistory();
-  showMessage(i18n[state.lang].applied,'ok');
+  showModal(i18n[state.lang].applied,'ok');
 });
-document.getElementById('flipBtn').addEventListener('click',()=>{
+document.getElementById('flipBtn').addEventListener('pointerup',()=>{
   state.flipped=!state.flipped;
   renderBoard();
-  showMessage(i18n[state.lang].applied,'ok');
+  showModal(i18n[state.lang].applied,'ok');
 });
-document.getElementById('undoBtn').addEventListener('click',()=>{
-  if(!undoStack.length){showMessage(i18n[state.lang].illegal,'warning'); return;}
+document.getElementById('undoBtn').addEventListener('pointerup',()=>{
+  if(!undoStack.length){showModal(i18n[state.lang].illegal,'warning'); return;}
   const snap=undoStack.pop();
   restoreSnapshot(snap);
   if(history.length) history.pop();
   renderBoard();
   renderHistory();
-  showMessage(i18n[state.lang].applied,'ok');
+  showModal(i18n[state.lang].applied,'ok');
 });
 
 document.getElementById('langSelect').value=state.lang;
-document.getElementById('applyLang').addEventListener('click',()=>{
+document.getElementById('applyLang').addEventListener('pointerup',()=>{
   state.lang=document.getElementById('langSelect').value;
   localStorage.setItem('chess_lang',state.lang);
   applyLangTexts();
   renderBoard();
   renderHistory();
-  showMessage(i18n[state.lang].applied,'ok');
+  showModal(i18n[state.lang].applied,'ok');
 });
-document.getElementById('applyTheme').addEventListener('click',()=>{
+document.getElementById('applyTheme').addEventListener('pointerup',()=>{
   state.theme.light=document.getElementById('lightColor').value;
   state.theme.dark=document.getElementById('darkColor').value;
   state.theme.pieceW=document.getElementById('whitePieceColor').value;
@@ -591,19 +623,19 @@ document.getElementById('applyTheme').addEventListener('click',()=>{
   localStorage.setItem('chess_pieceB',state.theme.pieceB);
   applyTheme();
   renderBoard();
-  showMessage(i18n[state.lang].applied,'ok');
+  showModal(i18n[state.lang].applied,'ok');
 });
-document.getElementById('applyAI').addEventListener('click',()=>{
+document.getElementById('applyAI').addEventListener('pointerup',()=>{
   state.aiSide=document.getElementById('aiSide').value;
   state.aiLevel=parseInt(document.getElementById('aiLevel').value,10);
   localStorage.setItem('chess_ai_side',state.aiSide);
   localStorage.setItem('chess_ai_level',state.aiLevel.toString());
   renderStatus();
-  showMessage(i18n[state.lang].applied,'ok');
+  showModal(i18n[state.lang].applied,'ok');
   maybeAITurn();
 });
 
-function boot(){applyLangTexts(); applyTheme(); loadFEN(initialFEN); renderBoard(); renderHistory(); showMessage(i18n[state.lang].startPrompt,'warning');}
+function boot(){applyLangTexts(); applyTheme(); loadFEN(initialFEN); renderBoard(); renderHistory(); showModal(i18n[state.lang].startPrompt,'warning',1400);}
 boot();
 </script>
 </body>
