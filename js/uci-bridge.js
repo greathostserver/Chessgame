@@ -1,4 +1,6 @@
 // Bridge to Stockfish UCI engine running in a WebWorker.
+// Provides initEngine(), setOptions(), goBestMove(fen, depth, moves), and emits bestmove.
+
 let engineWorker = null;
 let engineReady = false;
 const listeners = new Set();
@@ -8,15 +10,14 @@ export function onBestMove(cb){ listeners.add(cb); return ()=>listeners.delete(c
 export function initEngine(){
   if(engineWorker) return;
 
-  // مسیر سازگار با GitHub Pages: از ریشه به engine
+  // مسیر سازگار با GitHub Pages: نسبی از ریشه‌ی سایت
   engineWorker = new Worker('./engine/stockfish.js');
 
   engineWorker.onmessage = (e)=>{
     const msg = String(e.data || '');
     if(msg.includes('uciok')) engineReady = true;
     if(msg.startsWith('bestmove')){
-      const parts = msg.split(' ');
-      const move = parts[1] || '';
+      const move = msg.split(' ')[1] || '';
       for(const cb of listeners) cb(move);
     }
   };
@@ -35,7 +36,6 @@ export function setOptions(opts = {}){
 
 export function goBestMove(fen, depth=12, movelistLAN=''){
   if(!engineWorker || !engineReady) return;
-  // اگر movelistLAN داریم، با موقعیت fen و لیست حرکت‌ها تنظیم می‌کنیم
   const pos = movelistLAN ? `position fen ${fen} moves ${movelistLAN}` : `position fen ${fen}`;
   engineWorker.postMessage(pos);
   engineWorker.postMessage(`go depth ${depth}`);
