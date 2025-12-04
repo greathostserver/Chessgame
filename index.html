@@ -19,6 +19,7 @@
       </header>
 
       <div class="controls">
+        <!-- زبان -->
         <div class="card">
           <label id="langLabel"></label>
           <div class="row">
@@ -31,29 +32,19 @@
           </div>
         </div>
 
+        <!-- رنگ‌ها -->
         <div class="card">
           <label id="themeLabel"></label>
           <div class="row">
-            <div>
-              <div id="lightLabel"></div>
-              <input type="color" id="lightColor" value="#f0d9b5" />
-            </div>
-            <div>
-              <div id="darkLabel"></div>
-              <input type="color" id="darkColor" value="#b58863" />
-            </div>
-            <div>
-              <div id="whitePieceLabel"></div>
-              <input type="color" id="whitePieceColor" value="#ffffff" />
-            </div>
-            <div>
-              <div id="blackPieceLabel"></div>
-              <input type="color" id="blackPieceColor" value="#111111" />
-            </div>
+            <div><div id="lightLabel"></div><input type="color" id="lightColor" value="#f0d9b5" /></div>
+            <div><div id="darkLabel"></div><input type="color" id="darkColor" value="#b58863" /></div>
+            <div><div id="whitePieceLabel"></div><input type="color" id="whitePieceColor" value="#ffffff" /></div>
+            <div><div id="blackPieceLabel"></div><input type="color" id="blackPieceColor" value="#111111" /></div>
             <button id="applyTheme" class="primary" type="button"></button>
           </div>
         </div>
 
+        <!-- هوش مصنوعی -->
         <div class="card">
           <label id="aiLabel"></label>
           <div class="row">
@@ -77,10 +68,7 @@
       <div class="layout">
         <div class="board-wrap"><div id="board" class="board" aria-label="Chessboard"></div></div>
         <div class="side">
-          <div class="card status">
-            <div class="badge" id="turnBadge"></div>
-            <div class="badge" id="stateBadge"></div>
-          </div>
+          <div class="card status"><div class="badge" id="turnBadge"></div><div class="badge" id="stateBadge"></div></div>
           <div class="card history" id="history"></div>
         </div>
       </div>
@@ -92,8 +80,7 @@
   <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true"></div>
   <div id="modal" class="modal" role="dialog" aria-modal="true" aria-live="polite"><span id="modalText" class="ok"></span></div>
 
-  <script src="js/chess-rules.js"></script>
-  <script src="js/uci-bridge.js"></script>
-  <script src="js/chess-ui.js"></script>
+  <!-- فقط فایل اصلی را به صورت ماژول بارگذاری کن -->
+  <script type="module" src="js/chess-ui.js"></script>
 </body>
 </html>
