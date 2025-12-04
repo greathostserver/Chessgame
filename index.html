@@ -32,7 +32,7 @@ button.primary { background: var(--accent); color: #082032; font-weight: 900; bo
 .layout { display: grid; grid-template-columns: minmax(280px, 520px) minmax(280px, 520px); gap: 16px; justify-items: center; }
 @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
 .board-wrap { width: min(92vw, 520px); height: min(92vw, 520px); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); }
-.board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; height: 100%; user-select: none; }
+.board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 100%; height: 100%; user-select: none; touch-action: manipulation; }
 .square { display: flex; align-items: center; justify-content: center; }
 .light { background-color: var(--board-light); }
 .dark { background-color: var(--board-dark); }
@@ -165,7 +165,7 @@ const initialFEN="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
 
 function loadFEN(fen){board=Array(64).fill(null);const parts=fen.split('/');let i=0;for(let row=0;row<8;row++){const s=parts[row];for(const ch of s){if(/[1-8]/.test(ch))i+=parseInt(ch,10);else board[i++]=ch;}}whiteToMove=true;castleRights={K:true,Q:true,k:true,q:true};enPassant=null;halfmoveClock=0;fullmoveNumber=1;history.length=0;undoStack.length=0;}
 
-/* --- attack detection helpers --- */
+/* Helpers */
 function findKingIdx(w){const t=w?'K':'k';for(let i=0;i<64;i++)if(board[i]===t)return i;return-1;}
 function knightReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);const dx=Math.abs(tx-fx),dy=Math.abs(ty-fy);return dx*dy===2;}
 function kingReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);return Math.max(Math.abs(tx-fx),Math.abs(ty-fy))===1;}
@@ -189,45 +189,41 @@ function squareAttacked(idx,byWhite){
   return false;
 }
 
-/* --- move generation (with robust pawn double-step) --- */
-function addPawnAdvance(moves,fromIdx,toIdx,w){
-  const toRank=Math.floor(toIdx/8); const promRank=w?0:7;
-  if(toRank===promRank){for(const promo of['Q','R','B','N']){moves.push({from:fromIdx,to:toIdx,piece:board[fromIdx],prom:promo,capture:null});}}
-  else {moves.push({from:fromIdx,to:toIdx,piece:board[fromIdx],prom:null,capture:null});}
+/* Move generation — fixed pawn double-step logic */
+function addPawnAdvance(moves,from,to,w){
+  const toRank=Math.floor(to/8); const promRank=w?0:7;
+  if(toRank===promRank){for(const promo of['Q','R','B','N']){moves.push({from,to,piece:board[from],prom:promo,capture:null});}}
+  else {moves.push({from,to,piece:board[from],prom:null,capture:null});}
 }
 function generateMoves(w=true){
   const moves=[];
-  for(let i=0;i<64;i++){
-    const p=board[i]; if(!p) continue;
+  for(let from=0;from<64;from++){
+    const p=board[from]; if(!p) continue;
     if(w?!isWhite(p):!isBlack(p)) continue;
-    const piece=p.toUpperCase(); const from=i; const dir=w?-1:1;
+    const piece=p.toUpperCase(); const dir=w?-1:1;
 
     if(piece==='P'){
       const one=from+8*dir;
       const two=from+16*dir;
-      const startRank=w?6:1; // row index 6 (rank 2) for white, 1 (rank 7) for black
+      const startRank=w?6:1;
 
-      // one-step forward
       if(inBoardIdx(one)&&!board[one]){
         addPawnAdvance(moves,from,one,w);
-
-        // two-step forward: only if on start rank and both squares empty
-        if(Math.floor(from/8)===startRank && inBoardIdx(two) && !board[two]){
-          moves.push({from,to:two,piece:p,capture:null,prom:null,double:true});
-        }
+      }
+      if(Math.floor(from/8)===startRank && inBoardIdx(one) && inBoardIdx(two) && !board[one] && !board[two]){
+        moves.push({from,to:two,piece:p,capture:null,prom:null,double:true});
       }
 
-      // captures (including en passant)
       for(const df of[-1,1]){
-        const capIdx=from+8*dir+df;
-        if(!inBoardIdx(capIdx)) continue;
-        const target=board[capIdx];
-        if(target&&(w?isBlack(target):isWhite(target))){
-          moves.push({from,to:capIdx,piece:p,capture:target,prom:null,enp:false});
+        const cap=from+8*dir+df;
+        if(!inBoardIdx(cap)) continue;
+        const t=board[cap];
+        if(t&&(w?isBlack(t):isWhite(t))){
+          moves.push({from,to:cap,piece:p,capture:t,prom:null,enp:false});
         } else {
-          const toCoord=idxToCoord(capIdx);
+          const toCoord=idxToCoord(cap);
           if(enPassant===toCoord){
-            moves.push({from,to:capIdx,piece:p,capture:w?'p':'P',enp:true});
+            moves.push({from,to:cap,piece:p,capture:w?'p':'P',enp:true});
           }
         }
       }
@@ -252,7 +248,6 @@ function generateMoves(w=true){
         const to=from+d; if(!inBoardIdx(to)||!kingReach(from,to)) continue;
         const t=board[to]; if(!t||(w?isBlack(t):isWhite(t))){moves.push({from,to,piece:p,capture:t||null});}
       }
-      // castling
       if(w){
         const e1=coordToIdx('e1'),f1=coordToIdx('f1'),g1=coordToIdx('g1'),d1=coordToIdx('d1'),c1=coordToIdx('c1'),b1=coordToIdx('b1');
         if(from===e1&&castleRights.K&&!board[f1]&&!board[g1]&&!squareAttacked(e1,false)&&!squareAttacked(f1,false)&&!squareAttacked(g1,false)){
@@ -272,30 +267,23 @@ function generateMoves(w=true){
       }
     }
   }
-  // filter out illegal moves (king in check after move)
   return moves.filter(m=>!leavesKingInCheck(m,w));
 }
 
-/* --- state mutation --- */
+/* Mutations */
 function snapshotState(){return{board:board.slice(),whiteToMove,castleRights:{...castleRights},enPassant,halfmoveClock,fullmoveNumber};}
 function restoreSnapshot(s){board=s.board.slice();whiteToMove=s.whiteToMove;castleRights={...s.castleRights};enPassant=s.enPassant;halfmoveClock=s.halfmoveClock;fullmoveNumber=s.fullmoveNumber;}
-
 let _makeMove=function(move,opts={simulate:false}){
   const from=move.from,to=move.to; const piece=board[from];
-  // en passant capture
   if(move.enp){const dir=isWhite(piece)?-1:1; const behind=to-8*dir; board[behind]=null;}
-  // castling rook move
   if(move.castle){
     if(move.castle==='K'){board[coordToIdx('f1')]=board[coordToIdx('h1')]; board[coordToIdx('h1')]=null;}
     else if(move.castle==='Q'){board[coordToIdx('d1')]=board[coordToIdx('a1')]; board[coordToIdx('a1')]=null;}
     else if(move.castle==='k'){board[coordToIdx('f8')]=board[coordToIdx('h8')]; board[coordToIdx('h8')]=null;}
     else if(move.castle==='q'){board[coordToIdx('d8')]=board[coordToIdx('a8')]; board[coordToIdx('a8')]=null;}
   }
-  // place piece (promotion handled)
   board[to]=move.prom?(isWhite(piece)?move.prom:move.prom.toLowerCase()):piece;
   board[from]=null;
-
-  // set en passant target after double-step
   if(move.double){
     const toC=idxToCoord(to); const file=toC[0]; const rank=parseInt(toC[1],10);
     const epRank=isWhite(piece)?rank+1:rank-1;
@@ -303,8 +291,6 @@ let _makeMove=function(move,opts={simulate:false}){
   } else {
     enPassant=null;
   }
-
-  // update castle rights
   const fromCoord=idxToCoord(from); const toCoord=idxToCoord(to); const pieceUpper=piece.toUpperCase();
   if(pieceUpper==='K'){if(isWhite(piece)){castleRights.K=false; castleRights.Q=false;} else {castleRights.k=false; castleRights.q=false;}}
   if(pieceUpper==='R'){
@@ -319,8 +305,6 @@ let _makeMove=function(move,opts={simulate:false}){
     if(toCoord==='h8') castleRights.k=false;
     if(toCoord==='a8') castleRights.q=false;
   }
-
-  // clocks
   const isPawn=pieceUpper==='P';
   if(isPawn||move.capture) halfmoveClock=0; else halfmoveClock++;
   if(!opts.simulate){
@@ -335,7 +319,7 @@ function inCheck(w){const k=findKingIdx(w); return squareAttacked(k,!w);}
 function isCheckmate(w){if(!inCheck(w)) return false; return generateMoves(w).length===0;}
 function isStalemate(w){if(inCheck(w)) return false; return generateMoves(w).length===0;}
 
-/* --- evaluation and AI --- */
+/* Evaluation and AI */
 const val={p:100,n:320,b:330,r:500,q:900,k:20000};
 const pstW={p:[0,5,5,0,5,10,50,0,0,10,-5,0,5,10,50,0,0,10,-10,20,25,30,50,0,0,20,0,30,35,40,50,0,0,25,5,35,40,45,55,0,5,30,10,40,45,50,60,5,10,35,20,50,55,60,70,10,0,0,0,0,0,0,0,0],n:[-50,-40,-30,-30,-30,-30,-40,-50,-40,-20,0,0,0,0,-20,-40,-30,0,10,15,15,10,0,-30,-30,5,15,20,20,15,5,-30,-30,0,15,20,20,15,0,-30,-30,5,10,15,15,10,5,-30,-40,-20,0,5,5,0,-20,-40,-50,-40,-30,-30,-30,-30,-40,-50],b:[-20,-10,-10,-10,-10,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,10,10,5,0,-10,-10,5,5,10,10,5,5,-10,-10,0,10,10,10,10,0,-10,-10,10,10,10,10,10,10,-10,-10,5,0,0,0,0,5,-10,-20,-10,-10,-10,-10,-10,-10,-20],r:[0,0,0,5,5,0,0,0,5,10,10,10,10,10,10,5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,0,0,0,5,5,0,0,0],q:Array(64).fill(0),k:[20,30,10,0,0,10,30,20,20,20,0,0,0,0,20,20,-10,-20,-20,-20,-20,-20,-20,-10,-20,-30,-30,-40,-40,-30,-30,-20,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30]};
 function pstScore(p,idx){const isW=isWhite(p);const type=p.toLowerCase();const table=pstW[type]||Array(64).fill(0);const mirrorIdx=isW?idx:(Math.floor(idx/8)*8+(7-(idx%8)));return isW?table[idx]:-table[mirrorIdx];}
@@ -369,7 +353,7 @@ function alphabeta(depth,alpha,beta,whiteTurn){
   }
 }
 
-/* --- UI rendering --- */
+/* UI */
 const boardEl=document.getElementById('board'); const historyEl=document.getElementById('history'); const messageEl=document.getElementById('message'); const moveSound=document.getElementById('moveSound'); const illegalSound=document.getElementById('illegalSound');
 
 function applyLangTexts(){
@@ -431,7 +415,6 @@ function bindInteractions(){
   const squares=[...document.querySelectorAll('.square')];
   const pieces=[...document.querySelectorAll('.piece')];
 
-  // Click to select piece, single-click to move instantly
   squares.forEach(sq=>{
     sq.addEventListener('click',()=>{
       const idx=parseInt(sq.dataset.idx,10);
@@ -441,7 +424,7 @@ function bindInteractions(){
         legalHints=generateMoves(whiteToMove).filter(m=>m.from===idx).map(m=>m.to);
         highlightSelection();
       } else if(selectedIdx!==null) {
-        attemptMove(selectedIdx,idx); // instant, no delay
+        attemptMove(selectedIdx,idx);
         selectedIdx=null;
         legalHints=[];
         highlightSelection();
@@ -466,7 +449,7 @@ function bindInteractions(){
       e.preventDefault();
       const from=selectedIdx??parseInt(e.dataTransfer.getData('text/plain'),10);
       const to=parseInt(sq.dataset.idx,10);
-      attemptMove(from,to); // instant
+      attemptMove(from,to);
       selectedIdx=null;
       legalHints=[];
       highlightSelection();
@@ -495,7 +478,7 @@ function attemptMove(fromIdx,toIdx){
   const mv=legal.find(m=>m.from===fromIdx&&m.to===toIdx);
   if(!mv){illegalBlink(fromIdx); return;}
   const san=toSAN(mv);
-  makeMove(mv); // instant, no setTimeout
+  makeMove(mv);
   history.push(san);
   renderBoard();
   renderHistory();
@@ -547,7 +530,7 @@ function showMessage(text,type='info'){
   setTimeout(()=>{messageEl.textContent='';},2000);
 }
 
-/* --- AI turn (kept smooth but no delay for player moves) --- */
+/* AI — no delay for player moves, small delay only for AI if needed */
 function maybeAITurn(){
   const aiS=state.aiSide;
   const sideToMove=whiteToMove?'w':'b';
@@ -555,7 +538,7 @@ function maybeAITurn(){
   showMessage(i18n[state.lang].aiThinking,'ok');
   const mv=aiPickMove(aiS,state.aiLevel);
   if(!mv) return;
-  setTimeout(()=>{ // می‌توانی اگر خواستی این تاخیر را هم صفر کنی
+  setTimeout(()=>{
     const san=toSAN(mv);
     makeMove(mv);
     history.push(san);
@@ -563,13 +546,30 @@ function maybeAITurn(){
     renderHistory();
     moveSound.currentTime=0; moveSound.play().catch(()=>{});
     renderStatus();
-  },200);
+  },150);
 }
 
-/* --- controls --- */
-document.getElementById('newGameBtn').addEventListener('click',()=>{loadFEN(initialFEN); renderBoard(); renderHistory(); showMessage(i18n[state.lang].applied,'ok');});
-document.getElementById('flipBtn').addEventListener('click',()=>{state.flipped=!state.flipped; renderBoard(); showMessage(i18n[state.lang].applied,'ok');});
-document.getElementById('undoBtn').addEventListener('click',()=>{if(!undoStack.length){showMessage(i18n[state.lang].illegal,'warning'); return;} const snap=undoStack.pop(); restoreSnapshot(snap); if(history.length) history.pop(); renderBoard(); renderHistory(); showMessage(i18n[state.lang].applied,'ok');});
+/* Controls — with apply messages */
+document.getElementById('newGameBtn').addEventListener('click',()=>{
+  loadFEN(initialFEN);
+  renderBoard();
+  renderHistory();
+  showMessage(i18n[state.lang].applied,'ok');
+});
+document.getElementById('flipBtn').addEventListener('click',()=>{
+  state.flipped=!state.flipped;
+  renderBoard();
+  showMessage(i18n[state.lang].applied,'ok');
+});
+document.getElementById('undoBtn').addEventListener('click',()=>{
+  if(!undoStack.length){showMessage(i18n[state.lang].illegal,'warning'); return;}
+  const snap=undoStack.pop();
+  restoreSnapshot(snap);
+  if(history.length) history.pop();
+  renderBoard();
+  renderHistory();
+  showMessage(i18n[state.lang].applied,'ok');
+});
 
 document.getElementById('langSelect').value=state.lang;
 document.getElementById('applyLang').addEventListener('click',()=>{
@@ -578,7 +578,7 @@ document.getElementById('applyLang').addEventListener('click',()=>{
   applyLangTexts();
   renderBoard();
   renderHistory();
-  showMessage(i18n[state.lang].applied,'ok'); // پیام اعمال
+  showMessage(i18n[state.lang].applied,'ok');
 });
 document.getElementById('applyTheme').addEventListener('click',()=>{
   state.theme.light=document.getElementById('lightColor').value;
@@ -591,7 +591,7 @@ document.getElementById('applyTheme').addEventListener('click',()=>{
   localStorage.setItem('chess_pieceB',state.theme.pieceB);
   applyTheme();
   renderBoard();
-  showMessage(i18n[state.lang].applied,'ok'); // پیام اعمال
+  showMessage(i18n[state.lang].applied,'ok');
 });
 document.getElementById('applyAI').addEventListener('click',()=>{
   state.aiSide=document.getElementById('aiSide').value;
@@ -599,7 +599,7 @@ document.getElementById('applyAI').addEventListener('click',()=>{
   localStorage.setItem('chess_ai_side',state.aiSide);
   localStorage.setItem('chess_ai_level',state.aiLevel.toString());
   renderStatus();
-  showMessage(i18n[state.lang].applied,'ok'); // پیام اعمال
+  showMessage(i18n[state.lang].applied,'ok');
   maybeAITurn();
 });
 
