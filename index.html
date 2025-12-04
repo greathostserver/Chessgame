@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chess + Stockfish</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="container">
+      <header>
+        <div class="title">Chess • بازی شطرنج • الشطرنج</div>
+        <div class="header-actions">
+          <button id="newGameBtn" class="primary" type="button"></button>
+          <button id="flipBtn" type="button"></button>
+          <button id="undoBtn" type="button" disabled></button>
+        </div>
+      </header>
+
+      <div class="controls">
+        <div class="card">
+          <label id="langLabel"></label>
+          <div class="row">
+            <select id="langSelect" aria-label="Language">
+              <option value="fa">فارسی</option>
+              <option value="ar">العربية</option>
+              <option value="en">English</option>
+            </select>
+            <button id="applyLang" class="primary" type="button"></button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label id="themeLabel"></label>
+          <div class="row">
+            <div>
+              <div id="lightLabel"></div>
+              <input type="color" id="lightColor" value="#f0d9b5" />
+            </div>
+            <div>
+              <div id="darkLabel"></div>
+              <input type="color" id="darkColor" value="#b58863" />
+            </div>
+            <div>
+              <div id="whitePieceLabel"></div>
+              <input type="color" id="whitePieceColor" value="#ffffff" />
+            </div>
+            <div>
+              <div id="blackPieceLabel"></div>
+              <input type="color" id="blackPieceColor" value="#111111" />
+            </div>
+            <button id="applyTheme" class="primary" type="button"></button>
+          </div>
+        </div>
+
+        <div class="card">
+          <label id="aiLabel"></label>
+          <div class="row">
+            <select id="aiSide" aria-label="AI side">
+              <option value="none">غیرفعال</option>
+              <option value="w">سفید</option>
+              <option value="b">سیاه</option>
+            </select>
+            <select id="aiLevel" aria-label="AI level">
+              <option value="3">عمق 3 (سریع)</option>
+              <option value="10">عمق 10 (میانه)</option>
+              <option value="18">عمق 18 (قوی)</option>
+              <option value="22">عمق 22 (خیلی قوی)</option>
+              <option value="28">عمق 28 (رقابتی)</option>
+            </select>
+            <button id="applyAI" class="primary" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div class="board-wrap"><div id="board" class="board" aria-label="Chessboard"></div></div>
+        <div class="side">
+          <div class="card status">
+            <div class="badge" id="turnBadge"></div>
+            <div class="badge" id="stateBadge"></div>
+          </div>
+          <div class="card history" id="history"></div>
+        </div>
+      </div>
+
+      <footer>Client-side • Stockfish WASM Worker • No server needed</footer>
+    </div>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true"></div>
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-live="polite"><span id="modalText" class="ok"></span></div>
+
+  <script src="js/chess-rules.js"></script>
+  <script src="js/uci-bridge.js"></script>
+  <script src="js/chess-ui.js"></script>
+</body>
+</html>
