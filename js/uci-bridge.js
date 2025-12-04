@@ -1,5 +1,4 @@
 // Bridge to Stockfish UCI engine running in a WebWorker.
-// Provides initEngine(), setOptions(), goBestMove(fen, depth, moves), and emits bestmove.
 
 let engineWorker = null;
 let engineReady = false;
@@ -10,7 +9,7 @@ export function onBestMove(cb){ listeners.add(cb); return ()=>listeners.delete(c
 export function initEngine(){
   if(engineWorker) return;
 
-  // مسیر سازگار با GitHub Pages: نسبی از ریشه‌ی سایت
+  // مسیر سازگار با GitHub Pages
   engineWorker = new Worker('./engine/stockfish.js');
 
   engineWorker.onmessage = (e)=>{
