@@ -197,7 +197,6 @@ export function makeMove(move){
     if(fromC==='h8'||toC==='h8') state.castleRights.k=false;
     if(fromC==='a8'||toC==='a8') state.castleRights.q=false;
   }
-  // rook captured
   if(move.capture && move.capture.toUpperCase()==='R'){
     if(toC==='h1') state.castleRights.K=false;
     if(toC==='a1') state.castleRights.Q=false;
