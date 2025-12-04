@@ -1,4 +1,4 @@
-import { state, initialFEN, loadFEN, isCheckmate, isStalemate, inCheck, legalMoves, makeMove, moveToSAN, idxToCoord } from './chess-rules.js';
+import { state, initialFEN, loadFEN, isCheckmate, isStalemate, inCheck, legalMoves, makeMove, moveToSAN, idxToCoord, undo } from './chess-rules.js';
 import { initEngine, setOptions, goBestMove, onBestMove } from './uci-bridge.js';
 
 const i18n={fa:{newGame:"شروع بازی جدید",flip:"چرخش صفحه",undo:"بازگشت حرکت",langLabel:"انتخاب زبان",applyLang:"اعمال زبان",themeLabel:"تنظیمات ظاهر و رنگ‌ها",lightLabel:"خانه‌های روشن",darkLabel:"خانه‌های تیره",whitePieceLabel:"رنگ مهره‌های سفید",blackPieceLabel:"رنگ مهره‌های سیاه",applyTheme:"اعمال رنگ‌ها",aiLabel:"هوش مصنوعی: سمت و سطح",applyAI:"اعمال هوش مصنوعی",turnWhite:"نوبت سفید",turnBlack:"نوبت سیاه",statePlaying:"در حال بازی",stateCheck:"کیش!",stateMate:"کیش و مات",stateStalemate:"بن‌بست",illegal:"حرکت غیرقانونی است.",applied:"تنظیمات اعمال شد"},en:{newGame:"New game",flip:"Flip board",undo:"Undo",langLabel:"Choose language",applyLang:"Apply language",themeLabel:"Appearance & colors",lightLabel:"Light squares",darkLabel:"Dark squares",whitePieceLabel:"White pieces color",blackPieceLabel:"Black pieces color",applyTheme:"Apply colors",aiLabel:"AI: side & level",applyAI:"Apply AI",turnWhite:"White to move",turnBlack:"Black to move",statePlaying:"Playing",stateCheck:"Check!",stateMate:"Checkmate",stateStalemate:"Stalemate",illegal:"Illegal move.",applied:"Settings applied"},ar:{newGame:"بدء لعبة جديدة",flip:"تدوير اللوحة",undo:"تراجع",langLabel:"اختر اللغة",applyLang:"تطبيق اللغة",themeLabel:"إعدادات المظهر والألوان",lightLabel:"المربعات الفاتحة",darkLabel:"المربعات الداكنة",whitePieceLabel:"لون قطع الأبيض",blackPieceLabel:"لون قطع الأسود",applyTheme:"تطبيق الألوان",aiLabel:"الذكاء الاصطناعي: الجانب والمستوى",applyAI:"تطبيق الذكاء الاصطناعي",turnWhite:"دور الأبيض",turnBlack:"دور الأسود",statePlaying:"جارٍ اللعب",stateCheck:"كش!",stateMate:"كش مات",stateStalemate:"تعادل",illegal:"حركة غير قانونية.",applied:"تم تطبيق الإعدادات"}};
@@ -26,7 +26,19 @@ const dom = {
   applyAI: document.getElementById('applyAI')
 };
 
-const uiState = { lang: localStorage.getItem('chess_lang')||'fa', flipped:false, aiSide: localStorage.getItem('chess_ai_side')||'none', aiDepth: parseInt(localStorage.getItem('chess_ai_depth')||'10',10), theme:{light:localStorage.getItem('chess_light')||'#f0d9b5',dark:localStorage.getItem('chess_dark')||'#b58863',pieceW:localStorage.getItem('chess_pieceW')||'#ffffff',pieceB:localStorage.getItem('chess_pieceB')||'#111111'}, moveListLAN: [] };
+const uiState = {
+  lang: localStorage.getItem('chess_lang')||'fa',
+  flipped:false,
+  aiSide: localStorage.getItem('chess_ai_side')||'none',
+  aiDepth: parseInt(localStorage.getItem('chess_ai_depth')||'10',10),
+  theme:{
+    light:localStorage.getItem('chess_light')||'#f0d9b5',
+    dark:localStorage.getItem('chess_dark')||'#b58863',
+    pieceW:localStorage.getItem('chess_pieceW')||'#ffffff',
+    pieceB:localStorage.getItem('chess_pieceB')||'#111111'
+  },
+  moveListLAN: []
+};
 
 function showModal(text,type='ok',duration=1400){
   dom.modalText.className=type==='warning'?'warning':'ok';
@@ -133,6 +145,22 @@ function renderHistory(){
 }
 
 let selectedIdx=null; let legalTargets=[];
+function canDragPiece(idx){
+  const p=state.board[idx];
+  if(!p) return false;
+
+  const isWhitePiece = p===p.toUpperCase();
+  const sideToMove = state.whiteToMove ? 'w' : 'b';
+
+  // نوبت باید با رنگ مهره هماهنگ باشد
+  if(state.whiteToMove && !isWhitePiece) return false;
+  if(!state.whiteToMove && isWhitePiece) return false;
+
+  // اگر این سمت به AI سپرده شده، اجازه حرکت نده
+  if(uiState.aiSide === sideToMove) return false;
+
+  return true;
+}
 function bindInteractions(){
   const squares=[...document.querySelectorAll('.square')];
   const pieces=[...document.querySelectorAll('.piece')];
@@ -141,6 +169,13 @@ function bindInteractions(){
     sq.addEventListener('pointerup',()=>{
       const idx=parseInt(sq.dataset.idx,10);
       const p=state.board[idx];
+
+      const sideToMove = state.whiteToMove ? 'w' : 'b';
+      if(uiState.aiSide === sideToMove){
+        showModal(i18n[uiState.lang].illegal,'warning');
+        return;
+      }
+
       if(p&&((state.whiteToMove&&p===p.toUpperCase())||(!state.whiteToMove&&p===p.toLowerCase()))){
         selectedIdx=idx;
         legalTargets=legalMoves(state.whiteToMove).filter(m=>m.from===idx).map(m=>m.to);
@@ -166,6 +201,8 @@ function bindInteractions(){
     sq.addEventListener('dragover',(e)=>{e.preventDefault();});
     sq.addEventListener('drop',(e)=>{
       e.preventDefault();
+      const sideToMove = state.whiteToMove ? 'w' : 'b';
+      if(uiState.aiSide === sideToMove){ showModal(i18n[uiState.lang].illegal,'warning'); return; }
       const from=selectedIdx??parseInt(e.dataTransfer.getData('text/plain'),10);
       const to=parseInt(sq.dataset.idx,10);
       attemptMove(from,to);
@@ -173,7 +210,6 @@ function bindInteractions(){
     });
   });
 }
-function canDragPiece(idx){const p=state.board[idx]; if(!p) return false; if(state.whiteToMove&&p!==p.toUpperCase()) return false; if(!state.whiteToMove&&p!==p.toLowerCase()) return false; return true;}
 function highlightSelection(){
   document.querySelectorAll('.square').forEach(s=>s.classList.remove('highlight','hint'));
   if(selectedIdx===null) return;
@@ -262,15 +298,14 @@ function boot(){
     uiState.moveListLAN.length=0;
     renderBoard(); renderHistory(); setUndoEnabled(false);
     showModal(i18n[uiState.lang].applied,'ok');
+    scheduleAI();
   });
   dom.flipBtn.addEventListener('pointerup',()=>{uiState.flipped=!uiState.flipped; renderBoard(); showModal(i18n[uiState.lang].applied,'ok');});
   dom.undoBtn.addEventListener('pointerup',()=>{
     if(!state.undoStack.length){showModal(i18n[uiState.lang].illegal,'warning'); return;}
-    import('./chess-rules.js').then(mod=>{
-      const ok = mod.undo();
-      if(ok){ uiState.moveListLAN.pop(); }
-      renderBoard(); renderHistory(); setUndoEnabled(state.undoStack.length>0); showModal(i18n[uiState.lang].applied,'ok');
-    });
+    const ok = undo();
+    if(ok){ uiState.moveListLAN.pop(); }
+    renderBoard(); renderHistory(); setUndoEnabled(state.undoStack.length>0); showModal(i18n[uiState.lang].applied,'ok');
   });
   dom.applyLang.addEventListener('pointerup',()=>{
     uiState.lang=dom.langSel.value; localStorage.setItem('chess_lang',uiState.lang);
@@ -283,11 +318,12 @@ function boot(){
   });
   dom.applyAI.addEventListener('pointerup',applyAIControls);
 
-  // حیاتی: دریافت حرکت موتور
   onBestMove(onBestMoveHandler);
 
   loadFEN(initialFEN);
   renderBoard();
   renderHistory();
+
+  scheduleAI();
 }
 boot();
