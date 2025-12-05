@@ -155,7 +155,7 @@ function canDragPiece(idx){
   if(state.whiteToMove && !isWhitePiece) return false;
   if(!state.whiteToMove && isWhitePiece) return false;
 
-  // اگر نوبت سمت AI است، حرکت دستی ممنوع
+  // نوبت AI → حرکت دستی ممنوع
   if(uiState.aiSide === sideToMove) return false;
 
   return true;
@@ -167,15 +167,14 @@ function bindInteractions(){
 
   squares.forEach(sq=>{
     sq.addEventListener('pointerup',()=>{
-      const idx=parseInt(sq.dataset.idx,10);
-      const p=state.board[idx];
-
       const sideToMove = state.whiteToMove ? 'w' : 'b';
       if(uiState.aiSide === sideToMove){
         showModal(i18n[uiState.lang].illegal,'warning');
         return;
       }
 
+      const idx=parseInt(sq.dataset.idx,10);
+      const p=state.board[idx];
       if(p&&((state.whiteToMove&&p===p.toUpperCase())||(!state.whiteToMove&&p===p.toLowerCase()))){
         selectedIdx=idx;
         legalTargets=legalMoves(state.whiteToMove).filter(m=>m.from===idx).map(m=>m.to);
