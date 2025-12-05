@@ -1,5 +1,5 @@
 // Bridge to Stockfish UCI engine running in a WebWorker.
-// Resilient readiness detection and retry if called too early.
+// Fixed absolute worker path for GitHub Pages, resilient readiness, and retry.
 
 let engineWorker = null;
 let engineReady = false;
@@ -8,53 +8,34 @@ let readyPollTimer = null;
 
 export function onBestMove(cb){ listeners.add(cb); return ()=>listeners.delete(cb); }
 
-function normalizeMessage(e){
-  const d = e?.data;
-  if(d == null) return '';
-  if(typeof d === 'string') return d;
-  if(typeof d === 'object'){
-    if('data' in d && typeof d.data === 'string') return d.data;
-    try { return JSON.stringify(d); } catch { return String(d); }
-  }
-  return String(d);
-}
-
-function markReady(){
-  if(engineReady) return;
-  engineReady = true;
-  engineWorker.postMessage('ucinewgame');
-}
-
 export function initEngine(){
   if(engineWorker) return;
 
-  // مسیر سازگار با GitHub Pages
-  engineWorker = new Worker('./engine/stockfish.js');
+  // مسیر مطلق برای GitHub Pages: greathostserver.github.io/Chessgame
+  engineWorker = new Worker('/Chessgame/engine/stockfish.js');
 
   engineWorker.onmessage = (e)=>{
-    const msg = normalizeMessage(e).trim();
-
-    // آماده‌بودن
-    if(msg.includes('uciok') || msg.includes('readyok') || msg.toLowerCase().includes('stockfish')) markReady();
-
-    // خروجی bestmove (در پیام‌های چندخطی هم پیدا کن)
+    const msg = String(e.data || '').trim();
+    if(msg.includes('uciok') || msg.includes('readyok') || msg.toLowerCase().includes('stockfish')){
+      engineReady = true;
+      engineWorker.postMessage('ucinewgame');
+    }
     const line = msg.split('\n').find(l => l.startsWith('bestmove'));
     if(line){
       const move = line.split(' ')[1] || '';
       for(const cb of listeners) cb(move);
     }
-
     if(engineReady && readyPollTimer){ clearInterval(readyPollTimer); readyPollTimer = null; }
   };
 
-  // آغاز UCI
+  // UCI init
   engineWorker.postMessage('uci');
 
-  // پولینگ isready تا آماده شود
+  // Poll isready until ready
   let tries = 0;
   readyPollTimer = setInterval(()=>{
     if(engineReady){ clearInterval(readyPollTimer); readyPollTimer = null; return; }
-    if(++tries > 20){ clearInterval(readyPollTimer); readyPollTimer = null; markReady(); return; }
+    if(++tries > 20){ clearInterval(readyPollTimer); readyPollTimer = null; engineReady = true; engineWorker.postMessage('ucinewgame'); return; }
     engineWorker.postMessage('isready');
   }, 250);
 }
