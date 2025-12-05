@@ -41,6 +41,8 @@ export function loadFEN(fen){
 }
 
 function knightReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);const dx=Math.abs(tx-fx),dy=Math.abs(ty-fy);return dx*dy===2;}
+function kingReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);return Math.max(Math.abs(tx-fx),Math.abs(ty-fy))===1;}
+
 export function squareAttacked(idx,byWhite,board=state.board){
   for(let i=0;i<64;i++){
     const p=board[i]; if(!p) continue;
@@ -137,7 +139,7 @@ export function generatePseudoMoves(w=true){
           if(!t||(w?isBlack(t):isWhite(t))) moves.push({from,to,piece:p,capture:t||null});
         }
       }
-      // Castling (simplified but safe squares checked)
+      // Castling checks
       if(w){
         const e1=coordToIdx('e1'),f1=coordToIdx('f1'),g1=coordToIdx('g1'),d1=coordToIdx('d1'),c1=coordToIdx('c1'),b1=coordToIdx('b1');
         if(from===e1&&state.castleRights.K&&!board[f1]&&!board[g1]&&!squareAttacked(e1,false,board)&&!squareAttacked(f1,false,board)&&!squareAttacked(g1,false,board)) moves.push({from:e1,to:g1,piece:p,castle:'K'});
