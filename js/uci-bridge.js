@@ -9,7 +9,7 @@ export function onBestMove(cb){ listeners.add(cb); return ()=>listeners.delete(c
 export function initEngine(){
   if(engineWorker) return;
 
-  // مسیر سازگار با GitHub Pages
+  // مسیر سازگار با GitHub Pages؛ فایل باید در engine باشد
   engineWorker = new Worker('./engine/stockfish.js');
 
   engineWorker.onmessage = (e)=>{
@@ -21,6 +21,7 @@ export function initEngine(){
     }
   };
 
+  // UCI init
   engineWorker.postMessage('uci');
   engineWorker.postMessage('isready');
   engineWorker.postMessage('ucinewgame');
