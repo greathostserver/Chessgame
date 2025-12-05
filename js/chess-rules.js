@@ -41,8 +41,6 @@ export function loadFEN(fen){
 }
 
 function knightReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);const dx=Math.abs(tx-fx),dy=Math.abs(ty-fy);return dx*dy===2;}
-function kingReach(f,t){const fx=f%8,fy=Math.floor(f/8),tx=t%8,ty=Math.floor(t/8);return Math.max(Math.abs(tx-fx),Math.abs(ty-fy))===1;}
-
 export function squareAttacked(idx,byWhite,board=state.board){
   for(let i=0;i<64;i++){
     const p=board[i]; if(!p) continue;
@@ -139,15 +137,15 @@ export function generatePseudoMoves(w=true){
           if(!t||(w?isBlack(t):isWhite(t))) moves.push({from,to,piece:p,capture:t||null});
         }
       }
-      // Castling checks
+      // Castling (safe squares)
       if(w){
         const e1=coordToIdx('e1'),f1=coordToIdx('f1'),g1=coordToIdx('g1'),d1=coordToIdx('d1'),c1=coordToIdx('c1'),b1=coordToIdx('b1');
-        if(from===e1&&state.castleRights.K&&!board[f1]&&!board[g1]&&!squareAttacked(e1,false,board)&&!squareAttacked(f1,false,board)&&!squareAttacked(g1,false,board)) moves.push({from:e1,to:g1,piece:p,castle:'K'});
-        if(from===e1&&state.castleRights.Q&&!board[d1]&&!board[c1]&&!board[b1]&&!squareAttacked(e1,false,board)&&!squareAttacked(d1,false,board)&&!squareAttacked(c1,false,board)) moves.push({from:e1,to:c1,piece:p,castle:'Q'});
+        if(state.board[e1]==='K'&&from===e1&&state.castleRights.K&&!board[f1]&&!board[g1]&&!squareAttacked(e1,false,board)&&!squareAttacked(f1,false,board)&&!squareAttacked(g1,false,board)) moves.push({from:e1,to:g1,piece:p,castle:'K'});
+        if(state.board[e1]==='K'&&from===e1&&state.castleRights.Q&&!board[d1]&&!board[c1]&&!board[b1]&&!squareAttacked(e1,false,board)&&!squareAttacked(d1,false,board)&&!squareAttacked(c1,false,board)) moves.push({from:e1,to:c1,piece:p,castle:'Q'});
       } else {
         const e8=coordToIdx('e8'),f8=coordToIdx('f8'),g8=coordToIdx('g8'),d8=coordToIdx('d8'),c8=coordToIdx('c8'),b8=coordToIdx('b8');
-        if(from===e8&&state.castleRights.k&&!board[f8]&&!board[g8]&&!squareAttacked(e8,true,board)&&!squareAttacked(f8,true,board)&&!squareAttacked(g8,true,board)) moves.push({from:e8,to:g8,piece:p,castle:'k'});
-        if(from===e8&&state.castleRights.q&&!board[d8]&&!board[c8]&&!board[b8]&&!squareAttacked(e8,true,board)&&!squareAttacked(d8,true,board)&&!squareAttacked(c8,true,board)) moves.push({from:e8,to:c8,piece:p,castle:'q'});
+        if(state.board[e8]==='k'&&from===e8&&state.castleRights.k&&!board[f8]&&!board[g8]&&!squareAttacked(e8,true,board)&&!squareAttacked(f8,true,board)&&!squareAttacked(g8,true,board)) moves.push({from:e8,to:g8,piece:p,castle:'k'});
+        if(state.board[e8]==='k'&&from===e8&&state.castleRights.q&&!board[d8]&&!board[c8]&&!board[b8]&&!squareAttacked(e8,true,board)&&!squareAttacked(d8,true,board)&&!squareAttacked(c8,true,board)) moves.push({from:e8,to:c8,piece:p,castle:'q'});
       }
     }
   }
