@@ -1,133 +1,82 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی شطرنج پیشرفته</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&family=Scheherazade+New&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chess + Stockfish</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <div class="app">
     <div class="container">
-        <div id="language-selector" class="language-selector">
-            <h1>Chess Master</h1>
-            <p>لطفا زبان مورد نظر خود را انتخاب کنید</p>
-            <div class="language-options">
-                <button onclick="selectLanguage('fa')">فارسی</button>
-                <button onclick="selectLanguage('ar')">العربية</button>
-                <button onclick="selectLanguage('en')">English</button>
-            </div>
+      <header>
+        <div class="title">Chess • بازی شطرنج • الشطرنج</div>
+        <div class="header-actions">
+          <button id="newGameBtn" class="primary" type="button"></button>
+          <button id="flipBtn" type="button"></button>
+          <button id="undoBtn" type="button" disabled></button>
+        </div>
+      </header>
+
+      <div class="controls">
+        <div class="card">
+          <label id="langLabel"></label>
+          <div class="row">
+            <select id="langSelect" aria-label="Language">
+              <option value="fa">فارسی</option>
+              <option value="ar">العربية</option>
+              <option value="en">English</option>
+            </select>
+            <button id="applyLang" class="primary" type="button"></button>
+          </div>
         </div>
 
-        <div id="game-container" class="game-container hidden">
-            <header class="game-header">
-                <h1 id="game-title">شطرنج</h1>
-                <div class="header-controls">
-                    <button id="new-game-btn" class="btn">
-                        <i class="fas fa-plus-circle"></i>
-                        <span>بازی جدید</span>
-                    </button>
-                    <button id="undo-btn" class="btn">
-                        <i class="fas fa-undo"></i>
-                        <span>بازگشت حرکت</span>
-                    </button>
-                    <div class="player-info">
-                        <div class="player white">
-                            <span id="white-player-label">سفید</span>
-                            <div class="player-timer" id="white-timer">15:00</div>
-                        </div>
-                        <div class="vs">vs</div>
-                        <div class="player black">
-                            <span id="black-player-label">سیاه</span>
-                            <div class="player-timer" id="black-timer">15:00</div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <div class="game-content">
-                <div class="chess-board-container">
-                    <div id="board-controls" class="board-controls">
-                        <div class="color-controls">
-                            <h3 id="board-color-title">رنگ صفحه</h3>
-                            <div class="color-options">
-                                <div class="color-option" style="background: linear-gradient(135deg, #f0d9b5, #b58863);" onclick="changeBoardColor('classic')"></div>
-                                <div class="color-option" style="background: linear-gradient(135deg, #769656, #eeeed2);" onclick="changeBoardColor('green')"></div>
-                                <div class="color-option" style="background: linear-gradient(135deg, #8a2be2, #9370db);" onclick="changeBoardColor('purple')"></div>
-                                <div class="color-option" style="background: linear-gradient(135deg, #4682b4, #87ceeb);" onclick="changeBoardColor('blue')"></div>
-                            </div>
-                        </div>
-                        <div class="piece-controls">
-                            <h3 id="piece-color-title">رنگ مهره‌ها</h3>
-                            <div class="color-options">
-                                <div class="color-option piece-option" data-color="classic" onclick="changePieceColor('classic')">
-                                    <div class="piece-sample white-sample"></div>
-                                    <div class="piece-sample black-sample"></div>
-                                </div>
-                                <div class="color-option piece-option" data-color="red" onclick="changePieceColor('red')">
-                                    <div class="piece-sample white-sample" style="background-color: #ff6b6b;"></div>
-                                    <div class="piece-sample black-sample" style="background-color: #c44569;"></div>
-                                </div>
-                                <div class="color-option piece-option" data-color="gold" onclick="changePieceColor('gold')">
-                                    <div class="piece-sample white-sample" style="background-color: #ffd700;"></div>
-                                    <div class="piece-sample black-sample" style="background-color: #b8860b;"></div>
-                                </div>
-                                <div class="color-option piece-option" data-color="blue" onclick="changePieceColor('blue')">
-                                    <div class="piece-sample white-sample" style="background-color: #4ecdc4;"></div>
-                                    <div class="piece-sample black-sample" style="background-color: #1a535c;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="chess-board" class="chess-board"></div>
-
-                    <div id="game-controls" class="game-controls">
-                        <div class="ai-controls">
-                            <h3 id="ai-level-title">سطح هوش مصنوعی</h3>
-                            <div class="ai-levels">
-                                <button class="ai-level-btn active" data-level="1" onclick="changeAILevel(1)">آسان</button>
-                                <button class="ai-level-btn" data-level="2" onclick="changeAILevel(2)">متوسط</button>
-                                <button class="ai-level-btn" data-level="3" onclick="changeAILevel(3)">سخت</button>
-                            </div>
-                            <div class="game-mode">
-                                <label class="switch">
-                                    <input type="checkbox" id="ai-toggle" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <span id="ai-mode-label">بازی با کامپیوتر</span>
-                            </div>
-                        </div>
-                        
-                        <div class="move-history">
-                            <h3 id="move-history-title">تاریخچه حرکات</h3>
-                            <div id="move-history-list" class="move-history-list">
-                                <!-- حرکات اینجا نمایش داده می‌شوند -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="game-status">
-                    <div id="status-message" class="status-message">نوبت سفید است</div>
-                    <div class="sound-controls">
-                        <button id="sound-toggle" class="btn sound-btn">
-                            <i class="fas fa-volume-up"></i>
-                            <span id="sound-label">صدا فعال</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div class="card">
+          <label id="themeLabel"></label>
+          <div class="row">
+            <div><div id="lightLabel"></div><input type="color" id="lightColor" value="#f0d9b5" /></div>
+            <div><div id="darkLabel"></div><input type="color" id="darkColor" value="#b58863" /></div>
+            <div><div id="whitePieceLabel"></div><input type="color" id="whitePieceColor" value="#ffffff" /></div>
+            <div><div id="blackPieceLabel"></div><input type="color" id="blackPieceColor" value="#111111" /></div>
+            <button id="applyTheme" class="primary" type="button"></button>
+          </div>
         </div>
+
+        <div class="card">
+          <label id="aiLabel"></label>
+          <div class="row">
+            <select id="aiSide" aria-label="AI side">
+              <option value="none">غیرفعال</option>
+              <option value="w">سفید</option>
+              <option value="b">سیاه</option>
+            </select>
+            <select id="aiLevel" aria-label="AI level">
+              <option value="6">عمق 6 (سریع)</option>
+              <option value="10">عمق 10 (میانه)</option>
+              <option value="18">عمق 18 (قوی)</option>
+              <option value="22">عمق 22 (خیلی قوی)</option>
+              <option value="28">عمق 28 (رقابتی)</option>
+            </select>
+            <button id="applyAI" class="primary" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div class="board-wrap"><div id="board" class="board" aria-label="Chessboard"></div></div>
+        <div class="side">
+          <div class="card status"><div class="badge" id="turnBadge"></div><div class="badge" id="stateBadge"></div></div>
+          <div class="card history" id="history"></div>
+        </div>
+      </div>
+
+      <footer>Client-side • Stockfish WASM Worker</footer>
     </div>
+  </div>
 
-    <audio id="move-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-chess-piece-move-1566.mp3" preload="auto"></audio>
-    <audio id="capture-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-chess-capture-1565.mp3" preload="auto"></audio>
-    <audio id="illegal-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" preload="auto"></audio>
-    <audio id="check-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" preload="auto"></audio>
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true"></div>
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-live="polite"><span id="modalText" class="ok"></span></div>
 
-    <script src="chess.js"></script>
-    <script src="app.js"></script>
+  <script type="module" src="js/chess-ui.js"></script>
 </body>
 </html>
