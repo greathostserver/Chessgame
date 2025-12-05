@@ -1,102 +1,133 @@
-<!doctype html>
-<html lang="fa">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chess Game</title>
-  <style>
-    body{margin:0;font-family:sans-serif;background:#0f172a;color:white;display:flex;justify-content:center}
-    .app{margin-top:20px;background:#0b1220;padding:20px;border-radius:12px;width:95%;max-width:1000px}
-    .header{display:flex;justify-content:space-between;align-items:center}
-    .board{display:grid;grid-template-columns:repeat(8,1fr);width:320px;height:320px}
-    .cell{display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer}
-    .light{background:#f0d9b5}
-    .dark{background:#b58863}
-    .sidebar{margin-left:20px}
-    .main{display:flex;gap:20px;margin-top:20px}
-    button{padding:6px 12px;border:none;background:#06b6d4;border-radius:6px;font-weight:700}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی شطرنج پیشرفته</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&family=Scheherazade+New&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="container">
+        <div id="language-selector" class="language-selector">
+            <h1>Chess Master</h1>
+            <p>لطفا زبان مورد نظر خود را انتخاب کنید</p>
+            <div class="language-options">
+                <button onclick="selectLanguage('fa')">فارسی</button>
+                <button onclick="selectLanguage('ar')">العربية</button>
+                <button onclick="selectLanguage('en')">English</button>
+            </div>
+        </div>
 
-<div class="app" id="root"></div>
+        <div id="game-container" class="game-container hidden">
+            <header class="game-header">
+                <h1 id="game-title">شطرنج</h1>
+                <div class="header-controls">
+                    <button id="new-game-btn" class="btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>بازی جدید</span>
+                    </button>
+                    <button id="undo-btn" class="btn">
+                        <i class="fas fa-undo"></i>
+                        <span>بازگشت حرکت</span>
+                    </button>
+                    <div class="player-info">
+                        <div class="player white">
+                            <span id="white-player-label">سفید</span>
+                            <div class="player-timer" id="white-timer">15:00</div>
+                        </div>
+                        <div class="vs">vs</div>
+                        <div class="player black">
+                            <span id="black-player-label">سیاه</span>
+                            <div class="player-timer" id="black-timer">15:00</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/chess.js@1.0.0/chess.min.js"></script>
+            <div class="game-content">
+                <div class="chess-board-container">
+                    <div id="board-controls" class="board-controls">
+                        <div class="color-controls">
+                            <h3 id="board-color-title">رنگ صفحه</h3>
+                            <div class="color-options">
+                                <div class="color-option" style="background: linear-gradient(135deg, #f0d9b5, #b58863);" onclick="changeBoardColor('classic')"></div>
+                                <div class="color-option" style="background: linear-gradient(135deg, #769656, #eeeed2);" onclick="changeBoardColor('green')"></div>
+                                <div class="color-option" style="background: linear-gradient(135deg, #8a2be2, #9370db);" onclick="changeBoardColor('purple')"></div>
+                                <div class="color-option" style="background: linear-gradient(135deg, #4682b4, #87ceeb);" onclick="changeBoardColor('blue')"></div>
+                            </div>
+                        </div>
+                        <div class="piece-controls">
+                            <h3 id="piece-color-title">رنگ مهره‌ها</h3>
+                            <div class="color-options">
+                                <div class="color-option piece-option" data-color="classic" onclick="changePieceColor('classic')">
+                                    <div class="piece-sample white-sample"></div>
+                                    <div class="piece-sample black-sample"></div>
+                                </div>
+                                <div class="color-option piece-option" data-color="red" onclick="changePieceColor('red')">
+                                    <div class="piece-sample white-sample" style="background-color: #ff6b6b;"></div>
+                                    <div class="piece-sample black-sample" style="background-color: #c44569;"></div>
+                                </div>
+                                <div class="color-option piece-option" data-color="gold" onclick="changePieceColor('gold')">
+                                    <div class="piece-sample white-sample" style="background-color: #ffd700;"></div>
+                                    <div class="piece-sample black-sample" style="background-color: #b8860b;"></div>
+                                </div>
+                                <div class="color-option piece-option" data-color="blue" onclick="changePieceColor('blue')">
+                                    <div class="piece-sample white-sample" style="background-color: #4ecdc4;"></div>
+                                    <div class="piece-sample black-sample" style="background-color: #1a535c;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-<script>
-const e = React.createElement;
+                    <div id="chess-board" class="chess-board"></div>
 
-const T = {
-  fa:{newgame:"بازی جدید",invalid:"حرکت غیرقانونی",history:"تاریخچه"},
-  en:{newgame:"New Game",invalid:"Invalid Move",history:"History"},
-  ar:{newgame:"جديد",invalid:"خطأ",history:"السجل"}
-}
+                    <div id="game-controls" class="game-controls">
+                        <div class="ai-controls">
+                            <h3 id="ai-level-title">سطح هوش مصنوعی</h3>
+                            <div class="ai-levels">
+                                <button class="ai-level-btn active" data-level="1" onclick="changeAILevel(1)">آسان</button>
+                                <button class="ai-level-btn" data-level="2" onclick="changeAILevel(2)">متوسط</button>
+                                <button class="ai-level-btn" data-level="3" onclick="changeAILevel(3)">سخت</button>
+                            </div>
+                            <div class="game-mode">
+                                <label class="switch">
+                                    <input type="checkbox" id="ai-toggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span id="ai-mode-label">بازی با کامپیوتر</span>
+                            </div>
+                        </div>
+                        
+                        <div class="move-history">
+                            <h3 id="move-history-title">تاریخچه حرکات</h3>
+                            <div id="move-history-list" class="move-history-list">
+                                <!-- حرکات اینجا نمایش داده می‌شوند -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-status">
+                    <div id="status-message" class="status-message">نوبت سفید است</div>
+                    <div class="sound-controls">
+                        <button id="sound-toggle" class="btn sound-btn">
+                            <i class="fas fa-volume-up"></i>
+                            <span id="sound-label">صدا فعال</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-function App(){
-  const [lang,setLang]=React.useState("fa");
-  const t=T[lang];
-  const [game,setGame]=React.useState(new Chess());
-  const [board,setBoard]=React.useState(game.board());
-  const [history,setHistory]=React.useState([]);
-  const [selected,setSelected]=React.useState(null);
+    <audio id="move-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-chess-piece-move-1566.mp3" preload="auto"></audio>
+    <audio id="capture-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-chess-capture-1565.mp3" preload="auto"></audio>
+    <audio id="illegal-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" preload="auto"></audio>
+    <audio id="check-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" preload="auto"></audio>
 
-  function reset(){
-    const g=new Chess();
-    setGame(g);
-    setBoard(g.board());
-    setHistory([]);
-  }
-
-  function clickSquare(r,c){
-    const sq="abcdefgh"[c]+(8-r);
-    if(selected){
-      const m=game.move({from:selected,to:sq,promotion:"q"});
-      if(m){setHistory(h=>[...h,m.san]);}
-      else alert(t.invalid);
-      setSelected(null);
-      setBoard(game.board());
-    }else{
-      const p=game.get(sq);
-      if(p && p.color===game.turn()) setSelected(sq);
-    }
-  }
-
-  return e("div",null,
-
-    e("div",{className:"header"},
-      e("select",{onChange:e=>setLang(e.target.value)} ,
-        e("option",{value:"fa"},"فارسی"),
-        e("option",{value:"en"},"English"),
-        e("option",{value:"ar"},"العربية")
-      ),
-      e("button",{onClick:reset},t.newgame)
-    ),
-
-    e("div",{className:"main"},
-
-      e("div",{className:"board"},
-        board.map((row,r)=>row.map((cell,c)=>
-          e("div",{
-            key:r+""+c,
-            className:"cell "+(((r+c)%2)?"dark":"light"),
-            onClick:()=>clickSquare(r,c)
-          },cell?cell.type:"")
-        ))
-      ),
-
-      e("div",{className:"sidebar"},
-        e("h3",null,t.history),
-        history.map((h,i)=>e("div",{key:i},h))
-      )
-
-    )
-  )
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(e(App));
-</script>
-
+    <script src="chess.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
