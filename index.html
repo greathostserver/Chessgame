@@ -1,81 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chess + Stockfish</title>
-  <link rel="stylesheet" href="css/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Chess — شطرنج حرفه‌ای با AI</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app">
-    <div class="container">
-      <header>
-        <div class="title">Chess • بازی شطرنج • الشطرنج</div>
-        <div class="header-actions">
-          <button id="newGameBtn" class="primary" type="button"></button>
-          <button id="flipBtn" type="button"></button>
-          <button id="undoBtn" type="button" disabled></button>
-        </div>
-      </header>
-
-      <div class="controls">
-        <div class="card">
-          <label id="langLabel"></label>
-          <div class="row">
-            <select id="langSelect" aria-label="Language">
-              <option value="fa">فارسی</option>
-              <option value="ar">العربية</option>
-              <option value="en">English</option>
-            </select>
-            <button id="applyLang" class="primary" type="button"></button>
-          </div>
-        </div>
-
-        <div class="card">
-          <label id="themeLabel"></label>
-          <div class="row">
-            <div><div id="lightLabel"></div><input type="color" id="lightColor" value="#f0d9b5" /></div>
-            <div><div id="darkLabel"></div><input type="color" id="darkColor" value="#b58863" /></div>
-            <div><div id="whitePieceLabel"></div><input type="color" id="whitePieceColor" value="#ffffff" /></div>
-            <div><div id="blackPieceLabel"></div><input type="color" id="blackPieceColor" value="#111111" /></div>
-            <button id="applyTheme" class="primary" type="button"></button>
-          </div>
-        </div>
-
-        <div class="card">
-          <label id="aiLabel"></label>
-          <div class="row">
-            <select id="aiSide" aria-label="AI side">
-              <option value="none">غیرفعال</option>
-              <option value="w">سفید</option>
-              <option value="b">سیاه</option>
-            </select>
-            <select id="aiLevel" aria-label="AI level">
-              <option value="6">عمق 6 (سریع)</option>
-              <option value="10">عمق 10 (میانه)</option>
-              <option value="18">عمق 18 (قوی)</option>
-              <option value="22">عمق 22 (خیلی قوی)</option>
-              <option value="28">عمق 28 (رقابتی)</option>
-            </select>
-            <button id="applyAI" class="primary" type="button"></button>
-          </div>
-        </div>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">♟️ Chess • شطرنج حرفه‌ای</div>
+      <div class="actions">
+        <button id="newBtn" class="btn primary">شروع جدید</button>
+        <button id="undoBtn" class="btn">بازگشت</button>
+        <button id="flipBtn" class="btn">چرخش</button>
       </div>
+    </header>
 
-      <div class="layout">
-        <div class="board-wrap"><div id="board" class="board" aria-label="Chessboard"></div></div>
-        <div class="side">
-          <div class="card status"><div class="badge" id="turnBadge"></div><div class="badge" id="stateBadge"></div></div>
-          <div class="card history" id="history"></div>
+    <section class="content">
+      <aside class="panel left">
+        <div class="card">
+          <h3>حالت هوش مصنوعی</h3>
+          <div class="row">
+            <label>سمت</label>
+            <select id="aiSide">
+              <option value="none">خاموش</option>
+              <option value="w">هوش سفید</option>
+              <option value="b">هوش سیاه</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>قدرت (عمق)</label>
+            <select id="aiLevel">
+              <option value="6">۶</option>
+              <option value="10">۱۰</option>
+              <option value="16">۱۶</option>
+              <option value="22">۲۲</option>
+            </select>
+          </div>
+          <button id="applyAI" class="btn primary">اعمال AI</button>
         </div>
-      </div>
 
-      <footer>Client-side • Stockfish WASM Worker</footer>
-    </div>
-  </div>
+        <div class="card">
+          <h3>تم و صدا</h3>
+          <div class="row">
+            <label>تم</label>
+            <select id="themeSel">
+              <option value="classic">کلاسیک</option>
+              <option value="dark">تیره</option>
+              <option value="wood">چوبی</option>
+            </select>
+          </div>
+          <div class="row">
+            <label>صدا حرکت</label>
+            <input id="soundToggle" type="checkbox" checked />
+          </div>
+        </div>
 
-  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true"></div>
-  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-live="polite"><span id="modalText" class="ok"></span></div>
+        <div class="card status">
+          <div id="turnInfo">نوبت: -</div>
+          <div id="result" class="muted"></div>
+        </div>
+      </aside>
+
+      <section class="board-wrap">
+        <div id="board" class="board" aria-label="صفحه شطرنج"></div>
+      </section>
+
+      <aside class="panel right">
+        <div class="card history" id="history">
+          <h3>حرکات</h3>
+          <div id="movesList"></div>
+        </div>
+
+        <div class="card controls">
+          <button id="aiMoveBtn" class="btn">هوش: حرکت کن</button>
+          <button id="downloadPgn" class="btn">دانلود PGN</button>
+        </div>
+      </aside>
+    </section>
+
+    <footer class="footer">قابل اجرا روی GitHub Pages • محرک: Stockfish WASM</footer>
+  </main>
+
+  <div id="toast" class="toast hide"></div>
 
   <script type="module" src="chess-ui.js"></script>
 </body>
