@@ -1,90 +1,131 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Chess — شطرنج حرفه‌ای با AI</title>
-<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی شطرنج - Chess Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div class="brand">♟️ Chess • شطرنج حرفه‌ای</div>
-      <div class="actions">
-        <button id="newBtn" class="btn primary">شروع جدید</button>
-        <button id="undoBtn" class="btn">بازگشت</button>
-        <button id="flipBtn" class="btn">چرخش</button>
-      </div>
-    </header>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chess-board"></i> بازی شطرنج</h1>
+            <p class="subtitle">یک پیاده‌سازی کامل شطرنج با قوانین استاندارد</p>
+        </header>
 
-    <section class="content">
-      <aside class="panel left">
-        <div class="card">
-          <h3>حالت هوش مصنوعی</h3>
-          <div class="row">
-            <label>سمت</label>
-            <select id="aiSide">
-              <option value="none">خاموش</option>
-              <option value="w">هوش سفید</option>
-              <option value="b">هوش سیاه</option>
-            </select>
-          </div>
-          <div class="row">
-            <label>قدرت (عمق)</label>
-            <select id="aiLevel">
-              <option value="6">۶</option>
-              <option value="10">۱۰</option>
-              <option value="16">۱۶</option>
-              <option value="22">۲۲</option>
-            </select>
-          </div>
-          <button id="applyAI" class="btn primary">اعمال AI</button>
+        <main>
+            <div class="game-area">
+                <div class="chess-board-container">
+                    <div class="board-header">
+                        <div class="player-info black-player">
+                            <div class="player-icon"><i class="fas fa-chess-king"></i></div>
+                            <span class="player-name">سیاه</span>
+                            <div class="player-timer">00:00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chess-board" id="chess-board">
+                        <!-- تخته شطرنج به صورت دینامیک با JavaScript ساخته می‌شود -->
+                    </div>
+                    
+                    <div class="board-header">
+                        <div class="player-info white-player">
+                            <div class="player-icon"><i class="fas fa-chess-king"></i></div>
+                            <span class="player-name">سفید</span>
+                            <div class="player-timer">00:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-controls">
+                    <div class="game-info">
+                        <h3><i class="fas fa-info-circle"></i> وضعیت بازی</h3>
+                        <div class="status-box">
+                            <div class="status-item">
+                                <span class="status-label">نوبت:</span>
+                                <span class="status-value" id="current-turn">سفید</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">وضعیت:</span>
+                                <span class="status-value" id="game-status">بازی شروع شده</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">حرکت:</span>
+                                <span class="status-value" id="move-count">0</span>
+                            </div>
+                        </div>
+                        
+                        <h3><i class="fas fa-history"></i> تاریخچه حرکات</h3>
+                        <div class="move-history" id="move-history">
+                            <!-- تاریخچه حرکات در اینجا نمایش داده می‌شود -->
+                        </div>
+                    </div>
+                    
+                    <div class="control-buttons">
+                        <button id="new-game" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> بازی جدید
+                        </button>
+                        <button id="undo-move" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> بازگشت حرکت
+                        </button>
+                        <button id="flip-board" class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> چرخش صفحه
+                        </button>
+                        <button id="hint-move" class="btn btn-secondary">
+                            <i class="fas fa-lightbulb"></i> پیشنهاد حرکت
+                        </button>
+                        <button id="rules-btn" class="btn btn-secondary">
+                            <i class="fas fa-book"></i> قوانین شطرنج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>ساخته شده با <i class="fas fa-heart"></i> برای GitHub Pages | 
+                <a href="https://github.com/your-username/chess-game" target="_blank">مشاهده کد منبع</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Modal for rules -->
+    <div id="rules-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-book"></i> قوانین شطرنج</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="rules-section">
+                    <h3>حرکت مهره‌ها:</h3>
+                    <ul>
+                        <li><strong>سرباز (پیاده):</strong> یک خانه به جلو (در حرکت اول دو خانه)، ضرب‌گیری به صورت اریب</li>
+                        <li><strong>رخ:</strong> به صورت افقی یا عمودی به هر تعداد خانه</li>
+                        <li><strong>اسب:</strong> به شکل L (دو خانه در یک جهت و یک خانه در جهت عمود بر آن)</li>
+                        <li><strong>فیل:</strong> به صورت اریب به هر تعداد خانه</li>
+                        <li><strong>وزیر:</strong> هر جهتی (افقی، عمودی، اریب) به هر تعداد خانه</li>
+                        <li><strong>شاه:</strong> یک خانه در هر جهت</li>
+                    </ul>
+                </div>
+                <div class="rules-section">
+                    <h3>حرکت‌های خاص:</h3>
+                    <ul>
+                        <li><strong>قلعه‌گیری:</strong> جابجایی شاه و رخ در شرایط خاص</li>
+                        <li><strong>آنپاسان:</strong> حرکت ویژه پیاده برای گرفتن پیاده حریف</li>
+                        <li><strong>ارتقای پیاده:</strong> وقتی پیاده به آخرین ردیف می‌رسد، به هر مهره‌ای (غیر از شاه) تبدیل می‌شود</li>
+                    </ul>
+                </div>
+                <div class="rules-section">
+                    <h3>هدف بازی:</h3>
+                    <p>کیش و مات کردن شاه حریف. وقتی شاه تحت حمله (کیش) قرار می‌گیرد و هیچ حرکت قانونی برای رهایی از کیش وجود نداشته باشد، بازی با برد شما پایان می‌یابد.</p>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="card">
-          <h3>تم و صدا</h3>
-          <div class="row">
-            <label>تم</label>
-            <select id="themeSel">
-              <option value="classic">کلاسیک</option>
-              <option value="dark">تیره</option>
-              <option value="wood">چوبی</option>
-            </select>
-          </div>
-          <div class="row">
-            <label>صدا حرکت</label>
-            <input id="soundToggle" type="checkbox" checked />
-          </div>
-        </div>
-
-        <div class="card status">
-          <div id="turnInfo">نوبت: -</div>
-          <div id="result" class="muted"></div>
-        </div>
-      </aside>
-
-      <section class="board-wrap">
-        <div id="board" class="board" aria-label="صفحه شطرنج"></div>
-      </section>
-
-      <aside class="panel right">
-        <div class="card history" id="history">
-          <h3>حرکات</h3>
-          <div id="movesList"></div>
-        </div>
-
-        <div class="card controls">
-          <button id="aiMoveBtn" class="btn">هوش: حرکت کن</button>
-          <button id="downloadPgn" class="btn">دانلود PGN</button>
-        </div>
-      </aside>
-    </section>
-
-    <footer class="footer">قابل اجرا روی GitHub Pages • محرک: Stockfish WASM</footer>
-  </main>
-
-  <div id="toast" class="toast hide"></div>
-
-  <script type="module" src="chess-ui.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
