@@ -1,0 +1,484 @@
+/* Reset و فونت‌ها */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #f0f0f0;
+    min-height: 100vh;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* هدر */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #aaa;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* بخش بازی */
+.game-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.chess-board-container {
+    flex: 1;
+    min-width: 500px;
+    max-width: 600px;
+}
+
+.board-header {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 5px;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.white-player {
+    background: rgba(255, 255, 255, 0.1);
+    border-right: 5px solid #ffd700;
+}
+
+.black-player {
+    background: rgba(0, 0, 0, 0.5);
+    border-right: 5px solid #333;
+}
+
+.player-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+}
+
+.player-name {
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.player-timer {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 1.3rem;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* تخته شطرنج */
+.chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    border: 15px solid #8B4513;
+    border-radius: 5px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.square:hover {
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+.light-square {
+    background-color: #f0d9b5;
+}
+
+.dark-square {
+    background-color: #b58863;
+}
+
+.selected {
+    box-shadow: inset 0 0 0 4px #4CAF50;
+}
+
+.possible-move {
+    position: relative;
+}
+
+.possible-move::after {
+    content: '';
+    position: absolute;
+    width: 25%;
+    height: 25%;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+.possible-capture::after {
+    content: '';
+    position: absolute;
+    width: 85%;
+    height: 85%;
+    border: 4px solid rgba(255, 0, 0, 0.5);
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+/* کنترل‌های بازی */
+.game-controls {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.game-info {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.game-info h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.status-label {
+    color: #aaa;
+}
+
+.status-value {
+    font-weight: 700;
+    color: #fff;
+}
+
+.move-history {
+    height: 250px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.move-history::-webkit-scrollbar {
+    width: 8px;
+}
+
+.move-history::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.move-history::-webkit-scrollbar-thumb {
+    background: #ffd700;
+    border-radius: 10px;
+}
+
+.move-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: monospace;
+}
+
+.move-entry:nth-child(even) {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.move-number {
+    color: #aaa;
+}
+
+.move-white, .move-black {
+    font-weight: 500;
+}
+
+.move-white {
+    color: #fff;
+}
+
+.move-black {
+    color: #ccc;
+}
+
+/* دکمه‌ها */
+.control-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.btn {
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    color: #333;
+    grid-column: span 2;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 25px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: #ffd700;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* مودال */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #1a1a2e;
+    width: 90%;
+    max-width: 700px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    animation: modalFade 0.3s ease;
+}
+
+@keyframes modalFade {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.close-modal {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: #fff;
+}
+
+.modal-body {
+    padding: 30px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.rules-section {
+    margin-bottom: 25px;
+}
+
+.rules-section h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rules-section ul {
+    padding-right: 20px;
+    margin-bottom: 15px;
+}
+
+.rules-section li {
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+/* پاسخگویی (Responsive) */
+@media (max-width: 1100px) {
+    .game-area {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .chess-board-container, .game-controls {
+        max-width: 100%;
+        min-width: 100%;
+    }
+    
+    .chess-board {
+        max-width: 500px;
+    }
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .chess-board {
+        max-width: 400px;
+    }
+    
+    .square {
+        font-size: 2rem;
+    }
+    
+    .control-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .btn-primary {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .chess-board {
+        max-width: 350px;
+    }
+    
+    .square {
+        font-size: 1.7rem;
+    }
+    
+    .player-info {
+        font-size: 1rem;
+        padding: 8px 15px;
+    }
+    
+    .player-timer {
+        font-size: 1.1rem;
+        min-width: 70px;
+    }
+}
